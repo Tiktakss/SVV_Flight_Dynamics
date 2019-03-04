@@ -1,5 +1,4 @@
 import numpy as np
-from math import sqrt
 
 class Aero_Tools:
     def __init__(self):
@@ -20,7 +19,7 @@ class Aero_Tools:
         return self.p0 * (self.T_alt(h) / self.T0)**(-self.g0 / (self.R * self.lapse))
     
     def a_alt(self, h):
-        return sqrt(self.gamma * self.R * self.T_alt(h))
+        return np.sqrt(self.gamma * self.R * self.T_alt(h))
 
 
 """
