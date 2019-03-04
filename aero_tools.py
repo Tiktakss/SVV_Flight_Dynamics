@@ -30,5 +30,6 @@ if __name__ == "__main__":
     tools = Aero_Tools()
     
     h = 1000
+    print(h)
     print(tools.p_alt(h), 'Pa')
     print(tools.a_alt(h), 'm/s')
