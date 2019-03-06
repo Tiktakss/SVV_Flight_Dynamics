@@ -1,0 +1,63 @@
+
+import numpy as np
+import pandas as pd
+
+# this class contains "info" functions for column naming/data clearity in arrays
+
+class import_excel:
+    def __init__(self):
+        self.filename = './Post_Flight_Datasheet_Flight_test.xlsx'
+        self.cg_seats = [131,131,170,214,214,251,251,288,288]
+        self.blockfuel = self.file().values[16,3]
+        
+    
+    def file(self):
+        return pd.read_excel(self.filename)
+    
+    def people(self):
+        people = self.file().iloc[6:15,0:8].values
+        return people[:,[0,3,7]]
+    
+    def people_info(self):
+        return 'location,name,weight'
+    
+    def names(self):
+        return self.people()[:,1]
+    
+    def location(self):
+        return self.people()[:,0]
+    
+    def weights(self):
+        return self.people()[:,2]
+    
+    # print for clearity
+    def Cl_Cd_data_info(self):
+        return self.file().values[23:25,0:10]
+    
+    def Cl_Cd_data(self):
+        return self.file().values[26:32,0:10]
+    
+    def trimcurve_data(self):
+        return self.file().values[57:64,0:14]
+    
+    def trimcurve_data_info(self):
+        return self.file().values[54:56,0:14]
+    
+    def cg_shift_data(self):
+        return self.file().values[73:75,0:14]
+    
+    def cg_shift_data_info(self):
+        return self.file().values[71:73,0:14]
+    
+        
+        
+"""
+put testing/debugging code in the if-statement below
+it will only run if you run this python file (import_files.py)
+"""
+if __name__ == "__main__":
+    importx = import_excel()
+    print (importx.Cl_Cd_data_info())
+
+    
+
