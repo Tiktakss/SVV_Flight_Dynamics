@@ -29,7 +29,7 @@ class Analytical_Model:
         P2 = [0, (par.CZadot - 2 * par.muc) * par.c / v_t0, 0, 0]
         P3 = [0, 0, -par.c / v_t0, 0]
         P4 = [0, par.Cmadot * par.c / v_t0, 0, -2 * par.muc * par.KY2 * par.c / v_t0]
-        #print(np.asarray((P1, P2, P3, P4))[()])
+        print(np.asarray((P1, P2, P3, P4)).astype(float))
         return np.asarray((P1, P2, P3, P4)).astype(float)
     
     def Q(self):
