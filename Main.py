@@ -12,6 +12,9 @@
 
 #######################
 
+import pyplot.matplotlib as plt
+
+#import classes
 from aero_tools import Aero_Tools
 aero = Aero_Tools()
 from excel_tools import import_excel
@@ -21,6 +24,6 @@ matlab = Matlab_Tools()
 
 
 
-print(tools.a_alt(1000))
+print(aero.a_alt(1000))
 
 
