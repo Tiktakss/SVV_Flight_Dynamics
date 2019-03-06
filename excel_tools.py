@@ -5,9 +5,9 @@ import pandas as pd
 # this class contains "info" functions for column naming/data clearity in arrays
 
 class import_excel:
-    def __init__(self):
-        self.filename = './Post_Flight_Datasheet_Flight_test.xlsx'
-        self.cg_seats = [131,131,170,214,214,251,251,288,288]
+    def __init__(self,filename):
+        self.filename = filename# './Post_Flight_Datasheet_Flight_test.xlsx'
+        self.cg_seats = np.array([[131,131,170,214,214,251,251,288,288]])*0.025 # inch to m
         self.blockfuel = self.file().values[16,3]
         
     
@@ -16,16 +16,23 @@ class import_excel:
     
     def people(self):
         people = self.file().iloc[6:15,0:8].values
-        return people[:,[0,3,7]]
+        people = people[:,[0,3,7]]
+        return  np.c_[people,np.transpose(self.cg_seats)]
     
     def people_info(self):
-        return 'location,name,weight'
+        return ['location_name,name,weight,cg_location']
     
     def names(self):
         return self.people()[:,1]
     
-    def location(self):
+    def location_name(self):
         return self.people()[:,0]
+    
+    def location(self,frontisTrue):
+        normal = self.people()[:,3]
+        if frontisTrue:
+            normal[-1] = self.cg_seats[0]+0.30 # just behind pilot seats
+        return normal
     
     def weights(self):
         return self.people()[:,2]
@@ -56,8 +63,11 @@ put testing/debugging code in the if-statement below
 it will only run if you run this python file (import_files.py)
 """
 if __name__ == "__main__":
-    importx = import_excel()
-    print (importx.Cl_Cd_data_info())
+    excel = import_excel('./Post_Flight_Datasheet_Flight_test.xlsx')
+    
+    print ('people: ', excel.people_info())
+    print ('\nCl_Cd: ', excel.Cl_Cd_data_info())
+    print ('\nTrimcurve: ', excel.trimcurve_data_info())
 
     
 
