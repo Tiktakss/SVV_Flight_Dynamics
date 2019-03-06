@@ -25,6 +25,14 @@ class Aero_Tools:
     def rho_alt(self, h):
         return self.p_alt(h) / (self.R * self.T_alt(h))
 
+    def ft_to_m(self, ft):
+        return self.foot * ft
+    
+    def kts_to_ms(self, kts):
+        return kts * self.nm / 3600
+    
+    def ias_to_tas(self, h, v_ias):
+        return v_ias * np.sqrt(self.rho0 / self.rho_alt(h))
 
 
 """
