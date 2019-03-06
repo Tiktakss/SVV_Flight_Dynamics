@@ -6,27 +6,37 @@ Created on Wed Mar  6 09:54:48 2019
 """
 
 import scipy.io as sio
+import numpy as np
 
 class Matlab_Tools:
     def __init__(self):
-        self.p0 = 101325            #Pa
-        self.g0 = 9.80665           #m/s^2
-        self.T0 = 288.15            #K
-        self.rho0 = 1.225           #kg/m^3
-        self.lapse = -6.5 * 10**-3  #K/m
-        self.foot = 0.3048          #m
-        self.nm = 1852              #m
-        self.R = 287                #? gas constant
-        self.gamma = 1.4            #gas ratio
+        self.lol = 0 #not used
+        self.parameters=['vane_AOA','elevator_dte','column_fe','vane_AOA',' elevator_dte',' column_fe',' lh_engine_FMF',' rh_engine_FMF',' lh_engine_itt',' rh_engine_itt',' lh_engine_OP',' rh_engine_OP',' lh_engine_fan_N1',' lh_engine_turbine_N2','rh_engine_fan_N1',' rh_engine_turbine_N2','lh_engine_FU',' rh_engine_FU',' delta_a',' delta_e',' delta_r',' Gps_date',' Gps_utcSec',' Ahrs1_Roll',' Ahrs1_Pitch',' Fms1_trueHeading',' Gps_lat',' Gps_long',' Ahrs1_bRollRate',' Ahrs1_bPitchRate',' Ahrs1_bYawRate',' Ahrs1_bLongAcc',' Ahrs1_bLatAcc',' Ahrs1_bNormAcc',' Ahrs1_aHdgAcc',' Ahrs1_xHdgAcc',' Ahrs1_VertAcc',' Dadc1_sat',' Dadc1_tat',' Dadc1_alt',' Dadc1_bcAlt',' Dadc1_bcAltMb',' Dadc1_mach',' Dadc1_cas',' Dadc1_tas',' Dadc1_altRate',' measurement_running',' measurement_n_rdy',' display_graph_state',' display_active_screen',' time' ]
     
-    def T_alt(self, h):
-        return self.T0 + h * self.lapse
+    def getdata(self,filename,parameter):
+        data=sio.loadmat(filename)
+        flightdata=data['flightdata']
+        parameterdata=flightdata[0][0][parameter][0][0][0][0][0]
+        return parameterdata
+    
+    def getalldata(self,filename):
+        data=np.array(0)
+        for i in range(len(self.parameters)):
+            data=np.append(data,self.getdata(filename,self.parameters[i]))
+        return data
 
 
 
 """
 put testing/debugging code in the if-statement below
-it will only run if you run this python file (aero_tools.py)
+it will only run if you run this python file (matlab_tools.py)
 """
 if __name__ == "__main__":
-    sio.loadmat(FTISxprt-20180305_124437.mat)
+    tools=Matlab_Tools()
+    data=sio.loadmat('FTISxprt-20180305_124437.mat')
+    flightdata=data['flightdata']
+    vane_AOA=flightdata['vane_AOA']
+    
+    vane_AOA=tools.getdata('FTISxprt-20180305_124437.mat','vane_AOA')
+    
+    alldata=tools.getalldata('FTISxprt-20180305_124437.mat')
