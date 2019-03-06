@@ -5,8 +5,8 @@ import pandas as pd
 # this class contains "info" functions for column naming/data clearity in arrays
 
 class import_excel:
-    def __init__(self):
-        self.filename = './Post_Flight_Datasheet_Flight_test.xlsx'
+    def __init__(self,filename):
+        self.filename = filename# './Post_Flight_Datasheet_Flight_test.xlsx'
         self.cg_seats = np.array([[131,131,170,214,214,251,251,288,288]])*0.025 # inch to m
         self.blockfuel = self.file().values[16,3]
         
@@ -20,7 +20,7 @@ class import_excel:
         return  np.c_[people,np.transpose(self.cg_seats)]
     
     def people_info(self):
-        return 'location_name,name,weight,cg_location'
+        return ['location_name,name,weight,cg_location']
     
     def names(self):
         return self.people()[:,1]
@@ -63,8 +63,11 @@ put testing/debugging code in the if-statement below
 it will only run if you run this python file (import_files.py)
 """
 if __name__ == "__main__":
-    excel = import_excel()
-    print (excel.people())
+    excel = import_excel('./Post_Flight_Datasheet_Flight_test.xlsx')
+    
+    print ('people: ', excel.people_info())
+    print ('\nCl_Cd: ', excel.Cl_Cd_data_info())
+    print ('\nTrimcurve: ', excel.trimcurve_data_info())
 
     
 
