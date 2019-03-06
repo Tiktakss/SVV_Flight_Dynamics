@@ -11,6 +11,7 @@ class Aero_Tools:
         self.nm = 1852              #m
         self.R = 287                #? gas constant
         self.gamma = 1.4            #gas ratio
+        self.lbs = 0.453592         #kg
     
     def T_alt(self, h):
         return self.T0 + h * self.lapse
