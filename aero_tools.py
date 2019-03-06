@@ -20,6 +20,9 @@ class Aero_Tools:
     
     def a_alt(self, h):
         return np.sqrt(self.gamma * self.R * self.T_alt(h))
+    
+    def rho_alt(self, h):
+        return self.p_alt(h) / (self.R * self.T_alt(h))
 
 
 #kaas
@@ -33,4 +36,4 @@ if __name__ == "__main__":
     h = 1000
     print(h)
     print(tools.p_alt(h), 'Pa')
-    print(tools.a_alt(h), 'm/s')
+    print(tools.rho_alt(h), 'kg/m^3')
