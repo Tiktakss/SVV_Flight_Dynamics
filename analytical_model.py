@@ -21,21 +21,24 @@ class Analytical_Model:
     
     def elev_defl_mat(self):
         vect = [-par.CXde, -par.CZde, 0, -par.Cmde]
-        return np.transpose(vect)
+        #print(np.transpose(vect))
+        return np.transpose(vect).astype(float)
     
     def P(self, v_t0):
         P1 = [-2 * par.muc * par.c / v_t0, 0, 0, 0]
         P2 = [0, (par.CZadot - 2 * par.muc) * par.c / v_t0, 0, 0]
         P3 = [0, 0, -par.c / v_t0, 0]
         P4 = [0, par.Cmadot * par.c / v_t0, 0, -2 * par.muc * par.KY2 * par.c / v_t0]
-        return np.asarray((P1, P2, P3, P4))
+        #print(np.asarray((P1, P2, P3, P4))[()])
+        return np.asarray((P1, P2, P3, P4)).astype(float)
     
     def Q(self):
         Q1 = [-par.CXu, -par.CXy, -par.CXz0, 0]
         Q2 = [-par.CZu, -par.CZa, par.CX0, -(par.CZq * 2 * par.muc)]
         Q3 = [0, 0, 0, -1]
         Q4 = [-par.Cmu, -par.Cma, 0, -par.Cmq]
-        return np.asarray((Q1, Q2, Q3, Q4))
+        #print(np.asarray((Q1, Q2, Q3, Q4))[()])
+        return np.asarray((Q1, Q2, Q3, Q4)).astype(float)
     
     def A(self, v_t0):
         A = np.matmul(np.linalg.inv(self.P(v_t0)),self.Q)
