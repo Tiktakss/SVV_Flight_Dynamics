@@ -11,3 +11,10 @@
 # Nick Pauly
 
 #######################
+
+from aero_tools import Aero_Tools
+tools=Aero_Tools()
+
+print(tools.a_alt(1000))
+
+
