@@ -50,7 +50,6 @@ class Matlab_Tools:
         timeparameterdata=np.take(self.getdata('time'),times)
         data=timeparameterdata
         for i in range(len(self.parameters)-1,0,-1):
-            print(data.shape)
             data=np.column_stack((self.getdata_at_time(self.parameters[i],start_time_in_seconds,stop_time_in_seconds),data))
         return data
 
