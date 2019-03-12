@@ -2,7 +2,7 @@ import numpy as np
 import Cit_par as par
 from aero_tools import Aero_Tools
 
-class Analytical_Model:
+class Numerical_Model:
     def __init__(self):
         self.tools = Aero_Tools()
         
@@ -21,47 +21,83 @@ class Analytical_Model:
     
     def elev_defl_mat(self):
         vect = [-par.CXde, -par.CZde, 0, -par.Cmde]
+
         #print(np.transpose(vect))
         return np.transpose(vect)
 
-    def P(self, v_t0):
+    def Ps(self, v_t0):
         P1 = [-2 * par.muc * par.c / v_t0, 0, 0, 0]
         P2 = [0, (par.CZadot - 2 * par.muc) * par.c / v_t0, 0, 0]
         P3 = [0, 0, -par.c / v_t0, 0]
         P4 = [0, par.Cmadot * par.c / v_t0, 0, -2 * par.muc * par.KY2 * par.c / v_t0]
-
         #print(np.asarray((P1, P2, P3, P4)))
         return np.asarray((P1, P2, P3, P4))
 
-    
-    def Q(self):
-        Q1 = [-par.CXu, -par.CXy, -par.CXz0, 0]
-        Q2 = [-par.CZu, -par.CZa, par.CX0, -(par.CZq * 2 * par.muc)]
+    def Qs(self):
+        Q1 = [-par.CXu, -par.CXa, -par.CZ0, 0]
+        Q2 = [-par.CZu, -par.CZa, par.CX0, -(par.CZq + 2 * par.muc)]
         Q3 = [0, 0, 0, -1]
         Q4 = [-par.Cmu, -par.Cma, 0, -par.Cmq]
-
         #print(np.asarray((Q1, Q2, Q3, Q4)))
         return np.asarray((Q1, Q2, Q3, Q4))
+
+
+    def Pa(self, v_t0):
+        P1 = [(par.CYbdot -2 * par.mub)*par.b/v_t0, 0, 0, 0]
+        P2 = [0, -0.5*par.b/v_t0, 0, 0]
+        P3 = [0, 0, -4 * par.mub * par.KX2 * par.b/v_t0, 4 * par.mub * par.KXZ * par.b/v_t0]
+        P4 = [par.Cnbdot * par.b/v_t0, 0, 4 * par.mub * par.KXZ * par.b/v_t0, -4 * par.mub * par.KZ2 * par.b/v_t0]
+        return np.asarray((P1, P2, P3, P4))
     
-    def A(self, v_t0):
-        A = np.matmul(np.linalg.inv(self.P(v_t0)),self.Q)
+    def Qa(self):
+        Q1 = [-par.CYb, -par.CL, -par.CYp, -(par.CYr - 4*par.mub)]
+        Q2 = [0, 0, -1, 0]
+        Q3 = [-par.Clb, 0, -par.Clp, -par.Clr]
+        Q4 = [-par.Cnb, 0, -par.Cnp, -par.Cnr]
+        return np.asarray((Q1, Q2, Q3, Q4))
+    
+    def Ra(self):
+        R1 = [-par.CYda, -par.CYdr, ]
+        R2 = [0, 0]
+        R3 = [-par.Clda, -par.Cldr]
+        R4 = [-par.Cnda, -par.Cndr]
+        return np.asarray((R1, R2, R3, R4))
+    
+    def As(self, v_t0):
+        P_inv = np.linalg.inv(self.Ps(v_t0))
+        Q_mat = self.Qs()
+        A = np.matmul(P_inv,Q_mat)
         return A
     
-    def B(self, v_t0):
-        B = np.matmul(np.linalg.inv(self.P(v_t0)),self.elev_defl_mat)
+    def Bs(self, v_t0):
+        P_inv = np.linalg.inv(self.Ps(v_t0))
+        delta_mat = self.elev_defl_mat()
+        B = np.matmul(P_inv,delta_mat)
         return B
     
+    def Aa(self, v_t0):
+        P_inv = np.linalg.inv(self.Pa(v_t0))
+        Q_mat = self.Qa()
+        A = np.matmul(P_inv,Q_mat)
+        return A
+    
+    def Ba(self, v_t0):
+        P_inv = np.linalg.inv(self.Pa(v_t0))
+        R_mat = self.Ra()
+        B = np.matmul(P_inv,R_mat)
+        return B
+
     def C(self):
         return np.identity(4)
-        
+
     def Ds(self):
         return np.transpose(np.zeros(4))
-    
+
     def Da(self):
         return np.zeros((4,2))
-    
+        
 if __name__ == "__main__":
-    model = Analytical_Model()
+    model = Numerical_Model()
     
     v_ias = model.tools.kts_to_ms(161)
     alt = model.tools.ft_to_m(13250)
@@ -71,6 +107,7 @@ if __name__ == "__main__":
     D_c = model.D_c(0.1, v_dimless)
     #print(model.symm_mat(D_c))
     #print(model.elev_defl_mat())
+
 
 #    print(model.As(100))
 #    print(model.Bs(100))
@@ -84,12 +121,13 @@ if __name__ == "__main__":
     
     
     v_ref = 1
-    s_eigen = np.linalg.eig(model.As(v_ref))
+    s_eigen = np.linalg.eig(model.As(v_ref))[0]
     print('eigenvalues symm')
     print(s_eigen)
-    s_eigen = np.linalg.eig(model.Aa(v_ref))
+    s_eigen = np.linalg.eig(model.Aa(v_ref))[0]
     print('eigenvalues asymm')
     print(s_eigen)
 
 
     
+

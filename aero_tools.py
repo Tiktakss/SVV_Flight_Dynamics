@@ -7,7 +7,7 @@ class Aero_Tools:
         self.g0 = 9.80665           #m/s^2
         self.T0 = 288.15            #K
         self.rho0 = 1.225           #kg/m^3
-        self.lapse = -6.5 * 10**-3  #K/m
+        self.lapse = -6.5 * 10**(-3)  #K/m
         self.foot = 0.3048          #m
         self.nm = 1852              #m
         self.R = 287                #? gas constant
@@ -36,9 +36,13 @@ class Aero_Tools:
         return v_ias * np.sqrt(self.rho0 / self.rho_alt(h))
     
     def calc_mach(self, h, v_cal): #h[m] and v_cal[m/s] speed the pilot reads 
-        p = self.p0*(1+ (self.lapse*h)/self.T0)**(self.g0/(self.lapse*self.R))
-        M = sqrt( (2/(self.gamma -1))*((1 + self.p0/0*(1+ (self.gamma -1)/(2*self.gamma)*self.rho0/self.p0*v_cal*v_cal)**(self.gamma/(self.gamma -1))-1)**((self.gamma - 1)/self.gamma)-1))
-    
+        p = self.p0*(1 + (self.lapse*h)/self.T0)**(self.g0/(self.lapse*self.R))
+        M = sqrt((2.0/(self.gamma -1.0))*((1.0 \
+                 + (self.p0/p)*((1.0+ ((self.gamma \
+                   -1.0)/(2.0*self.gamma))*(self.rho0/self.p0)*v_cal*v_cal)**(self.gamma/(self.gamma \
+                    -1.0))-1.0))**((self.gamma \
+            - 1.0)/self.gamma)-1.0))
+        return M
 
 
 """

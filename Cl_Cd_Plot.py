@@ -28,6 +28,7 @@ total_weight = weight_people + blockfuel + empty_weight
 C_l = [] #lift coefficient
 C_d = [] #drag coefficient
 alpha = [] #angle of attack
+mach = []
 
 for i in range(len(data)):
     row = data[i]
@@ -49,30 +50,38 @@ for i in range(len(data)):
     
     aoa = row[5] #angle of attack #degrees
     alpha.append(aoa)
+    
+    M = aero.calc_mach(h_m, speed_ms)
+    mach.append(M)
+    
 
-#Plot Cl_CD Curve    
-plt.figure()
-plt.plot(C_d[0], C_l[0], "ro")
-plt.plot(C_d[1], C_l[1], "bo")
-plt.plot(C_d[2], C_l[2], "go")
-plt.plot(C_d[3], C_l[3], "yo")
-plt.plot(C_d[4], C_l[4], "ko")
-plt.plot(C_d[5], C_l[5], "co")
-plt.plot(C_d, C_l)
-plt.title('Lift coefficient vs Drag coefficient')
-plt.xlabel('Drag coefficient [-]')
-plt.ylabel('Lift coefficient [-]')
-plt.grid(True)
-plt.show()  
+##Plot Cl_CD Curve    
+#plt.figure()
+#plt.plot(C_d[0], C_l[0], "ro")
+#plt.plot(C_d[1], C_l[1], "bo")
+#plt.plot(C_d[2], C_l[2], "go")
+#plt.plot(C_d[3], C_l[3], "yo")
+#plt.plot(C_d[4], C_l[4], "ko")
+#plt.plot(C_d[5], C_l[5], "co")
+#plt.plot(C_d, C_l)
+#plt.title('Lift coefficient vs Drag coefficient')
+#plt.xlabel('Drag coefficient [-]')
+#plt.ylabel('Lift coefficient [-]')
+#plt.grid(True)
+#plt.show()  
+#
+##PLot lift curve 
+#plt.figure()
+#plt.plot(alpha, C_l)
+#plt.title('Lift Curve')
+#plt.xlabel('Angle of Attack [-]')
+#plt.ylabel('Lift coefficient [-]')
+#plt.grid(True)
+#plt.show() 
+    
+print(mach)
+    
 
-#PLot lift curve 
-plt.figure()
-plt.plot(alpha, C_l)
-plt.title('Lift Curve')
-plt.xlabel('Angle of Attack [-]')
-plt.ylabel('Lift coefficient [-]')
-plt.grid(True)
-plt.show()  
 
     
 
