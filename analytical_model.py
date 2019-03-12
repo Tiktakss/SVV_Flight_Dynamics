@@ -87,7 +87,7 @@ if __name__ == "__main__":
     s_eigen = np.linalg.eig(model.As(v_ref))
     print('eigenvalues symm')
     print(s_eigen)
-    s_eigen = np.linalg.eig(model.Aa(v_ref))
+    s_eigen = np.linalg.eig(model.Aa(v_ref))[0]
     print('eigenvalues asymm')
     print(s_eigen)
 
