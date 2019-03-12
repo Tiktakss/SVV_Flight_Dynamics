@@ -17,6 +17,7 @@ surface = 30 #m^2 #obtained from reader
 Cd0 = 0.04 # #obtained from reader
 e = 0.8 #obtained from reader
 b = 15.911 #span obtained from reader #m
+length = 600 *0.0254
 
 
 #obtain data for Cl-Cd plot
@@ -32,7 +33,7 @@ t2 = 21*60 + 32 #seconds
 t3 = 25*60 + 31 #seconds
 t4 = 27*60 + 29 #seconds
 t5 = 29*60 + 3  #seconds
-t6 = 31*13 + 13 #seconds
+t6 = 31*60 + 13 #seconds
 dt = 5          #seconds
 
 time = [t1, t2, t3, t4, t5, t6]
@@ -42,6 +43,7 @@ C_l = [] #lift coefficient
 C_d = [] #drag coefficient
 alpha = [] #angle of attack
 mach = []
+Re = []
 
 for i in range(len(time)):
     fuel_left = matlab.getdata_at_time('lh_engine_FU',time[i], time[i]+dt)
@@ -76,6 +78,9 @@ for i in range(len(time)):
     
     M = aero.calc_mach(h_m, speed_ms)
     mach.append(M)
+    
+    re_num = aero.calc_re(density, speed_ms, length)
+    Re.append(re_num)
 
 
 #Plot Cl_CD Curve    
@@ -87,6 +92,7 @@ plt.plot(C_d[3], C_l[3], "yo")
 plt.plot(C_d[4], C_l[4], "ko")
 plt.plot(C_d[5], C_l[5], "co")
 plt.plot(C_d, C_l)
+plt.text(0.045, 0.65, r'$M=0.172 - 0.3473,\ \Re= $')
 plt.title('Lift coefficient vs Drag coefficient')
 plt.xlabel('Drag coefficient [-]')
 plt.ylabel('Lift coefficient [-]')
@@ -101,7 +107,14 @@ plt.xlabel('Angle of Attack [-]')
 plt.ylabel('Lift coefficient [-]')
 plt.grid(True)
 plt.show() 
-    
+
+#Cl_alpha
+dy = max(C_l) - min(C_l)
+dx = max(alpha) - min(alpha)
+getal = dy/dx
+
+print(getal)
+
 
 
     
