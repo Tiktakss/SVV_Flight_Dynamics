@@ -2,7 +2,7 @@ import numpy as np
 import Cit_par as par
 from aero_tools import Aero_Tools
 
-class Analytical_Model:
+class Numerical_Model:
     def __init__(self):
         self.tools = Aero_Tools()
         
@@ -97,7 +97,7 @@ class Analytical_Model:
         return np.zeros((4,2))
         
 if __name__ == "__main__":
-    model = Analytical_Model()
+    model = Numerical_Model()
     
     v_ias = model.tools.kts_to_ms(161)
     alt = model.tools.ft_to_m(13250)
