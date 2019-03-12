@@ -22,7 +22,7 @@ b = 15.911 #span obtained from reader #m
 #obtain data for Cl-Cd plot
 data = import_excel.Cl_Cd_data(excel)
 
-weight_people = sum(import_excel.weights(excel))/0.453592 #lbs
+weight_people = sum(import_excel.weights(excel)) #lbs
 total_weight = weight_people + blockfuel + empty_weight
 C_l = [] #lift coefficient
 C_d = [] #drag coefficient
@@ -67,7 +67,7 @@ plt.show()
 #PLot lift curve 
 plt.figure()
 plt.plot(alpha, C_l)
-plt.title('Lift Curve')
+plt.title('Lift Cruve')
 plt.xlabel('Angle of Attack [-]')
 plt.ylabel('Lift coefficient [-]')
 plt.grid(True)
