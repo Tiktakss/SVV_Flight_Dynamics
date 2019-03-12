@@ -16,6 +16,7 @@ Arm_seat12 = 131.0 #inch #obtained from appendix E
 Arm_seat34 = 214.0 #inch #obtained from appendix E
 Arm_seat56 = 251.0 #inch #obtained from appendix E
 Arm_fuel = 285.56 #inch #obtained from Mass & Balance report
+Arm_BEM = 292.18 #inch #obtained from Mass & Balance report
 
 #obtain data for mass balance
 data = import_excel.Cl_Cd_data(excel)
@@ -23,6 +24,18 @@ data = import_excel.Cl_Cd_data(excel)
 weight_people = sum(import_excel.weights(excel))/0.453592 #lbs
 total_weight = weight_people + blockfuel + empty_weight
 
+
 for i in range(len(data)):
     row = data[i]
-    weight_lbs = total_weight - row[8] #weight in lbs
+    weight_fuel = blockfuel - row[8] #lbs
+    total_weight = weight_people + weight_fuel + empty_weight #lbs
+    moment_fuel = weight_fuel*Arm_fuel #lbs*inch
+    moment_BEM = empty_weight*Arm_BEM #lbs*inch
+    moment_p1 = import_excel.weights(excel)[0] * Arm_seat12 #lbs*inch
+    moment_p2 = import_excel.weights(excel)[1] * Arm_seat12 #lbs*inch
+    moment_p3 = import_excel.weights(excel)[2] * Arm_seat34 #lbs*inch
+    moment_p4 = import_excel.weights(excel)[3] * Arm_seat34 #lbs*inch
+    moment_p5 = import_excel.weights(excel)[4] * Arm_seat56 #lbs*inch
+    moment_p6 = import_excel.weights(excel)[5] * Arm_seat56 #lbs*inch
+    Center_gravity = (moment_fuel+moment_BEM+moment_p1+moment_p2+moment_p3+moment_p4+moment_p5+moment_p6)
+
