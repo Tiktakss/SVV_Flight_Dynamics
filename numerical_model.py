@@ -1,10 +1,12 @@
 import numpy as np
 import Cit_par as par
 from aero_tools import Aero_Tools
+from real_analytical_model import Analytical_Model
 
 class Numerical_Model:
     def __init__(self):
         self.tools = Aero_Tools()
+        self.amod = Analytical_Model()
         
     def v_dimless(self, v_t, v_t0):
         return (v_t - v_t0) / v_t0
@@ -21,7 +23,6 @@ class Numerical_Model:
     
     def elev_defl_mat(self):
         vect = [-par.CXde, -par.CZde, 0, -par.Cmde]
-
         #print(np.transpose(vect))
         return np.transpose(vect)
 
@@ -121,10 +122,12 @@ if __name__ == "__main__":
     
     
     v_ref = 1
-    s_eigen = np.linalg.eig(model.As(v_ref))[0]
+    s_eigen = np.linalg.eig(model.As(v_ref))[0] / par.c
+    print(model.amod.eigenv_short())
+    print(model.amod.eigenv_phugoid())
     print('eigenvalues symm')
     print(s_eigen)
-    s_eigen = np.linalg.eig(model.Aa(v_ref))[0]
+    s_eigen = np.linalg.eig(model.Aa(v_ref))[0] / par.b
     print('eigenvalues asymm')
     print(s_eigen)
 

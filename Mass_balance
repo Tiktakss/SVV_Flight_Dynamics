@@ -10,11 +10,12 @@ excel = import_excel('./Post_Flight_Datasheet_Flight_test.xlsx')
 #Inputs
 blockfuel = 4090.0 #lbs #obtained from written data sheet
 empty_weight = 9165.0 #lbs #obtained from Mass & Balance report
-
-#Distances
 Arm_seat12 = 131.0 #inch #obtained from appendix E
+Arm_seat910 = 170.0 #inch #obtained from appendix E
 Arm_seat34 = 214.0 #inch #obtained from appendix E
 Arm_seat56 = 251.0 #inch #obtained from appendix E
+Arm_seat78 = 288.0 #inch #obtained from appendix E
+Arm_cgshift = 145.0 #inch estimated between 1 and 9
 Arm_fuel = 285.56 #inch #obtained from Mass & Balance report
 Arm_BEM = 292.18 #inch #obtained from Mass & Balance report
 
@@ -24,18 +25,33 @@ data = import_excel.Cl_Cd_data(excel)
 weight_people = sum(import_excel.weights(excel))/0.453592 #lbs
 total_weight = weight_people + blockfuel + empty_weight
 
+#Calculate moments for people
+moment_p1 = import_excel.weights(excel)[0] * Arm_seat12  # lbs*inch
+moment_p2 = import_excel.weights(excel)[1] * Arm_seat12  # lbs*inch
+moment_p10 = import_excel.weights(excel)[2] * Arm_seat910  # lbs*inch
+moment_p3 = import_excel.weights(excel)[3] * Arm_seat34  # lbs*inch
+moment_p4 = import_excel.weights(excel)[4] * Arm_seat34  # lbs*inch
+moment_p5 = import_excel.weights(excel)[5] * Arm_seat56  # lbs*inch
+moment_p6 = import_excel.weights(excel)[6] * Arm_seat56  # lbs*inch
+moment_p7 = import_excel.weights(excel)[7] * Arm_seat78  # lbs*inch
+moment_p8 = import_excel.weights(excel)[8] * Arm_seat78  # lbs*inch
+moment_CGshift = import_excel.weights(excel)[8] * Arm_cgshift
+moment_BEM = empty_weight * Arm_BEM  # lbs*inch
 
+Center_gravity = np.zeros(len(data)+1)
 for i in range(len(data)):
     row = data[i]
     weight_fuel = blockfuel - row[8] #lbs
     total_weight = weight_people + weight_fuel + empty_weight #lbs
     moment_fuel = weight_fuel*Arm_fuel #lbs*inch
-    moment_BEM = empty_weight*Arm_BEM #lbs*inch
-    moment_p1 = import_excel.weights(excel)[0] * Arm_seat12 #lbs*inch
-    moment_p2 = import_excel.weights(excel)[1] * Arm_seat12 #lbs*inch
-    moment_p3 = import_excel.weights(excel)[2] * Arm_seat34 #lbs*inch
-    moment_p4 = import_excel.weights(excel)[3] * Arm_seat34 #lbs*inch
-    moment_p5 = import_excel.weights(excel)[4] * Arm_seat56 #lbs*inch
-    moment_p6 = import_excel.weights(excel)[5] * Arm_seat56 #lbs*inch
-    Center_gravity = (moment_fuel+moment_BEM+moment_p1+moment_p2+moment_p3+moment_p4+moment_p5+moment_p6)
+    Center_gravity[i] = (moment_fuel+moment_BEM+moment_p1+moment_p2+moment_p10+moment_p3\
+                         +moment_p4+moment_p5+moment_p6+moment_p7+moment_p8)/total_weight #cm
+Center_gravity[len(data)] = (Center_gravity[len(data)-1]*total_weight-moment_p8+moment_CGshift)/total_weight#cm
+
+#Plotting
+plt.plot(Center_gravity)
+plt.title("Center of Gravity")
+plt.ylabel("distance from nose[inch]")
+plt.show()
+
 
