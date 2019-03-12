@@ -43,13 +43,15 @@ class Matlab_Tools:
         return timeparameterdata
     
     def getalldata_at_time(self,filename,start_time_in_seconds,stop_time_in_seconds):
-        data=[]
-        for i in range(len(self.parameters)):
-            print('begin')
+        time = self.getdata(filename,'time')
+        start = np.where(time==start_time_in_seconds)[0]
+        stop = np.where(time==stop_time_in_seconds)[0]
+        times= np.arange(start,stop)
+        timeparameterdata=np.take(self.getdata(filename,'time'),times)
+        data=timeparameterdata
+        for i in range(len(self.parameters)-1,0,-1):
             print(data.shape)
-            print(self.getdata_at_time(filename,self.parameters[i],start_time_in_seconds,stop_time_in_seconds).shape)
-            data=np.vstack((data,self.getdata_at_time(filename,self.parameters[i],start_time_in_seconds,stop_time_in_seconds)))
-            print(data.shape)
+            data=np.column_stack((self.getdata_at_time(filename,self.parameters[i],start_time_in_seconds,stop_time_in_seconds),data))
         return data
 
 
@@ -67,6 +69,9 @@ if __name__ == "__main__":
 #    elevator_dte=tools.getdata('FTISxprt-20180305_124437.mat','elevator_dte')
 #    time=tools.getdata('FTISxprt-20180305_124437.mat','time')
 #    alldata=tools.getalldata('FTISxprt-20180305_124437.mat')
-    output=tools.getalldata_at_time('FTISxprt-20180305_124437.mat',10,100)
+    outputall=tools.getalldata_at_time('FTISxprt-20190305_124649.mat',10,20)
+    time = tools.getdata('FTISxprt-20190305_124649.mat','time')
+    output=tools.getdata_at_time('FTISxprt-20190305_124649.mat','Dadc1_bcAlt',10,20)
     print(output)
+    print(outputall)
     
