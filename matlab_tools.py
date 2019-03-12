@@ -43,7 +43,7 @@ class Matlab_Tools:
         return timeparameterdata
     
     def getalldata_at_time(self,filename,start_time_in_seconds,stop_time_in_seconds):
-        data=[]
+        data=np.array([])
         for i in range(len(self.parameters)):
             print('begin')
             print(data.shape)
