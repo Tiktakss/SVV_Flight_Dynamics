@@ -57,17 +57,18 @@ if __name__ == "__main__":
     v = 140
     vc = v/par.c
     vb = v/par.b
+    print('\t', 'short period:')
     print(mod.eigenv_short())
     print(mod.half_time(mod.eigenv_short()[0][0],v)*vc)
-    print()
+    print('\t', 'phugoid:')
     print(mod.eigenv_phugoid())
     print(mod.half_time(mod.eigenv_phugoid()[0][0],v)*vc)
-    print()
+    print('\t', 'dutch roll:')
     print(mod.dutchr())
     print(mod.half_time2(mod.dutchr()[0][0],v)*vb)
-    print()
+    print('\t', 'aperiodic roll:')
     print(mod.aperroll())
     print(mod.half_time2(mod.aperroll(),v)*vb)
-    print()
+    print('\t', 'spiral:')
     print(mod.spiral())
     print(mod.half_time2(mod.spiral(),v)*vb)
