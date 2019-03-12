@@ -27,6 +27,7 @@ total_weight = weight_people + blockfuel + empty_weight
 C_l = [] #lift coefficient
 C_d = [] #drag coefficient
 alpha = [] #angle of attack
+mach = []
 
 for i in range(len(data)):
     row = data[i]
@@ -48,6 +49,10 @@ for i in range(len(data)):
     
     aoa = row[5] #angle of attack #degrees
     alpha.append(aoa)
+    
+    M = aero.calc_mach(h_m, speed_ms)
+    mach.append(M)
+    
 
 #Plot Cl_CD Curve    
 plt.figure()
@@ -71,7 +76,9 @@ plt.title('Lift Cruve')
 plt.xlabel('Angle of Attack [-]')
 plt.ylabel('Lift coefficient [-]')
 plt.grid(True)
-plt.show()  
+plt.show() 
+    
+
 
     
 
