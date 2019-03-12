@@ -23,6 +23,7 @@ b = 15.911 #span obtained from reader #m
 data = import_excel.Cl_Cd_data(excel)
 
 weight_people = sum(import_excel.weights(excel))/0.453592 #lbs
+
 total_weight = weight_people + blockfuel + empty_weight
 C_l = [] #lift coefficient
 C_d = [] #drag coefficient
