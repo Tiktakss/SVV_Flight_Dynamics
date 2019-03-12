@@ -21,6 +21,7 @@ Arm_BEM = 292.18 #inch #obtained from Mass & Balance report
 
 #obtain data for mass balance
 data = import_excel.Cl_Cd_data(excel)
+data_trim_curve = import_excel.trimcurve_data(excel)
 
 weight_people = sum(import_excel.weights(excel))/0.453592 #lbs
 total_weight = weight_people + blockfuel + empty_weight
@@ -48,6 +49,11 @@ for i in range(len(data)):
                          +moment_p4+moment_p5+moment_p6+moment_p7+moment_p8)/total_weight #cm
 Center_gravity[len(data)] = (Center_gravity[len(data)-1]*total_weight-moment_p8+moment_CGshift)/total_weight#cm
 
+de = np.zeros(len(data_trim_curve))
+for i in range(len(data_trim_curve)):
+    row = data_trim_curve[i]
+    de[i] = row[6]
+print(de)
 #Plotting
 plt.plot(Center_gravity)
 plt.title("Center of Gravity")
