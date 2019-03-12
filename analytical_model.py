@@ -22,23 +22,26 @@ class Analytical_Model:
     def elev_defl_mat(self):
         vect = [-par.CXde, -par.CZde, 0, -par.Cmde]
         #print(np.transpose(vect))
-        return np.transpose(vect).astype(float)
-    
+        return np.transpose(vect)
+
     def P(self, v_t0):
         P1 = [-2 * par.muc * par.c / v_t0, 0, 0, 0]
         P2 = [0, (par.CZadot - 2 * par.muc) * par.c / v_t0, 0, 0]
         P3 = [0, 0, -par.c / v_t0, 0]
         P4 = [0, par.Cmadot * par.c / v_t0, 0, -2 * par.muc * par.KY2 * par.c / v_t0]
-        print(np.asarray((P1, P2, P3, P4)).astype(float))
-        return np.asarray((P1, P2, P3, P4)).astype(float)
+
+        #print(np.asarray((P1, P2, P3, P4)))
+        return np.asarray((P1, P2, P3, P4))
+
     
     def Q(self):
         Q1 = [-par.CXu, -par.CXy, -par.CXz0, 0]
         Q2 = [-par.CZu, -par.CZa, par.CX0, -(par.CZq * 2 * par.muc)]
         Q3 = [0, 0, 0, -1]
         Q4 = [-par.Cmu, -par.Cma, 0, -par.Cmq]
-        #print(np.asarray((Q1, Q2, Q3, Q4))[()])
-        return np.asarray((Q1, Q2, Q3, Q4)).astype(float)
+
+        #print(np.asarray((Q1, Q2, Q3, Q4)))
+        return np.asarray((Q1, Q2, Q3, Q4))
     
     def A(self, v_t0):
         A = np.matmul(np.linalg.inv(self.P(v_t0)),self.Q)
@@ -47,7 +50,16 @@ class Analytical_Model:
     def B(self, v_t0):
         B = np.matmul(np.linalg.inv(self.P(v_t0)),self.elev_defl_mat)
         return B
+    
+    def C(self):
+        return np.identity(4)
         
+    def Ds(self):
+        return np.transpose(np.zeros(4))
+    
+    def Da(self):
+        return np.zeros((4,2))
+    
 if __name__ == "__main__":
     model = Analytical_Model()
     
@@ -59,6 +71,25 @@ if __name__ == "__main__":
     D_c = model.D_c(0.1, v_dimless)
     #print(model.symm_mat(D_c))
     #print(model.elev_defl_mat())
-    print(model.A(100))
-    print(model.B(100))
+
+#    print(model.As(100))
+#    print(model.Bs(100))
+#    print()
+#    print(model.Aa(100))
+#    print(model.Ba(100))
+#    print()
+#    print(model.C())
+#    print(model.Ds())
+#    print(model.Da())
+    
+    
+    v_ref = 1
+    s_eigen = np.linalg.eig(model.As(v_ref))
+    print('eigenvalues symm')
+    print(s_eigen)
+    s_eigen = np.linalg.eig(model.Aa(v_ref))
+    print('eigenvalues asymm')
+    print(s_eigen)
+
+
     
