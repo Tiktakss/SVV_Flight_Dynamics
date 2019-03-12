@@ -10,8 +10,8 @@ from matlab_tools import Matlab_Tools
 matlab = Matlab_Tools()
 
 #inputs
-blockfuel = 4090.0 #lbs #obtained from written data sheet
-empty_weight = 9165.0 #lbs #obtained from Mass & Balance report
+blockfuel       = 4090.0 #lbs #obtained from written data sheet
+empty_weight    = 9165.0 #lbs #obtained from Mass & Balance report
 gravity = 9.81 #m/s^2
 surface = 30 #m^2 #obtained from reader
 Cd0 = 0.04 # #obtained from reader
@@ -72,6 +72,7 @@ plt.xlabel('Angle of Attack [-]')
 plt.ylabel('Lift coefficient [-]')
 plt.grid(True)
 plt.show()  
+
     
 
 
