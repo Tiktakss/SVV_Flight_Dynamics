@@ -24,8 +24,9 @@ data = import_excel.Cl_Cd_data(excel)
 
 weight_people = sum(import_excel.weights(excel)) #lbs
 total_weight = weight_people + blockfuel + empty_weight
-C_l = []
-C_d = []
+C_l = [] #lift coefficient
+C_d = [] #drag coefficient
+alpha = [] #angle of attack
 
 for i in range(len(data)):
     row = data[i]
@@ -41,11 +42,14 @@ for i in range(len(data)):
     lift = (2*weight_n)/(density*surface*speed_ms**2)
     C_l.append(lift)
     
-    A = b*b/surface
+    A = b*b/surface #aspect ratio
     drag = Cd0 +(lift**2)/(pi*A*e)
     C_d.append(drag)
-
     
+    aoa = row[5] #angle of attack #degrees
+    alpha.append(aoa)
+
+#Plot Cl_CD Curve    
 plt.figure()
 plt.plot(C_d[0], C_l[0], "ro")
 plt.plot(C_d[1], C_l[1], "bo")
@@ -58,7 +62,16 @@ plt.title('Lift coefficient vs Drag coefficient')
 plt.xlabel('Drag coefficient [-]')
 plt.ylabel('Lift coefficient [-]')
 plt.grid(True)
-plt.show()   
+plt.show()  
+
+#PLot lift curve 
+plt.figure()
+plt.plot(alpha, C_l)
+plt.title('Lift Cruve')
+plt.xlabel('Angle of Attack [-]')
+plt.ylabel('Lift coefficient [-]')
+plt.grid(True)
+plt.show()  
     
 
 
