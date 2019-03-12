@@ -1,4 +1,5 @@
 import numpy as np
+from math import *
 
 class Aero_Tools:
     def __init__(self):
@@ -33,6 +34,11 @@ class Aero_Tools:
     
     def ias_to_tas(self, h, v_ias):
         return v_ias * np.sqrt(self.rho0 / self.rho_alt(h))
+    
+    def calc_mach(self, h, v_cal): #h[m] and v_cal[m/s] speed the pilot reads 
+        p = self.p0*(1+ (self.lapse*h)/self.T0)**(self.g0/(self.lapse*self.R))
+        M = sqrt( (2/(self.gamma -1))*((1 + self.p0/0*(1+ (self.gamma -1)/(2*self.gamma)*self.rho0/self.p0*v_cal*v_cal)**(self.gamma/(self.gamma -1))-1)**((self.gamma - 1)/self.gamma)-1))
+    
 
 
 """
