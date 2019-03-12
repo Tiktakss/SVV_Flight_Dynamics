@@ -25,8 +25,6 @@ class Analytical_Model:
         #print(np.transpose(vect))
         return np.transpose(vect)
 
-
-    
     def Ps(self, v_t0):
         P1 = [-2 * par.muc * par.c / v_t0, 0, 0, 0]
         P2 = [0, (par.CZadot - 2 * par.muc) * par.c / v_t0, 0, 0]
@@ -123,7 +121,7 @@ if __name__ == "__main__":
     
     
     v_ref = 1
-    s_eigen = np.linalg.eig(model.As(v_ref))
+    s_eigen = np.linalg.eig(model.As(v_ref))[0]
     print('eigenvalues symm')
     print(s_eigen)
     s_eigen = np.linalg.eig(model.Aa(v_ref))[0]
