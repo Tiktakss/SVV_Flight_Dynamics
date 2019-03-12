@@ -10,8 +10,8 @@ from matlab_tools import Matlab_Tools
 matlab = Matlab_Tools()
 
 #inputs
-blockfuel = 4090.0 #lbs #obtained from written data sheet
-empty_weight = 9165.0 #lbs #obtained from Mass & Balance report
+blockfuel       = 4090.0 #lbs #obtained from written data sheet
+empty_weight    = 9165.0 #lbs #obtained from Mass & Balance report
 gravity = 9.81 #m/s^2
 surface = 30 #m^2 #obtained from reader
 Cd0 = 0.04 # #obtained from reader
@@ -22,7 +22,7 @@ b = 15.911 #span obtained from reader #m
 #obtain data for Cl-Cd plot
 data = import_excel.Cl_Cd_data(excel)
 
-weight_people = sum(import_excel.weights(excel)) #lbs
+weight_people = sum(import_excel.weights(excel))/0.453592 #lbs
 total_weight = weight_people + blockfuel + empty_weight
 C_l = [] #lift coefficient
 C_d = [] #drag coefficient
@@ -67,11 +67,12 @@ plt.show()
 #PLot lift curve 
 plt.figure()
 plt.plot(alpha, C_l)
-plt.title('Lift Cruve')
+plt.title('Lift Curve')
 plt.xlabel('Angle of Attack [-]')
 plt.ylabel('Lift coefficient [-]')
 plt.grid(True)
 plt.show()  
+
     
 
 
