@@ -21,23 +21,23 @@ class Analytical_Model:
     
     def elev_defl_mat(self):
         vect = [-par.CXde, -par.CZde, 0, -par.Cmde]
-        #print(np.transpose(vect).astype(float))
-        return np.transpose(vect).astype(float)
+        #print(np.transpose(vect))
+        return np.transpose(vect)
     
     def Ps(self, v_t0):
         P1 = [-2 * par.muc * par.c / v_t0, 0, 0, 0]
         P2 = [0, (par.CZadot - 2 * par.muc) * par.c / v_t0, 0, 0]
         P3 = [0, 0, -par.c / v_t0, 0]
         P4 = [0, par.Cmadot * par.c / v_t0, 0, -2 * par.muc * par.KY2 * par.c / v_t0]
-        #print(np.asarray((P1, P2, P3, P4)).astype(float))
-        return np.asarray((P1, P2, P3, P4)).astype(float)
+        #print(np.asarray((P1, P2, P3, P4)))
+        return np.asarray((P1, P2, P3, P4))
     
     def Qs(self):
         Q1 = [-par.CXu, -par.CXa, -par.CZ0, 0]
         Q2 = [-par.CZu, -par.CZa, par.CX0, -(par.CZq + 2 * par.muc)]
         Q3 = [0, 0, 0, -1]
         Q4 = [-par.Cmu, -par.Cma, 0, -par.Cmq]
-        #print(np.asarray((Q1, Q2, Q3, Q4)).astype(float))
+        #print(np.asarray((Q1, Q2, Q3, Q4)))
         return np.asarray((Q1, Q2, Q3, Q4))
     
     def Pa(self, v_t0):
@@ -84,7 +84,16 @@ class Analytical_Model:
         R_mat = self.Ra()
         B = np.matmul(P_inv,R_mat)
         return B
+    
+    def C(self):
+        return np.identity(4)
         
+    def Ds(self):
+        return np.transpose(np.zeros(4))
+    
+    def Da(self):
+        return np.zeros((4,2))
+    
 if __name__ == "__main__":
     model = Analytical_Model()
     
@@ -101,3 +110,13 @@ if __name__ == "__main__":
     print()
     print(model.Aa(100))
     print(model.Ba(100))
+    print()
+    print(model.C())
+    print(model.Ds())
+    print(model.Da())
+    
+    print('eigenvalues symm')
+    v_ref = 1
+    s_eigen = np.linalg.eig(model.As(v_ref))
+    print(s_eigen)
+    
