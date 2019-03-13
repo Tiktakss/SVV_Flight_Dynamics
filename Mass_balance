@@ -1,7 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from Cl_Cd_Plot import C_l
-print(C_l)
 
 #import classes
 from aero_tools import Aero_Tools
@@ -56,26 +55,26 @@ AOA = np.zeros(len(data_trim_curve)+len(data_cg_shift_data))
 de = np.zeros(len(data_trim_curve)+len(data_cg_shift_data))
 Fe = np.zeros(len(data_trim_curve)+len(data_cg_shift_data))
 V = np.zeros(len(data_trim_curve)+len(data_cg_shift_data))
-Cn = np.zeros(len(data_trim_curve)+len(data_cg_shift_data))
 
 for i in range(len(data_trim_curve)):
     row = data_trim_curve[i]
     AOA[i] = row[5]
     de[i] = row[6]
     Fe[i] = row[8]
-    V[i] = row[4]*0.5144
-
-
+    V[i] = row[4]
 
 for i in range(len(data_cg_shift_data)):
     row = data_cg_shift_data[i]
     AOA[i+len(data_trim_curve)] = row[5]
     de[i+len(data_trim_curve)] = row[6]
     Fe[i+len(data_trim_curve)] = row[8]
+    V[i+len(data_trim_curve)] = row[4]
 
-print(AOA)
 slope = (de[5]-de[0])/(AOA[5]-AOA[0])
-print(slope)
+Cm_delta = -C_l[5]*(Center_gravity[6]-Center_gravity[5])*0.0254/((de[8]-de[6])*2.0569)
+Cm_alpha = -Cm_delta*slope
+
+
 #Plotting
 plt.subplot(311)
 plt.scatter([0,1,2,3,4,5,6],Center_gravity)
@@ -83,7 +82,7 @@ plt.title("Center of Gravity")
 plt.ylabel("Distance from nose[inch]")
 
 plt.subplot(312)
-plt.scatter(AOA,de)
+plt.scatter(V,de)
 plt.title("Elevator trim curve")
 plt.ylabel("Angle[deg]")
 
