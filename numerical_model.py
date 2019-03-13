@@ -126,8 +126,7 @@ if __name__ == "__main__":
     
     print()
     print()
-    
-    eig_s = 
+
 
 
 #    print(model.As(100))
