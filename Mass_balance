@@ -22,7 +22,7 @@ Arm_BEM = 292.18 #inch #obtained from Mass & Balance report
 #obtain data for mass balance
 data = import_excel.Cl_Cd_data(excel)
 data_trim_curve = import_excel.trimcurve_data(excel)
-
+data_cg_shift_data = import_excel.cg_shift_data(excel)
 weight_people = sum(import_excel.weights(excel))/0.453592 #lbs
 total_weight = weight_people + blockfuel + empty_weight
 
@@ -50,14 +50,27 @@ for i in range(len(data)):
 Center_gravity[len(data)] = (Center_gravity[len(data)-1]*total_weight-moment_p8+moment_CGshift)/total_weight#cm
 
 de = np.zeros(len(data_trim_curve))
+Fe = np.zeros(len(data_trim_curve))
 for i in range(len(data_trim_curve)):
     row = data_trim_curve[i]
     de[i] = row[6]
-print(de)
+    Fe[i] = row[8]
+
 #Plotting
-plt.plot(Center_gravity)
+plt.subplot(311)
+plt.scatter([0,1,2,3,4,5,6],Center_gravity)
 plt.title("Center of Gravity")
-plt.ylabel("distance from nose[inch]")
+plt.ylabel("Distance from nose[inch]")
+
+plt.subplot(312)
+plt.scatter([0,1,2,3,4,5,6],de)
+plt.title("Elevator trim curve")
+plt.ylabel("Angle[deg]")
+
+plt.subplot(313)
+plt.scatter([0,1,2,3,4,5,6],Fe)
+plt.title("Control force curve")
+plt.ylabel("Force[N]")
 plt.show()
 
 
