@@ -1,5 +1,6 @@
 from math import *
 import matplotlib.pyplot as plt
+import numpy as np
 
 #import classes
 from aero_tools import Aero_Tools
@@ -83,37 +84,88 @@ for i in range(len(time)):
     Re.append(re_num)
 
 
-#Plot Cl_CD Curve    
-plt.figure()
-plt.plot(C_d[0], C_l[0], "ro")
-plt.plot(C_d[1], C_l[1], "bo")
-plt.plot(C_d[2], C_l[2], "go")
-plt.plot(C_d[3], C_l[3], "yo")
-plt.plot(C_d[4], C_l[4], "ko")
-plt.plot(C_d[5], C_l[5], "co")
-plt.plot(C_d, C_l)
-plt.text(0.045, 0.65, r'$M=0.172 - 0.3473,\ \Re= $')
-plt.title('Lift coefficient vs Drag coefficient')
-plt.xlabel('Drag coefficient [-]')
-plt.ylabel('Lift coefficient [-]')
-plt.grid(True)
-plt.show()  
+##Plot Cl_CD Curve    
+#plt.figure()
+#plt.plot(C_d[0], C_l[0], "ro")
+#plt.plot(C_d[1], C_l[1], "bo")
+#plt.plot(C_d[2], C_l[2], "go")
+#plt.plot(C_d[3], C_l[3], "yo")
+#plt.plot(C_d[4], C_l[4], "ko")
+#plt.plot(C_d[5], C_l[5], "co")
+#plt.plot(C_d, C_l)
+#plt.text(0.045, 0.65, r'$M=0.172 - 0.3473,\ \Re= $')
+#plt.title('Lift coefficient vs Drag coefficient')
+#plt.xlabel('Drag coefficient [-]')
+#plt.ylabel('Lift coefficient [-]')
+#plt.grid(True)
+#plt.show()  
+#
+##PLot lift curve 
+#plt.figure()
+#plt.plot(alpha, C_l)
+#plt.title('Lift Curve')
+#plt.xlabel('Angle of Attack [-]')
+#plt.ylabel('Lift coefficient [-]')
+#plt.grid(True)
+#plt.show() 
 
-#PLot lift curve 
+#Trim Curve
+t1_trim = 34*60 + 9
+t2_trim = 36*60 + 50
+t3_trim = 38*60 + 0
+t4_trim = 39*60 + 13
+t5_trim = 40*40 + 40
+t6_trim = 41*60 + 54
+time_trim = [t1_trim, t2_trim, t3_trim, t4_trim, t5_trim, t6_trim]
+
+trim_curve = []
+alpha_trim = []
+speed_lst = []
+
+
+
+for i in range(len(time_trim)):
+    elevator = matlab.getdata_at_time('delta_e', time_trim[i], time_trim[i] + dt)
+    elevator_avg = (sum(elevator))/(len(elevator))
+    trim_curve.append(elevator_avg)
+    
+    angle_trim = matlab.getdata_at_time('vane_AOA', time_trim[i], time_trim[i] + dt )
+    angle_avg = (sum(angle_trim))/(len(angle_trim))
+    alpha_trim.append(angle_avg)
+    
+    speed_trim = matlab.getdata_at_time('Dadc1_tas', time_trim[i], time_trim[i]+dt)
+    speed_kts_trim = (sum(speed_trim))/(len(speed_trim))
+    speed_ms_trim = aero.kts_to_ms(speed_kts_trim)
+    speed_lst.append(speed_ms_trim)
+
+    
+#plot trim curve
 plt.figure()
-plt.plot(alpha, C_l)
-plt.title('Lift Curve')
+plt.plot(alpha_trim, trim_curve, "ro")
+plt.title('Trim Curve')
 plt.xlabel('Angle of Attack [-]')
-plt.ylabel('Lift coefficient [-]')
+plt.ylabel('Delta_e [-]')
 plt.grid(True)
-plt.show() 
+plt.show()
 
-#Cl_alpha
-dy = max(C_l) - min(C_l)
-dx = max(alpha) - min(alpha)
-getal = dy/dx
+z = np.polyfit(alpha_trim, trim_curve, 1)
+p = np.poly1d(z)
+plt.plot(alpha_trim,p(alpha_trim),"r--")
+plt.show()
 
-print(getal)
+plt.figure()
+plt.plot(speed_lst, trim_curve, "ro")
+plt.title('Trim Curve')
+plt.xlabel('Speed [m/s]')
+plt.ylabel('Delta_e [-]')
+plt.grid(True)
+plt.show()
+    
+
+
+    
+
+    
 
 
 
