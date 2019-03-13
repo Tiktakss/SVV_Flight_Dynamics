@@ -2,7 +2,7 @@
 """
 Created on Wed Mar 13 10:56:04 2019
 
-@author: Jeije
+@author: Jeije& wouter
 """
 import control
 from control.matlab import * 
@@ -41,10 +41,10 @@ if __name__ == "__main__":
     B=np.transpose(B)
     C=np.transpose(C)
     D=np.transpose(D)
+    #dimentionless
     
     
     
-    print (A.shape,B.shape,C.shape,D.shape)
     sys=control.StateSpace(A,B,C,D)
     x0=0
     
