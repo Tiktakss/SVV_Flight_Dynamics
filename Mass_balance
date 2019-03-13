@@ -1,11 +1,14 @@
 import numpy as np
 import matplotlib.pyplot as plt
+from Cl_Cd_Plot import C_l
+print(C_l)
 
 #import classes
 from aero_tools import Aero_Tools
 aero = Aero_Tools()
 from excel_tools import import_excel
 excel = import_excel('./Post_Flight_Datasheet_Flight_test.xlsx')
+
 
 #Inputs
 blockfuel = 4090.0 #lbs #obtained from written data sheet
@@ -49,13 +52,30 @@ for i in range(len(data)):
                          +moment_p4+moment_p5+moment_p6+moment_p7+moment_p8)/total_weight #cm
 Center_gravity[len(data)] = (Center_gravity[len(data)-1]*total_weight-moment_p8+moment_CGshift)/total_weight#cm
 
-de = np.zeros(len(data_trim_curve))
-Fe = np.zeros(len(data_trim_curve))
+AOA = np.zeros(len(data_trim_curve)+len(data_cg_shift_data))
+de = np.zeros(len(data_trim_curve)+len(data_cg_shift_data))
+Fe = np.zeros(len(data_trim_curve)+len(data_cg_shift_data))
+V = np.zeros(len(data_trim_curve)+len(data_cg_shift_data))
+Cn = np.zeros(len(data_trim_curve)+len(data_cg_shift_data))
+
 for i in range(len(data_trim_curve)):
     row = data_trim_curve[i]
+    AOA[i] = row[5]
     de[i] = row[6]
     Fe[i] = row[8]
+    V[i] = row[4]*0.5144
 
+
+
+for i in range(len(data_cg_shift_data)):
+    row = data_cg_shift_data[i]
+    AOA[i+len(data_trim_curve)] = row[5]
+    de[i+len(data_trim_curve)] = row[6]
+    Fe[i+len(data_trim_curve)] = row[8]
+
+print(AOA)
+slope = (de[5]-de[0])/(AOA[5]-AOA[0])
+print(slope)
 #Plotting
 plt.subplot(311)
 plt.scatter([0,1,2,3,4,5,6],Center_gravity)
@@ -63,12 +83,12 @@ plt.title("Center of Gravity")
 plt.ylabel("Distance from nose[inch]")
 
 plt.subplot(312)
-plt.scatter([0,1,2,3,4,5,6],de)
+plt.scatter(AOA,de)
 plt.title("Elevator trim curve")
 plt.ylabel("Angle[deg]")
 
 plt.subplot(313)
-plt.scatter([0,1,2,3,4,5,6],Fe)
+plt.scatter(AOA,Fe)
 plt.title("Control force curve")
 plt.ylabel("Force[N]")
 plt.show()
