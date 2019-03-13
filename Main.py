@@ -97,6 +97,23 @@ ax[1].plot(dutchR_damptime,dutchR_dampdata2)
 ax[1].set_ylabel('yaw rate [rad/s]')
 ax[1].set_xlabel('time [min]')
 
+### spiral
+spiralstart = 60*62 -10
+spiraltime = 400
+
+spiraldata = matlab.getdata_at_time('Ahrs1_Roll',spiralstart,spiralstart+spiraltime)/180*np.pi
+spiraldata2 = matlab.getdata_at_time('Ahrs1_bYawRate',spiralstart,spiralstart+spiraltime)
+spiraltime = matlab.getdata_at_time('time',spiralstart,spiralstart+spiraltime)/60
+
+plt.figure(6)
+fig, ax = plt.subplots(2, 1, sharex=True)
+ax[0].plot(spiraltime,spiraldata)
+ax[0].set_ylabel('roll [rad]')
+ax[1].plot(spiraltime,spiraldata2)
+ax[1].set_ylabel('yaw rate [deg/s]')
+ax[1].set_xlabel('time [min]')
+
+
 
 
 

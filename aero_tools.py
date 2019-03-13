@@ -13,6 +13,7 @@ class Aero_Tools:
         self.R = 287                #? gas constant
         self.gamma = 1.4            #gas ratio
         self.lbs = 0.453592         #kg
+        self.mu = 16.9e-6              #Pa s Dynamics viscosity
     
     def T_alt(self, h):
         return self.T0 + h * self.lapse
@@ -43,6 +44,9 @@ class Aero_Tools:
                     -1.0))-1.0))**((self.gamma \
             - 1.0)/self.gamma)-1.0))
         return M
+    
+    def calc_re(self, rho, speed, length):
+        return (rho * speed * length)/(self.mu)
 
 
 """
