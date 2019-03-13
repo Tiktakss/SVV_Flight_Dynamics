@@ -2,6 +2,7 @@ import numpy as np
 import Cit_par as par
 from aero_tools import Aero_Tools
 from real_analytical_model import Analytical_Model
+from control.matlab import * 
 
 class Numerical_Model:
     def __init__(self):
