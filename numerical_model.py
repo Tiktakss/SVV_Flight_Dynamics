@@ -23,14 +23,14 @@ class Numerical_Model:
         symm2 = [par.CZu, par.CZa + (par.CZadot - 2 * par.muc)*D_c, -par.CX0, par.CZq + 2 * par.muc]
         symm3 = [0, 0, - D_c, 1]
         symm4 = [par.Cmu, par.Cma + par.Cmadot * D_c, 0, par.Cmq - 2 * par.muc * par.KY2 * D_c]
-        return np.asarray((symm1, symm2, symm3, symm4))
+        return np.matrix((symm1, symm2, symm3, symm4))
     
     def EOM_asym(self, D_b):
         asymm1 = [par.CYb + (par.CYbdot - 2*par.mub)*D_b, par.CL, par.CYp, par.CYr - 4*par.mub]
         asymm2 = [0, -0.5*D_b, 1, 0]
         asymm3 = [par.Clb, 0, par.Clp - 4*par.mub * par.KX2 * D_b, par.Clr + 4*par.mub * par.KXZ * D_b]
         asymm4 = [par.Cnb + par.Cnbdot, 0, par.Cnp + 4*par.mub * par.KXZ * D_b, par.Cnr - 4*par.mub * par.KZ2 * D_b]
-        return np.asarray((asymm1, asymm2, asymm3, asymm4))
+        return np.matrix((asymm1, asymm2, asymm3, asymm4))
     
     def elev_defl_mat(self):
         vect = [-par.CXde, -par.CZde, 0, -par.Cmde]
@@ -42,16 +42,16 @@ class Numerical_Model:
         P2 = [0, (par.CZadot - 2 * par.muc) * par.c / v_t0, 0, 0]
         P3 = [0, 0, -par.c / v_t0, 0]
         P4 = [0, par.Cmadot * par.c / v_t0, 0, -2 * par.muc * par.KY2 * par.c / v_t0]
-        #print(np.asarray((P1, P2, P3, P4)))
-        return np.asarray((P1, P2, P3, P4))
+        #print(np.matrix((P1, P2, P3, P4)))
+        return np.matrix((P1, P2, P3, P4))
 
     def Qs(self):
         Q1 = [-par.CXu, -par.CXa, -par.CZ0, 0]
         Q2 = [-par.CZu, -par.CZa, par.CX0, -(par.CZq + 2 * par.muc)]
         Q3 = [0, 0, 0, -1]
         Q4 = [-par.Cmu, -par.Cma, 0, -par.Cmq]
-        #print(np.asarray((Q1, Q2, Q3, Q4)))
-        return np.asarray((Q1, Q2, Q3, Q4))
+        #print(np.matrix((Q1, Q2, Q3, Q4)))
+        return np.matrix((Q1, Q2, Q3, Q4))
 
 
     def Pa(self, v_t0):
@@ -59,21 +59,21 @@ class Numerical_Model:
         P2 = [0, -0.5*par.b/v_t0, 0, 0]
         P3 = [0, 0, -4 * par.mub * par.KX2 * par.b/v_t0, 4 * par.mub * par.KXZ * par.b/v_t0]
         P4 = [par.Cnbdot * par.b/v_t0, 0, 4 * par.mub * par.KXZ * par.b/v_t0, -4 * par.mub * par.KZ2 * par.b/v_t0]
-        return np.asarray((P1, P2, P3, P4))
+        return np.matrix((P1, P2, P3, P4))
     
     def Qa(self):
         Q1 = [-par.CYb, -par.CL, -par.CYp, -(par.CYr - 4*par.mub)]
         Q2 = [0, 0, -1, 0]
         Q3 = [-par.Clb, 0, -par.Clp, -par.Clr]
         Q4 = [-par.Cnb, 0, -par.Cnp, -par.Cnr]
-        return np.asarray((Q1, Q2, Q3, Q4))
+        return np.matrix((Q1, Q2, Q3, Q4))
     
     def Ra(self):
         R1 = [-par.CYda, -par.CYdr, ]
         R2 = [0, 0]
         R3 = [-par.Clda, -par.Cldr]
         R4 = [-par.Cnda, -par.Cndr]
-        return np.asarray((R1, R2, R3, R4))
+        return np.matrix((R1, R2, R3, R4))
     
     def As(self, v_t0):
         P_inv = np.linalg.inv(self.Ps(v_t0))
@@ -100,13 +100,13 @@ class Numerical_Model:
         return B
 
     def C(self):
-        return np.identity(4)
+        return np.matrix(np.identity(4))
 
     def Ds(self):
-        return np.transpose(np.zeros(4))
+        return np.matrix(np.transpose(np.zeros(4)))
 
     def Da(self):
-        return np.zeros((4,2))
+        return np.matrix(np.zeros((4,2)))
 
         
         

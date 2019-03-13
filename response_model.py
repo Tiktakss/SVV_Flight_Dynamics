@@ -33,10 +33,10 @@ if __name__ == "__main__":
     v_tas = model.tools.ias_to_tas(alt, v_ias)
     v_dimless = model.v_dimless(v_tas, v_tas+1)
     
-    A=np.matrix(model.As(v_tas))
-    B=np.matrix(model.Bs(v_tas))
-    C=np.matrix(model.C())
-    D=np.matrix(model.Ds())
+    A=model.As(v_tas)
+    B=model.Bs(v_tas)
+    C=model.C()
+    D=model.Ds()
     A=np.transpose(A)
     B=np.transpose(B)
     C=np.transpose(C)
@@ -51,5 +51,6 @@ if __name__ == "__main__":
     print (sys)
     
     T,yout, xout=control.step_response(sys,return_x=True,transpose=True)
-    ax = plt.figure()
-    ax.plot(T,yout)
+    plt.figure(1)
+    plt.plot(T,xout)
+    plt.yscale('log')
