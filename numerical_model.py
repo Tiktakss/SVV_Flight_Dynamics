@@ -15,12 +15,22 @@ class Numerical_Model:
     def D_c(self, dt, v_dimless):
         return par.c / (v_dimless * dt)
     
-    def symm_mat(self, D_c):
+    def D_b(self, dt, v_dimless):
+        return par.b / (v_dimless * dt)
+    
+    def EOM_sym(self, D_c):
         symm1 = [par.CXu - 2 * par.muc * D_c, par.CXa, par.CZ0, par.CXq]
         symm2 = [par.CZu, par.CZa + (par.CZadot - 2 * par.muc)*D_c, -par.CX0, par.CZq + 2 * par.muc]
         symm3 = [0, 0, - D_c, 1]
         symm4 = [par.Cmu, par.Cma + par.Cmadot * D_c, 0, par.Cmq - 2 * par.muc * par.KY2 * D_c]
         return np.asarray((symm1, symm2, symm3, symm4))
+    
+    def EOM_asym(self, D_b):
+        asymm1 = [par.CYb + (par.CYbdot - 2*par.mub)*D_b, par.CL, par.CYp, par.CYr - 4*par.mub]
+        asymm2 = [0, -0.5*D_b, 1, 0]
+        asymm3 = [par.Clb, 0, par.Clp - 4*par.mub * par.KX2 * D_b, par.Clr + 4*par.mub * par.KXZ * D_b]
+        asymm4 = [par.Cnb + par.Cnbdot, 0, par.Cnp + 4*par.mub * par.KXZ * D_b, par.Cnr - 4*par.mub * par.KZ2 * D_b]
+        return np.asarray((asymm1, asymm2, asymm3, asymm4))
     
     def elev_defl_mat(self):
         vect = [-par.CXde, -par.CZde, 0, -par.Cmde]
@@ -97,6 +107,8 @@ class Numerical_Model:
 
     def Da(self):
         return np.zeros((4,2))
+
+        
         
 if __name__ == "__main__":
     model = Numerical_Model()
@@ -104,11 +116,18 @@ if __name__ == "__main__":
     v_ias = model.tools.kts_to_ms(161)
     alt = model.tools.ft_to_m(13250)
     v_tas = model.tools.ias_to_tas(alt, v_ias)
-    #print(alt,v_tas)
     v_dimless = model.v_dimless(v_tas, v_tas+1)
+    
     D_c = model.D_c(0.1, v_dimless)
-    #print(model.symm_mat(D_c))
-    #print(model.elev_defl_mat())
+    D_b = model.D_b(0.1, v_dimless)
+    
+    sym = model.EOM_sym(D_c)
+    asym = model.EOM_asym(D_b)
+    
+    print()
+    print()
+    
+    eig_s = 
 
 
 #    print(model.As(100))
@@ -122,15 +141,15 @@ if __name__ == "__main__":
 #    print(model.Da())
     
     
-    v_ref = 1
-    s_eigen = np.linalg.eig(model.As(v_ref))[0] / par.c
-    print(model.amod.eigenv_short())
-    print(model.amod.eigenv_phugoid())
-    print('eigenvalues symm')
-    print(s_eigen)
-    s_eigen = np.linalg.eig(model.Aa(v_ref))[0] / par.b
-    print('eigenvalues asymm')
-    print(s_eigen)
+#    v_ref = 1
+#    s_eigen = np.linalg.eig(model.As(v_ref))[0] / par.c
+#    print(model.amod.eigenv_short())
+#    print(model.amod.eigenv_phugoid())
+#    print('eigenvalues symm')
+#    print(s_eigen)
+#    s_eigen = np.linalg.eig(model.Aa(v_ref))[0] / par.b
+#    print('eigenvalues asymm')
+#    print(s_eigen)
 
 
     
