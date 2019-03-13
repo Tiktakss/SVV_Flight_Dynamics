@@ -115,11 +115,18 @@ if __name__ == "__main__":
     v_ias = model.tools.kts_to_ms(161)
     alt = model.tools.ft_to_m(13250)
     v_tas = model.tools.ias_to_tas(alt, v_ias)
-    #print(alt,v_tas)
     v_dimless = model.v_dimless(v_tas, v_tas+1)
+    
     D_c = model.D_c(0.1, v_dimless)
-    #print(model.symm_mat(D_c))
-    #print(model.elev_defl_mat())
+    D_b = model.D_b(0.1, v_dimless)
+    
+    sym = model.EOM_sym(D_c)
+    asym = model.EOM_asym(D_b)
+    
+    print()
+    print()
+    
+    eig_s = 
 
 
 #    print(model.As(100))
@@ -133,15 +140,15 @@ if __name__ == "__main__":
 #    print(model.Da())
     
     
-    v_ref = 1
-    s_eigen = np.linalg.eig(model.As(v_ref))[0] / par.c
-    print(model.amod.eigenv_short())
-    print(model.amod.eigenv_phugoid())
-    print('eigenvalues symm')
-    print(s_eigen)
-    s_eigen = np.linalg.eig(model.Aa(v_ref))[0] / par.b
-    print('eigenvalues asymm')
-    print(s_eigen)
+#    v_ref = 1
+#    s_eigen = np.linalg.eig(model.As(v_ref))[0] / par.c
+#    print(model.amod.eigenv_short())
+#    print(model.amod.eigenv_phugoid())
+#    print('eigenvalues symm')
+#    print(s_eigen)
+#    s_eigen = np.linalg.eig(model.Aa(v_ref))[0] / par.b
+#    print('eigenvalues asymm')
+#    print(s_eigen)
 
 
     
