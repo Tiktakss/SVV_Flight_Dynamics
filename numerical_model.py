@@ -130,17 +130,17 @@ if __name__ == "__main__":
     
     print(sym)
     print(eig_s)
-    print()
+    print(np.poly(sym))
     #print(asym)
     #print(eig_a)
 
 
 
 
-    print(model.As(1))
+#    print(model.As(1))
 #    print(model.Bs(100))
 #    print()
-    print(model.Aa(1))
+#    print(model.Aa(1))
 #    print(model.Ba(100))
 #    print()
 #    print(model.C())
@@ -153,10 +153,10 @@ if __name__ == "__main__":
 #    print(model.amod.eigenv_short())
 #    print(model.amod.eigenv_phugoid())
 #    print('eigenvalues symm')
-    print(s_eigen)
-    s_eigen = np.linalg.eig(model.Aa(v_ref))[0] / par.b
-    print('eigenvalues asymm')
-    print(s_eigen)
+#    print(s_eigen)
+#    s_eigen = np.linalg.eig(model.Aa(v_ref))[0] / par.b
+#    print('eigenvalues asymm')
+#    print(s_eigen)
 
 
     
