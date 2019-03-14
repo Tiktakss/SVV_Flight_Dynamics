@@ -6,7 +6,7 @@ import numpy as np
 from aero_tools import Aero_Tools
 aero = Aero_Tools()
 from excel_tools import import_excel
-excel = import_excel('./Post_Flight_Datasheet_Flight_test.xlsx') #update with our file
+excel = import_excel('./Post_Flight_Datasheet_03_05_V3.xlsx') #update with our file
 from matlab_tools import Matlab_Tools
 matlab = Matlab_Tools('./FTISxprt-20190305_124649.mat')
 
@@ -35,7 +35,7 @@ t3 = 25*60 + 31 #seconds
 t4 = 27*60 + 29 #seconds
 t5 = 29*60 + 3  #seconds
 t6 = 31*60 + 13 #seconds
-dt = 5          #seconds
+dt = 2          #seconds
 
 time = [t1, t2, t3, t4, t5, t6]
 
@@ -46,44 +46,44 @@ alpha = [] #angle of attack
 mach = []
 Re = []
 
-for i in range(len(time)):
-    fuel_left = matlab.getdata_at_time('lh_engine_FU',time[i], time[i]+dt)
-    fuel_left_avg = (sum(fuel_left))/(len(fuel_left))
-    fuel_right = matlab.getdata_at_time('rh_engine_FU',time[i], time[i]+dt)
-    fuel_right_avg = (sum(fuel_right))/(len(fuel_right))
-    fuel_total = fuel_left_avg + fuel_right_avg
-
-    weight_lbs = total_weight - fuel_total #weight in lbs
-    weight_kg = weight_lbs * 0.453592 #weight in kg
-    weight_n = weight_kg*gravity #weight inNewon
-    
-    height = matlab.getdata_at_time('Dadc1_alt', time[i], time[i]+dt)
-    h_ft = (sum(height))/(len(height))
-    h_m = aero.ft_to_m(h_ft) #height in m
-    density = aero.rho_alt(h_m) #density kg/m^3
-    
-    speed = matlab.getdata_at_time('Dadc1_tas', time[i], time[i]+dt)
-    speed_kts = (sum(speed))/(len(speed))
-    speed_ms = aero.kts_to_ms(speed_kts)
-    
-    lift = (2*weight_n)/(density*surface*speed_ms**2)
-    C_l.append(lift)
-    
-    A = b*b/surface #aspect ratio
-    drag = Cd0 +(lift**2)/(pi*A*e)
-    C_d.append(drag)
-    
-    angle = matlab.getdata_at_time('vane_AOA', time[i], time[i] +dt)
-    aoa = (sum(angle))/(len(angle)) #angle of attack #degrees
-    alpha.append(aoa)
-    
-    M = aero.calc_mach(h_m, speed_ms)
-    mach.append(M)
-    
-    re_num = aero.calc_re(density, speed_ms, length)
-    Re.append(re_num)
-
-
+#for i in range(len(time)):
+#    fuel_left = matlab.getdata_at_time('lh_engine_FU',time[i], time[i]+dt)
+#    fuel_left_avg = (sum(fuel_left))/(len(fuel_left))
+#    fuel_right = matlab.getdata_at_time('rh_engine_FU',time[i], time[i]+dt)
+#    fuel_right_avg = (sum(fuel_right))/(len(fuel_right))
+#    fuel_total = fuel_left_avg + fuel_right_avg
+#
+#    weight_lbs = total_weight - fuel_total #weight in lbs
+#    weight_kg = weight_lbs * 0.453592 #weight in kg
+#    weight_n = weight_kg*gravity #weight inNewon
+#    
+#    height = matlab.getdata_at_time('Dadc1_alt', time[i], time[i]+dt)
+#    h_ft = (sum(height))/(len(height))
+#    h_m = aero.ft_to_m(h_ft) #height in m
+#    density = aero.rho_alt(h_m) #density kg/m^3
+#    
+#    speed = matlab.getdata_at_time('Dadc1_tas', time[i], time[i]+dt)
+#    speed_kts = (sum(speed))/(len(speed))
+#    speed_ms = aero.kts_to_ms(speed_kts)
+#    
+#    lift = (2*weight_n)/(density*surface*speed_ms**2)
+#    C_l.append(lift)
+#    
+#    A = b*b/surface #aspect ratio
+#    drag = Cd0 +(lift**2)/(pi*A*e)
+#    C_d.append(drag)
+#    
+#    angle = matlab.getdata_at_time('vane_AOA', time[i], time[i] +dt)
+#    aoa = (sum(angle))/(len(angle)) #angle of attack #degrees
+#    alpha.append(aoa)
+#    
+#    M = aero.calc_mach(h_m, speed_ms)
+#    mach.append(M)
+#    
+#    re_num = aero.calc_re(density, speed_ms, length)
+#    Re.append(re_num)
+#
+#
 ##Plot Cl_CD Curve    
 #plt.figure()
 #plt.plot(C_d[0], C_l[0], "ro")
