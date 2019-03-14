@@ -28,7 +28,7 @@ data_cg_shift_data = import_excel.cg_shift_data(excel)
 weight_people = sum(import_excel.weights(excel))/0.453592 #lbs
 total_weight = weight_people + blockfuel + empty_weight
 
-#Calculate moments for people
+#Calculate moments for people and BEM
 moment_p1 = import_excel.weights(excel)[0] * Arm_seat12  # lbs*inch
 moment_p2 = import_excel.weights(excel)[1] * Arm_seat12  # lbs*inch
 moment_p10 = import_excel.weights(excel)[2] * Arm_seat910  # lbs*inch
@@ -41,7 +41,14 @@ moment_p8 = import_excel.weights(excel)[8] * Arm_seat78  # lbs*inch
 moment_CGshift = import_excel.weights(excel)[8] * Arm_cgshift
 moment_BEM = empty_weight * Arm_BEM  # lbs*inch
 
+#Empty arrays
+AOA = np.zeros(len(data_trim_curve)+len(data_cg_shift_data))
+de = np.zeros(len(data_trim_curve)+len(data_cg_shift_data))
+Fe = np.zeros(len(data_trim_curve)+len(data_cg_shift_data))
+V = np.zeros(len(data_trim_curve)+len(data_cg_shift_data))
 Center_gravity = np.zeros(len(data)+1)
+
+#CG shift due to fuel flow
 for i in range(len(data)):
     row = data[i]
     weight_fuel = blockfuel - row[8] #lbs
@@ -49,13 +56,10 @@ for i in range(len(data)):
     moment_fuel = weight_fuel*Arm_fuel #lbs*inch
     Center_gravity[i] = (moment_fuel+moment_BEM+moment_p1+moment_p2+moment_p10+moment_p3\
                          +moment_p4+moment_p5+moment_p6+moment_p7+moment_p8)/total_weight #cm
+#After CG shift
 Center_gravity[len(data)] = (Center_gravity[len(data)-1]*total_weight-moment_p8+moment_CGshift)/total_weight#cm
 
-AOA = np.zeros(len(data_trim_curve)+len(data_cg_shift_data))
-de = np.zeros(len(data_trim_curve)+len(data_cg_shift_data))
-Fe = np.zeros(len(data_trim_curve)+len(data_cg_shift_data))
-V = np.zeros(len(data_trim_curve)+len(data_cg_shift_data))
-
+#Put data from PFD into arrays
 for i in range(len(data_trim_curve)):
     row = data_trim_curve[i]
     AOA[i] = row[5]
@@ -63,6 +67,7 @@ for i in range(len(data_trim_curve)):
     Fe[i] = row[8]
     V[i] = row[4]
 
+#After cg shifts
 for i in range(len(data_cg_shift_data)):
     row = data_cg_shift_data[i]
     AOA[i+len(data_trim_curve)] = row[5]
@@ -70,26 +75,29 @@ for i in range(len(data_cg_shift_data)):
     Fe[i+len(data_trim_curve)] = row[8]
     V[i+len(data_trim_curve)] = row[4]
 
+#Calculation for Cm_delta and Cm_alpha
 slope = (de[5]-de[0])/(AOA[5]-AOA[0])
 Cm_delta = -C_l[5]*(Center_gravity[6]-Center_gravity[5])*0.0254/((de[8]-de[6])*2.0569)
 Cm_alpha = -Cm_delta*slope
 
-
 #Plotting
-plt.subplot(311)
+plt.subplot(221)
 plt.scatter([0,1,2,3,4,5,6],Center_gravity)
 plt.title("Center of Gravity")
 plt.ylabel("Distance from nose[inch]")
+plt.xlabel("Measurements")
 
-plt.subplot(312)
+plt.subplot(222)
 plt.scatter(V,de)
 plt.title("Elevator trim curve")
-plt.ylabel("Angle[deg]")
+plt.ylabel("$\delta_e[deg]$")
+plt.xlabel("Velocity [kts]")
 
-plt.subplot(313)
+plt.subplot(223)
 plt.scatter(AOA,Fe)
 plt.title("Control force curve")
-plt.ylabel("Force[N]")
+plt.ylabel("$F_e$[N]")
+plt.xlabel("$\\alpha[deg]$")
 plt.show()
 
 
