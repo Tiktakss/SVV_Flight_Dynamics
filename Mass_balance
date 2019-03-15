@@ -78,8 +78,8 @@ for i in range(len(data_cg_shift_data)):
     moment_fuel = weight_fuel*Arm_fuel #lbs*inch
     if i == 1.:
         moment_p8 = moment_CGshift
-    Center_gravity[i+len(data)+len(data_trim_curve)-1] = (moment_fuel+moment_BEM+moment_p1+moment_p2+moment_p10+moment_p3\
-                         +moment_p4+moment_p5+moment_p6+moment_p7+moment_p8)/total_weight*2.54 #cm
+    Center_gravity[i+len(data)+len(data_trim_curve)-1] = (moment_fuel+moment_BEM+moment_p1+moment_p2+\
+            moment_p10+moment_p3+moment_p4+moment_p5+moment_p6+moment_p7+moment_p8)/total_weight*2.54 #cm
     AOA[i+len(data_trim_curve)-1] = row[5]
     de[i+len(data_trim_curve)-1] = row[6]
     Fe[i+len(data_trim_curve)-1] = row[8]
@@ -87,9 +87,9 @@ for i in range(len(data_cg_shift_data)):
 
 #Calculation for Cm_delta and Cm_alpha
 slope = (de[3]-de[5])/(AOA[3]-AOA[5])
-Cm_delta = -C_l[5]*(Center_gravity[13]-Center_gravity[12])/((de[7]-de[6])*205.69)
-Cm_alpha = -Cm_delta*slope
-print(Cm_alpha,Cm_delta)
+#Cm_delta = -C_l[5]*(Center_gravity[13]-Center_gravity[12])/((de[7]-de[6])*205.69)
+#Cm_alpha = -Cm_delta*slope
+#print(Cm_alpha,Cm_delta)
 
 #Plotting
 plt.subplot(221)
