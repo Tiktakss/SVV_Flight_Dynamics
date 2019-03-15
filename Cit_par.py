@@ -1,8 +1,5 @@
 import math
 import app_C_values as c
-from matlab_tools import Matlab_Tools
-from numpy import matrix
-matlab = Matlab_Tools('FTISxprt-20190305_124649.mat')
 
 
 
@@ -122,27 +119,3 @@ Cnda   =  -0.0120
 Cndr   =  -0.0939
 
 
-def Xs(manouvre):
-    if manouvre == 'fugoid':
-        start=matlab.fugoidstart
-    elif manouvre=='ap_roll':
-        start=matlab.ap_rollstart
-    elif manouvre=='sh_period':
-        start=matlab.sh_periodstart
-    elif manouvre=='dutchR':
-        start=matlab.dutchRstart
-    elif manouvre=='dutchR_damp':
-        start=matlab.dutchR_dampstart
-    elif manouvre=='spiral':
-        start=matlab.spiralstart
-    else:
-        print ('invalid manouvre')
-        start=0
-    
-    dt= 0.2
-    uhat=0 #dimensionlessvelocity vt true airspeed vt0 stationary airspead
-    aoa=matlab.getdata_at_time('vane_AOA',start,start+dt)[0]
-    theta=matlab.getdata_at_time('vane_AOA',start,start+dt)[0]
-    qcoverv=matlab.getdata_at_time('Ahrs1_bPitchRate',start,start+dt)[0]*c/matlab.getdata_at_time('Dadc1_tas',start,start+dt)[0]#q is pitchrate
-    X_s=matrix([[uhat],[aoa],[theta],[qcoverv]])
-    return X_s
