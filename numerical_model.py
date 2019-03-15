@@ -2,7 +2,7 @@ import numpy as np
 import Cit_par as par
 from aero_tools import Aero_Tools
 from real_analytical_model import Analytical_Model
-from control.matlab import * 
+#from control.matlab import * 
 
 class Numerical_Model:
     def __init__(self):
@@ -78,7 +78,7 @@ class Numerical_Model:
     def As(self, v_t0):
         P_inv = np.linalg.inv(self.Ps(v_t0))
         Q_mat = self.Qs()
-        A = np.matmul(P_inv,Q_mat)
+        A = np.matmul(-P_inv,Q_mat)
         return A
     
     def Bs(self, v_t0):
@@ -90,7 +90,7 @@ class Numerical_Model:
     def Aa(self, v_t0):
         P_inv = np.linalg.inv(self.Pa(v_t0))
         Q_mat = self.Qa()
-        A = np.matmul(P_inv,Q_mat)
+        A = np.matmul(-P_inv,Q_mat)
         return A
     
     def Ba(self, v_t0):
@@ -128,27 +128,34 @@ if __name__ == "__main__":
     eig_a = np.linalg.eig(asym)
     
     
-    print(sym)
-    print(eig_s)
-    print(np.poly(sym))
+#    print(sym)
+#    print(eig_s)
+    #print(np.poly(sym))
     #print(asym)
     #print(eig_a)
 
+    v_ref = 1
 
-
-
-#    print(model.As(1))
-#    print(model.Bs(100))
-#    print()
-#    print(model.Aa(1))
-#    print(model.Ba(100))
+    As_mat=model.As(1)
+    As_mat[:,-1]*=par.c/v_ref
+    Aa_mat=model.Aa(1)
+    Aa_mat[:,-1]*=par.b*0.5/v_ref
+    Aa_mat[:,-2]*=par.b*0.5/v_ref
+    
+    print(As_mat)
+#    print(model.Bs(1))
+    print(np.linalg.eig(As_mat)[0])
+    print()
+    print(Aa_mat)
+    print(np.linalg.eig(Aa_mat)[0])
+#    print(model.Ba(1))
 #    print()
 #    print(model.C())
 #    print(model.Ds())
 #    print(model.Da())
     
     
-    v_ref = 1
+    
     s_eigen = np.linalg.eig(model.As(v_ref))[0] / par.c
 #    print(model.amod.eigenv_short())
 #    print(model.amod.eigenv_phugoid())
@@ -159,5 +166,7 @@ if __name__ == "__main__":
 #    print(s_eigen)
 
 
-    
+#    q = model.Qs()
+#    print(q)
+#    print(np.linalg.eig(q)[0])
 
