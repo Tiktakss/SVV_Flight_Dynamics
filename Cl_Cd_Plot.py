@@ -46,70 +46,70 @@ alpha = [] #angle of attack
 mach = []
 Re = []
 
-#for i in range(len(time)):
-#    fuel_left = matlab.getdata_at_time('lh_engine_FU',time[i], time[i]+dt)
-#    fuel_left_avg = (sum(fuel_left))/(len(fuel_left))
-#    fuel_right = matlab.getdata_at_time('rh_engine_FU',time[i], time[i]+dt)
-#    fuel_right_avg = (sum(fuel_right))/(len(fuel_right))
-#    fuel_total = fuel_left_avg + fuel_right_avg
-#
-#    weight_lbs = total_weight - fuel_total #weight in lbs
-#    weight_kg = weight_lbs * 0.453592 #weight in kg
-#    weight_n = weight_kg*gravity #weight inNewon
-#    
-#    height = matlab.getdata_at_time('Dadc1_alt', time[i], time[i]+dt)
-#    h_ft = (sum(height))/(len(height))
-#    h_m = aero.ft_to_m(h_ft) #height in m
-#    density = aero.rho_alt(h_m) #density kg/m^3
-#    
-#    speed = matlab.getdata_at_time('Dadc1_tas', time[i], time[i]+dt)
-#    speed_kts = (sum(speed))/(len(speed))
-#    speed_ms = aero.kts_to_ms(speed_kts)
-#    
-#    lift = (2*weight_n)/(density*surface*speed_ms**2)
-#    C_l.append(lift)
-#    
-#    A = b*b/surface #aspect ratio
-#    drag = Cd0 +(lift**2)/(pi*A*e)
-#    C_d.append(drag)
-#    
-#    angle = matlab.getdata_at_time('vane_AOA', time[i], time[i] +dt)
-#    aoa = (sum(angle))/(len(angle)) #angle of attack #degrees
-#    alpha.append(aoa)
-#    
-#    M = aero.calc_mach(h_m, speed_ms)
-#    mach.append(M)
-#    
-#    re_num = aero.calc_re(density, speed_ms, length)
-#    Re.append(re_num)
-#
-#
-##Plot Cl_CD Curve    
-#plt.figure()
-#plt.plot(C_d[0], C_l[0], "ro")
-#plt.plot(C_d[1], C_l[1], "bo")
-#plt.plot(C_d[2], C_l[2], "go")
-#plt.plot(C_d[3], C_l[3], "yo")
-#plt.plot(C_d[4], C_l[4], "ko")
-#plt.plot(C_d[5], C_l[5], "co")
-#plt.plot(C_d, C_l)
-#plt.text(0.045, 0.65, r'$M=0.172 - 0.3473,\ \Re= $')
-#plt.title('Lift coefficient vs Drag coefficient')
-#plt.xlabel('Drag coefficient [-]')
-#plt.ylabel('Lift coefficient [-]')
-#plt.grid(True)
-#plt.show()  
-#
-##PLot lift curve 
-#plt.figure()
-#plt.plot(alpha, C_l)
-#plt.title('Lift Curve')
-#plt.xlabel('Angle of Attack [-]')
-#plt.ylabel('Lift coefficient [-]')
-#plt.grid(True)
-#plt.show() 
+for i in range(len(time)):
+    fuel_left = matlab.getdata_at_time('lh_engine_FU',time[i], time[i]+dt)
+    fuel_left_avg = (sum(fuel_left))/(len(fuel_left))
+    fuel_right = matlab.getdata_at_time('rh_engine_FU',time[i], time[i]+dt)
+    fuel_right_avg = (sum(fuel_right))/(len(fuel_right))
+    fuel_total = fuel_left_avg + fuel_right_avg
 
-#Trim Curve
+    weight_lbs = total_weight - fuel_total #weight in lbs
+    weight_kg = weight_lbs * 0.453592 #weight in kg
+    weight_n = weight_kg*gravity #weight inNewon
+    
+    height = matlab.getdata_at_time('Dadc1_alt', time[i], time[i]+dt)
+    h_ft = (sum(height))/(len(height))
+    h_m = aero.ft_to_m(h_ft) #height in m
+    density = aero.rho_alt(h_m) #density kg/m^3
+    
+    speed = matlab.getdata_at_time('Dadc1_tas', time[i], time[i]+dt)
+    speed_kts = (sum(speed))/(len(speed))
+    speed_ms = aero.kts_to_ms(speed_kts)
+    
+    lift = (2*weight_n)/(density*surface*speed_ms**2)
+    C_l.append(lift)
+    
+    A = b*b/surface #aspect ratio
+    drag = Cd0 +(lift**2)/(pi*A*e)
+    C_d.append(drag)
+    
+    angle = matlab.getdata_at_time('vane_AOA', time[i], time[i] +dt)
+    aoa = (sum(angle))/(len(angle)) #angle of attack #degrees
+    alpha.append(aoa)
+    
+    M = aero.calc_mach(h_m, speed_ms)
+    mach.append(M)
+    
+    re_num = aero.calc_re(density, speed_ms, length)
+    Re.append(re_num)
+
+
+#Plot Cl_CD Curve    
+plt.figure()
+plt.plot(C_d[0], C_l[0], "ro")
+plt.plot(C_d[1], C_l[1], "bo")
+plt.plot(C_d[2], C_l[2], "go")
+plt.plot(C_d[3], C_l[3], "yo")
+plt.plot(C_d[4], C_l[4], "ko")
+plt.plot(C_d[5], C_l[5], "co")
+plt.plot(C_d, C_l)
+plt.text(0.045, 0.65, r'$M=0.172 - 0.3473,\ \Re= $')
+plt.title('Lift coefficient vs Drag coefficient')
+plt.xlabel('Drag coefficient [-]')
+plt.ylabel('Lift coefficient [-]')
+plt.grid(True)
+plt.show()  
+
+#PLot lift curve 
+plt.figure()
+plt.plot(alpha, C_l)
+plt.title('Lift Curve')
+plt.xlabel('Angle of Attack [-]')
+plt.ylabel('Lift coefficient [-]')
+plt.grid(True)
+plt.show() 
+
+Trim Curve
 t1_trim = 34*60 + 9
 t2_trim = 36*60 + 50
 t3_trim = 38*60 + 0
