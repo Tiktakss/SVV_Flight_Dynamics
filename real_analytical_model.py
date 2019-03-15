@@ -60,7 +60,7 @@ class Analytical_Model:
     
 if __name__ == "__main__":
     mod = Analytical_Model()
-    v = 140
+    v = 100
     vc = v/par.c
     vb = v/par.b
     print('\t', 'short period:')
@@ -69,12 +69,12 @@ if __name__ == "__main__":
     print('\t', 'phugoid:')
     print(mod.eigenv_phugoid())
     print(mod.half_time(mod.eigenv_phugoid()[0][0],v)*vc)
-    print('\t', 'dutch roll:')
-    print(mod.dutchr())
-    print(mod.half_time2(mod.dutchr()[0][0],v)*vb)
-    print('\t', 'aperiodic roll:')
-    print(mod.aperroll())
-    print(mod.half_time2(mod.aperroll(),v)*vb)
-    print('\t', 'spiral:')
-    print(mod.spiral())
-    print(mod.half_time2(mod.spiral(),v)*vb)
+#    print('\t', 'dutch roll:')
+#    print(mod.dutchr())
+#    print(mod.half_time2(mod.dutchr()[0][0],v)*vb)
+#    print('\t', 'aperiodic roll:')
+#    print(mod.aperroll())
+#    print(mod.half_time2(mod.aperroll(),v)*vb)
+#    print('\t', 'spiral:')
+#    print(mod.spiral())
+#    print(mod.half_time2(mod.spiral(),v)*vb)

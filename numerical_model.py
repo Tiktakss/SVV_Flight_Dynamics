@@ -2,6 +2,7 @@ import numpy as np
 import Cit_par as p
 from aero_tools import Aero_Tools
 from real_analytical_model import Analytical_Model
+
 #from control.matlab import * 
 
 class Numerical_Model:
@@ -9,6 +10,7 @@ class Numerical_Model:
         self.tools = Aero_Tools()
         self.amod = Analytical_Model()
         self.delta_t = 0.01
+        
         
     def v_dimless(self, v_t, v_t0):
         return (v_t - v_t0) / v_t0
@@ -170,7 +172,7 @@ if __name__ == "__main__":
     
     print(As_mat)
     print(As_eig)
-#    print(model.amod.period_s(np.imag(As_eig),v_ref))
+    print(model.amod.half_time(np.real(As_eig),v_ref))
 #    print()
 #    print(Aa_mat)
 #    print(Aa_eig)
