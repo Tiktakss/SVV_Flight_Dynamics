@@ -108,6 +108,9 @@ class Numerical_Model:
     def Da(self):
         return np.matrix(np.zeros((4,2)))
 
+    def Xs(self,manouvre):
+        
+
         
         
 if __name__ == "__main__":
