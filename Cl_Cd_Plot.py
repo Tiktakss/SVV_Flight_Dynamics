@@ -20,12 +20,9 @@ e = 0.8 #obtained from reader
 b = 15.911 #span obtained from reader #m
 length = 600 *0.0254
 
-
 #obtain data for Cl-Cd plot
 data = import_excel.Cl_Cd_data(excel)
-
 weight_people = sum(import_excel.weights(excel))/0.453592 #lbs
-
 total_weight = weight_people + blockfuel + empty_weight
 
 #time stamps plots
@@ -83,7 +80,6 @@ for i in range(len(time)):
     re_num = aero.calc_re(density, speed_ms, length)
     Re.append(re_num)
 
-
 #Trim Curve
 t1_trim = 34*60 + 9
 t2_trim = 36*60 + 50
@@ -96,8 +92,6 @@ time_trim = [t1_trim, t2_trim, t3_trim, t4_trim, t5_trim, t6_trim]
 trim_curve = []
 alpha_trim = []
 speed_lst = []
-
-
 
 for i in range(len(time_trim)):
     elevator = matlab.getdata_at_time('delta_e', time_trim[i], time_trim[i] + dt)
@@ -113,7 +107,6 @@ for i in range(len(time_trim)):
     speed_ms_trim = aero.kts_to_ms(speed_kts_trim)
     speed_lst.append(speed_ms_trim)
 
-    
 #plot trim curve
 plt.subplot(221)
 plt.plot(alpha_trim, trim_curve, "ro")
@@ -156,15 +149,3 @@ plt.xlabel('Angle of Attack [-]')
 plt.ylabel('Lift coefficient [-]')
 plt.grid(True)
 plt.show()
-
-    
-
-    
-
-
-
-    
-
-
-
-
