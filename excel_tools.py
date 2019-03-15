@@ -6,7 +6,7 @@ import pandas as pd
 
 class import_excel:
     def __init__(self,filename):
-        self.filename = filename# './Post_Flight_Datasheet_Flight_test.xlsx'
+        self.filename = filename# './Post_Flight_Datasheet_03_05_V3.xlsx'
         self.cg_seats = np.array([[131,131,170,214,214,251,251,288,288]])*0.025 # inch to m
         self.blockfuel = self.file().values[16,3]
         
@@ -63,7 +63,7 @@ put testing/debugging code in the if-statement below
 it will only run if you run this python file (import_files.py)
 """
 if __name__ == "__main__":
-    excel = import_excel('./Post_Flight_Datasheet_Flight_test.xlsx')
+    excel = import_excel('./Post_Flight_Datasheet_03_05_V3.xlsx')
     
     print ('people: ', excel.people_info())
     print ('\nCl_Cd: ', excel.Cl_Cd_data_info())
