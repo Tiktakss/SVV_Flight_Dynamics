@@ -8,6 +8,7 @@ Created on Wed Mar  6 09:54:48 2019
 import scipy.io as sio
 import numpy as np
 import matplotlib.pyplot as plt
+import Cit_par as p
 
 class Matlab_Tools:
     def __init__(self,filename):
@@ -64,6 +65,32 @@ class Matlab_Tools:
         for i in range(len(self.parameters)-1,0,-1):
             data=np.column_stack((self.getdata_at_time(self.parameters[i],start_time_in_seconds,stop_time_in_seconds),data))
         return data
+    
+    def Xs(self,manouvre):
+        if manouvre == 'fugoid':
+            start=self.fugoidstart
+        elif manouvre=='ap_roll':
+            start=self.ap_rollstart
+        elif manouvre=='sh_period':
+            start=self.sh_periodstart
+        elif manouvre=='dutchR':
+            start=self.dutchRstart
+        elif manouvre=='dutchR_damp':
+            start=self.dutchR_dampstart
+        elif manouvre=='spiral':
+            start=self.spiralstart
+        else:
+            print ('invalid manouvre')
+            start=0
+        
+        dt= 0.2
+        uhat=0 #dimensionlessvelocity vt true airspeed vt0 stationary airspead
+        aoa=self.getdata_at_time('vane_AOA',start,start+dt)[0]
+        theta=self.getdata_at_time('vane_AOA',start,start+dt)[0]
+        qcoverv=self.getdata_at_time('Ahrs1_bPitchRate',start,start+dt)[0]*p.c/self.getdata_at_time('Dadc1_tas',start,start+dt)[0]#q is pitchrate
+        X_s=np.matrix([[uhat],[aoa],[theta],[qcoverv]])
+        return X_s
+
 
 
 
