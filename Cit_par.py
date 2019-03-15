@@ -1,5 +1,14 @@
 import math
 import app_C_values as c
+from matlab_tools import Matlab_Tools
+matlab = Matlab_Tools('FTISxprt-20190305_124649.mat')
+
+
+
+
+
+
+
 # Citation 550 - Linear simulation
 
 # xcg = 0.25 * c
@@ -110,3 +119,35 @@ Cnp    =  -0.0602
 Cnr    =  -0.2061
 Cnda   =  -0.0120
 Cndr   =  -0.0939
+
+
+def Xs(manouvre):
+    start=0
+    time=1
+    if manouvre == 'fugoid':
+        start=matlab.fugoidstart
+        time=matlab.fugoidtime
+    elif manouvre=='ap_roll':
+        start=matlab.ap_rollstart
+        time=matlab.ap_rolltime
+    elif manouvre=='sh_period':
+        start=matlab.sh_periodstart
+        time=matlab.sh_periodtime
+    elif manouvre=='dutchR':
+        start=matlab.dutchRstart
+        time=matlab.dutchRtime
+    elif manouvre=='dutchR_damp':
+        start=matlab.dutchR_dampstart
+        time=matlab.dutchR_damptime
+    elif manouvre=='spiral':
+        start=matlab.spiralstart
+        time=matlab.spiraltime
+    else:
+        print ('invalid manouvre')
+    
+    uhat=(vt-vt0)/vt0 #dimensionlessvelocity vt true airspeed vt0 stationary airspead
+    aoa=matlab.getdata_at_time('vane_AOA',start,start)
+    theta=matlab.getdata_at_time('vane_AOA',start,start)
+    qcoverv=matlab.getdata_at_time('pitchrate',start,start)*c/matlab.getdata_at_time('true airspeat',start,start)#q is pitchrate
+    X_s=np.matrix([uhat],[aoa],[theta],[qcoverv])
+    return X_s

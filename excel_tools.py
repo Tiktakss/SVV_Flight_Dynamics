@@ -7,6 +7,7 @@ import pandas as pd
 class import_excel:
     def __init__(self,filename):
         self.filename = filename#'./Post_Flight_Datasheet_Flight_test.xlsx'
+        self.filename = filename# './Post_Flight_Datasheet_03_05_V3.xlsx'
         self.cg_seats = np.array([[131,131,170,214,214,251,251,288,288]])*0.025 # inch to m
         self.blockfuel = self.file().values[16,3]
         

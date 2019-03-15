@@ -52,6 +52,12 @@ class Analytical_Model:
     def half_time2(self, xi, v):
         return np.log(0.5)*par.b/(xi * v)
     
+    def period_s(self, eta, v):
+        return (2*np.pi*par.c)/(eta*v)
+    
+    def period_a(self, eta, v):
+        return (2*np.pi*par.b)/(eta*v)
+    
 if __name__ == "__main__":
     mod = Analytical_Model()
     v = 140
