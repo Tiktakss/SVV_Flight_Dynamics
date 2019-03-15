@@ -38,18 +38,18 @@ class Numerical_Model:
         return np.transpose(vect)
 
     def Ps(self, v_t0):
-        P1 = [-2 * par.muc * par.c / v_t0, 0, 0, 0]
+        P1 = [-2 * par.muc * par.c / v_t0**2, 0, 0, 0]
         P2 = [0, (par.CZadot - 2 * par.muc) * par.c / v_t0, 0, 0]
         P3 = [0, 0, -par.c / v_t0, 0]
-        P4 = [0, par.Cmadot * par.c / v_t0, 0, -2 * par.muc * par.KY2 * par.c / v_t0]
+        P4 = [0, par.Cmadot * par.c / v_t0, 0, -2 * par.muc * par.KY2 * par.c**2 / v_t0**2]
         #print(np.matrix((P1, P2, P3, P4)))
         return np.matrix((P1, P2, P3, P4))
 
-    def Qs(self):
-        Q1 = [-par.CXu, -par.CXa, -par.CZ0, 0]
-        Q2 = [-par.CZu, -par.CZa, par.CX0, -(par.CZq + 2 * par.muc)]
-        Q3 = [0, 0, 0, -1]
-        Q4 = [-par.Cmu, -par.Cma, 0, -par.Cmq]
+    def Qs(self, v_t0):
+        Q1 = [-par.CXu/v_t0, -par.CXa, -par.CZ0, -par.CXq * par.c/v_t0]
+        Q2 = [-par.CZu/v_t0, -par.CZa, par.CX0, -(par.CZq + 2 * par.muc)* par.c/v_t0]
+        Q3 = [0, 0, 0, -1* par.c/v_t0]
+        Q4 = [-par.Cmu/v_t0, -par.Cma, 0, -par.Cmq* par.c/v_t0]
         #print(np.matrix((Q1, Q2, Q3, Q4)))
         return np.matrix((Q1, Q2, Q3, Q4))
 
@@ -77,8 +77,8 @@ class Numerical_Model:
     
     def As(self, v_t0):
         P_inv = np.linalg.inv(self.Ps(v_t0))
-        Q_mat = self.Qs()
-        A = np.matmul(-P_inv,Q_mat)
+        Q_mat = self.Qs(v_t0)
+        A = np.matmul(P_inv,Q_mat)
         return A
     
     def Bs(self, v_t0):
@@ -90,7 +90,7 @@ class Numerical_Model:
     def Aa(self, v_t0):
         P_inv = np.linalg.inv(self.Pa(v_t0))
         Q_mat = self.Qa()
-        A = np.matmul(-P_inv,Q_mat)
+        A = np.matmul(P_inv,Q_mat)
         return A
     
     def Ba(self, v_t0):
@@ -134,20 +134,25 @@ if __name__ == "__main__":
     #print(asym)
     #print(eig_a)
 
-    v_ref = 1
+    v_ref = 100
 
-    As_mat=model.As(1)
-    As_mat[:,-1]*=par.c/v_ref
-    Aa_mat=model.Aa(1)
-    Aa_mat[:,-1]*=par.b*0.5/v_ref
-    Aa_mat[:,-2]*=par.b*0.5/v_ref
+    As_mat=model.As(v_ref)
+#    As_mat[:,0]*=1/v_ref
+#    As_mat[:,-1]*=par.c/v_ref
+    As_eig=np.linalg.eig(As_mat)[0]
+    
+    Aa_mat=model.Aa(v_ref)
+#    Aa_mat[:,-1]*=par.b*0.5/v_ref
+#    Aa_mat[:,-2]*=par.b*0.5/v_ref
+    Aa_eig=np.linalg.eig(Aa_mat)[0]
     
     print(As_mat)
-#    print(model.Bs(1))
-    print(np.linalg.eig(As_mat)[0])
+    print(As_eig)
+    print(model.amod.half_time(np.real(As_eig),v_ref))
     print()
     print(Aa_mat)
-    print(np.linalg.eig(Aa_mat)[0])
+    print(Aa_eig)
+    print(model.amod.half_time2(np.real(Aa_eig),v_ref))
 #    print(model.Ba(1))
 #    print()
 #    print(model.C())
