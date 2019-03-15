@@ -77,27 +77,12 @@ for i in range(len(data)):
     lift = (2*weight_n)/(density*par.S*speed_ms**2)
     C_l.append(lift)
     
-    drag = par.CD0 +(lift**2)/(pi*A*e)
+    drag = par.CD0 +(lift**2)/(pi*A*par.e)
     C_d.append(drag)
     
     angle = row_lift[5]
     alpha.append(angle)
     
-plt.subplot(121)   
-plt.plot(C_d, C_l, "ro", label='Flight Data')
-plt.title('Lift coefficient vs Drag coefficient')
-plt.xlabel('Drag coefficient [-]')
-plt.ylabel('Lift coefficient [-]')
-plt.grid(True)
-
-plt.subplot(122)
-plt.plot(alpha, C_l, "ro", label='FLight Data')
-plt.title('Lift Curve')
-plt.xlabel('Angle of Attack [-]')
-plt.ylabel('Lift coefficient [-]')
-plt.grid(True)
-plt.show()
-
 
 #CG shift due to fuel flow
 for i in range(len(data)):
@@ -142,7 +127,8 @@ slope = (de[3]-de[5])/(AOA[3]-AOA[5])
 #Cm_delta = -C_l[5]*(Center_gravity[13]-Center_gravity[12])/((de[7]-de[6])*205.69)
 #Cm_alpha = -Cm_delta*slope
 #print(Cm_alpha,Cm_delta)
-print(Center_gravity[13]-Center_gravity[12])
+#print(Center_gravity[13]-Center_gravity[12])
+
 #Plotting
 plt.subplot(221)
 plt.plot(Time,Center_gravity)
@@ -162,3 +148,23 @@ plt.title("Control force curve")
 plt.ylabel("$F_e$[N]")
 plt.xlabel("$\\alpha[deg]$")
 plt.show()
+
+#Plot C curves
+plt.figure()
+plt.subplot(121)
+plt.plot(C_d, C_l, "ro")
+plt.title('Lift coefficient vs Drag coefficient')
+plt.xlabel('Drag coefficient [-]')
+plt.ylabel('Lift coefficient [-]')
+plt.grid(True)
+
+plt.subplot(122)
+plt.plot(alpha, C_l , "ro")
+plt.title('Lift Curve')
+plt.xlabel('Angle of Attack [-]')
+plt.ylabel('Lift coefficient [-]')
+plt.grid(True)
+plt.show()
+
+
+
