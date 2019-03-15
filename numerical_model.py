@@ -113,18 +113,18 @@ class Numerical_Model:
         return np.arange(0,T,self.delta_t)
     
     def interpolate(self,T):
-        u_hat = np.array()
-        AoA = np.array()
-        Theta = np.array()
-        q = np.array()
+        u_hat = np.array([])
+        AoA = np.array([])
+        Theta = np.array([])
+        q = np.array([])
         for t in range(len(self.t_run(T))):
             np.append(u_hat,self.Xs[0,0],axis=0)
             np.append(AoA,self.Xs[1,0],axis=0)
             np.append(Theta,self.Xs[2,0],axis=0)
             np.append(q,self.Xs[3,0],axis=0)
             U_s = de_interp[t]
-            DX_s = self.As*X_s + self.Bs*U_s
-            X_s += DX_s*self.delta_t
+            DX_s = self.As*Xs + self.Bs*U_s
+            Xs += DX_s*self.delta_t
         return u_hat, AoA, Theta, q
 
 #    def Xs(self,manouvre):
