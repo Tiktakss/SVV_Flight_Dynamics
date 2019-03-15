@@ -2,6 +2,7 @@ import numpy as np
 import Cit_par as p
 from aero_tools import Aero_Tools
 from real_analytical_model import Analytical_Model
+
 #from control.matlab import * 
 
 class Numerical_Model:
@@ -9,6 +10,7 @@ class Numerical_Model:
         self.tools = Aero_Tools()
         self.amod = Analytical_Model()
         self.delta_t = 0.01
+        
         
     def v_dimless(self, v_t, v_t0):
         return (v_t - v_t0) / v_t0
@@ -112,23 +114,23 @@ class Numerical_Model:
     def t_run(self,T):
         return np.arange(0,T,self.delta_t)
     
-    def interpolate(self,T):
-        u_hat = np.array()
-        AoA = np.array()
-        Theta = np.array()
-        q = np.array()
+    def interpolate(self,T,manouvre):
+        Xs = matlab.manouvre(manouvre)
+        u_hat = np.array([])
+        AoA = np.array([])
+        Theta = np.array([])
+        q = np.array([])
         for t in range(len(self.t_run(T))):
             np.append(u_hat,self.Xs[0,0],axis=0)
             np.append(AoA,self.Xs[1,0],axis=0)
             np.append(Theta,self.Xs[2,0],axis=0)
             np.append(q,self.Xs[3,0],axis=0)
             U_s = de_interp[t]
-            DX_s = self.As*X_s + self.Bs*U_s
-            X_s += DX_s*self.delta_t
+            DX_s = self.As*Xs + self.Bs*U_s
+            Xs += DX_s*self.delta_t
         return u_hat, AoA, Theta, q
 
-#    def Xs(self,manouvre):
-        
+
 
         
         
@@ -161,7 +163,7 @@ if __name__ == "__main__":
     As_mat=model.As(v_ref)
 #    As_mat[:,0]*=1/v_ref
 #    As_mat[:,-1]*=p.c/v_ref
-    As_eig=np.linalg.eig(As_mat)[0] * v_ref/p.c
+    As_eig=np.linalg.eig(As_mat)[0] #* v_ref/p.c
     
     Aa_mat=model.Aa(v_ref)
 #    Aa_mat[:,-1]*=p.b*0.5/v_ref
@@ -170,7 +172,7 @@ if __name__ == "__main__":
     
     print(As_mat)
     print(As_eig)
-#    print(model.amod.period_s(np.imag(As_eig),v_ref))
+    print(model.amod.half_time(np.real(As_eig),v_ref))
 #    print()
 #    print(Aa_mat)
 #    print(Aa_eig)
