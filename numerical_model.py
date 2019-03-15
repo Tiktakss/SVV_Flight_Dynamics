@@ -2,7 +2,7 @@ import numpy as np
 import Cit_par as par
 from aero_tools import Aero_Tools
 from real_analytical_model import Analytical_Model
-from control.matlab import * 
+#from control.matlab import * 
 
 class Numerical_Model:
     def __init__(self):
@@ -128,20 +128,21 @@ if __name__ == "__main__":
     eig_a = np.linalg.eig(asym)
     
     
-    print(sym)
-    print(eig_s)
-    print(np.poly(sym))
+#    print(sym)
+#    print(eig_s)
+    #print(np.poly(sym))
     #print(asym)
     #print(eig_a)
 
 
 
-
-#    print(model.As(1))
-#    print(model.Bs(100))
-#    print()
-#    print(model.Aa(1))
-#    print(model.Ba(100))
+    As_mat=model.As(1)
+    print(As_mat)
+#    print(model.Bs(1))
+    print(np.linalg.eig(As_mat)[0])
+    print()
+    print(model.Aa(1))
+#    print(model.Ba(1))
 #    print()
 #    print(model.C())
 #    print(model.Ds())
