@@ -1,8 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
 #from Cl_Cd_Plot import C_l
-import Cit_par as par
-from math import pi
 
 #import classes
 from aero_tools import Aero_Tools
@@ -50,54 +48,6 @@ de = np.zeros(len(data_trim_curve)+len(data_cg_shift_data)-1)
 Fe = np.zeros(len(data_trim_curve)+len(data_cg_shift_data)-1)
 V = np.zeros(len(data_trim_curve)+len(data_cg_shift_data)-1)
 Center_gravity = np.zeros(len(data)+len(data_trim_curve)+len(data_cg_shift_data)-1)
-
-#Make Life curve
-#Inputs
-A = par.b*par.b / par.S
-#Create emoty lists for plots
-C_l = [] #lift coefficient
-C_d = [] #drag coefficient
-alpha = [] #angle of attack
-
-#Create plots
-data_lift_curve = import_excel.Cl_Cd_data(excel)
-for i in range(len(data)):
-    row_lift = data_lift_curve[i]
-    weight = total_weight - row_lift[8] #lbs
-    weight_kg = aero.lbs * weight
-    weight_n = weight_kg * aero.g0
-    
-    height = row_lift[3]
-    height_m = aero.ft_to_m(height)
-    density = aero.rho_alt(height_m)
-    
-    speed = row_lift[4]
-    speed_ms = aero.kts_to_ms(speed)
-    
-    lift = (2*weight_n)/(density*par.S*speed_ms**2)
-    C_l.append(lift)
-    
-    drag = par.CD0 +(lift**2)/(pi*A*e)
-    C_d.append(drag)
-    
-    angle = row_lift[5]
-    alpha.append(angle)
-    
-plt.subplot(121)   
-plt.plot(C_d, C_l, "ro", label='Flight Data')
-plt.title('Lift coefficient vs Drag coefficient')
-plt.xlabel('Drag coefficient [-]')
-plt.ylabel('Lift coefficient [-]')
-plt.grid(True)
-
-plt.subplot(122)
-plt.plot(alpha, C_l, "ro", label='FLight Data')
-plt.title('Lift Curve')
-plt.xlabel('Angle of Attack [-]')
-plt.ylabel('Lift coefficient [-]')
-plt.grid(True)
-plt.show()
-
 
 #CG shift due to fuel flow
 for i in range(len(data)):
