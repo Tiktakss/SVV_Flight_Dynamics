@@ -1,13 +1,11 @@
 import numpy as np
 import matplotlib.pyplot as plt
-#from Cl_Cd_Plot import C_l
 
 #import classes
 from aero_tools import Aero_Tools
 aero = Aero_Tools()
 from excel_tools import import_excel
 excel = import_excel('./Post_Flight_Datasheet_03_05_V3.xlsx')
-from matlab_tools import Matlab_Tools
 
 #Inputs
 blockfuel = 4050.0 #lbs #obtained from written data sheet
@@ -89,10 +87,10 @@ for i in range(len(data_cg_shift_data)):
 
 #Calculation for Cm_delta and Cm_alpha
 slope = (de[3]-de[5])/(AOA[3]-AOA[5])
-#Cm_delta = -C_l[5]*(Center_gravity[13]-Center_gravity[12])/((de[7]-de[6])*205.69)
-#Cm_alpha = -Cm_delta*slope
-#print(Cm_alpha,Cm_delta)
-print(Center_gravity[13]-Center_gravity[12])
+Cm_delta = -C_l[5]*(Center_gravity[13]-Center_gravity[12])/((de[7]-de[6])*205.69)
+Cm_alpha = -Cm_delta*slope
+print(Cm_alpha,Cm_delta)
+
 #Plotting
 plt.subplot(221)
 plt.plot(Time,Center_gravity)
