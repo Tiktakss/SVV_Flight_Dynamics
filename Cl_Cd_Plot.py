@@ -140,20 +140,19 @@ for i in range(len(time_trim)):
 
     
 #plot trim curve
-plt.figure()
+plt.subplot(221)
 plt.plot(alpha_trim, trim_curve, "ro")
 plt.title('Trim Curve')
 plt.xlabel('Angle of Attack [-]')
 plt.ylabel('Delta_e [-]')
 plt.grid(True)
-plt.show()
 
+plt.subplot(222)
 z = np.polyfit(alpha_trim, trim_curve, 1)
 p = np.poly1d(z)
 plt.plot(alpha_trim,p(alpha_trim),"r--")
-plt.show()
 
-plt.figure()
+plt.subplot(223)
 plt.plot(speed_lst, trim_curve, "ro")
 plt.title('Trim Curve')
 plt.xlabel('Speed [m/s]')
