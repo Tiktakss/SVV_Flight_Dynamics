@@ -1,10 +1,12 @@
 import math
 import app_C_values as c
-
-f_u_l=matlab.getdata_at_time('lh_engine_FU',matlab.fugoidstart,matlab.fugoidstart)
-f_u_r=matlab.getdata_at_time('rh_engine_FU',matlab.fugoidstart,matlab.fugoidstart)
-
-used = (f_u_l + f_u_r )*0.453592
+#from matlab_tools import Matlab_Tools
+#matlab = Matlab_Tools('FTISxprt-20190305_124649.mat')
+#
+#f_u_l=matlab.getdata_at_time('lh_engine_FU',matlab.fugoidstart,matlab.fugoidstart)
+#f_u_r=matlab.getdata_at_time('rh_engine_FU',matlab.fugoidstart,matlab.fugoidstart)
+#
+#used = (f_u_l + f_u_r )*0.453592
 
 
 

@@ -15,3 +15,10 @@ class EigenV:
         + p.Cmadot * (p.CX0 * p.CXu - p.CZ0 * p.CZu) + p.Cmq * (p.CXu * p.CZa - p.CZu * p.CXa)
         E = -p.Cmu * (p.CX0 * p.CXa + p.CZ0 * p.CZa) + p.Cma * (p.CX0 * p.CXu + p.CZ0 * p.CZu)
         return [A,B,C,D,E]
+
+if __name__ == "__main__":
+    eigen = EigenV()
+    e=eigen.poly()
+    roots = np.polynomial.polynomial.polyroots(e)
+    print(e)
+    print(roots)
