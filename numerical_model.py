@@ -112,7 +112,8 @@ class Numerical_Model:
     def t_run(self,T):
         return np.arange(0,T,self.delta_t)
     
-    def interpolate(self,T):
+    def interpolate(self,T,manouvre):
+        Xs = matlab.manouvre(manouvre)
         u_hat = np.array([])
         AoA = np.array([])
         Theta = np.array([])
@@ -127,8 +128,7 @@ class Numerical_Model:
             Xs += DX_s*self.delta_t
         return u_hat, AoA, Theta, q
 
-#    def Xs(self,manouvre):
-        
+
 
         
         
