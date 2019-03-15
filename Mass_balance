@@ -77,7 +77,7 @@ for i in range(len(data_cg_shift_data)):
 
 #Calculation for Cm_delta and Cm_alpha
 slope = (de[5]-de[0])/(AOA[5]-AOA[0])
-Cm_delta = -C_l[5]*(Center_gravity[6]-Center_gravity[5])*0.0254/((de[8]-de[6])*2.0569)
+Cm_delta = -C_l[5]*(Center_gravity[6]-Center_gravity[5])*0.0254/((de[7]-de[5])*2.0569)
 Cm_alpha = -Cm_delta*slope
 print(Cm_alpha,Cm_delta)
 
