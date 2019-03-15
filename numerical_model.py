@@ -163,7 +163,7 @@ if __name__ == "__main__":
     As_mat=model.As(v_ref)
 #    As_mat[:,0]*=1/v_ref
 #    As_mat[:,-1]*=p.c/v_ref
-    As_eig=np.linalg.eig(As_mat)[0] * v_ref/p.c
+    As_eig=np.linalg.eig(As_mat)[0] #* v_ref/p.c
     
     Aa_mat=model.Aa(v_ref)
 #    Aa_mat[:,-1]*=p.b*0.5/v_ref

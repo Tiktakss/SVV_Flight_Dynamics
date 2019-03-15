@@ -14,7 +14,7 @@ class EigenV:
         D = p.Cmu * (p.CXa * (p.CZq + 2*p.muc) - p.CZ0 * (p.CZadot - 2*p.muc)) - p.Cma * (2*p.muc * p.CX0 + p.CXu * (p.CZq + 2*p.muc)) \
         + p.Cmadot * (p.CX0 * p.CXu - p.CZ0 * p.CZu) + p.Cmq * (p.CXu * p.CZa - p.CZu * p.CXa)
         E = -p.Cmu * (p.CX0 * p.CXa + p.CZ0 * p.CZa) + p.Cma * (p.CX0 * p.CXu + p.CZ0 * p.CZu)
-        return [A,B,C,D,E]
+        return [E,D,C,B,A]#[A,B,C,D,E]
 
 if __name__ == "__main__":
     eigen = EigenV()
