@@ -1,6 +1,7 @@
-from math import *
+from math import pi
 import matplotlib.pyplot as plt
 import numpy as np
+import Cit_par as par
 
 #import classes
 from aero_tools import Aero_Tools
@@ -13,11 +14,11 @@ matlab = Matlab_Tools('./FTISxprt-20190305_124649.mat')
 #inputs
 blockfuel       = 4090.0 #lbs #obtained from written data sheet
 empty_weight    = 9165.0 #lbs #obtained from Mass & Balance report
-gravity = 9.81 #m/s^2
-surface = 30 #m^2 #obtained from reader
-Cd0 = 0.04 # #obtained from reader
-e = 0.8 #obtained from reader
-b = 15.911 #span obtained from reader #m
+gravity = par.g #m/s^2
+surface = par.S #m^2 #obtained from reader
+Cd0 = par.CD0 # #obtained from reader
+e = par.e #obtained from reader
+b = par.b #span obtained from reader #m
 length = 600 *0.0254
 
 
@@ -140,19 +141,17 @@ for i in range(len(time_trim)):
 
     
 #plot trim curve
-plt.subplot(221)
+plt.subplot(121)
 plt.plot(alpha_trim, trim_curve, "ro")
 plt.title('Trim Curve')
 plt.xlabel('Angle of Attack [-]')
 plt.ylabel('Delta_e [-]')
 plt.grid(True)
-
-plt.subplot(222)
 z = np.polyfit(alpha_trim, trim_curve, 1)
 p = np.poly1d(z)
 plt.plot(alpha_trim,p(alpha_trim),"r--")
 
-plt.subplot(223)
+plt.subplot(122)
 plt.plot(speed_lst, trim_curve, "ro")
 plt.title('Trim Curve')
 plt.xlabel('Speed [m/s]')
