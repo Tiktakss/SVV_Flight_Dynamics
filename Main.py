@@ -22,10 +22,16 @@ from excel_tools import import_excel
 excel = import_excel('./Post_Flight_Datasheet_03_05_V3.xlsx')
 from matlab_tools import Matlab_Tools
 matlab = Matlab_Tools('FTISxprt-20190305_124649.mat')
+from numerical_model import Numerical_Model
+nummodel = Numerical_Model()
+
 
 #Phugoid
-fugoiddata = matlab.getdata_at_time('Dadc1_bcAlt',matlab.fugoidstart,matlab.fugoidstart+matlab.fugoidtime)*0.3048
+fugoiddata = matlab.getdata_at_time('Dadc1_bcAlt',matlab.fugoidstart,matlab.fugoidstart+matlab.fugoidtime)
+fugoiddata = fugoiddata - fugoiddata[0] #correct for stable flight
 fugoidtime = matlab.getdata_at_time('time',matlab.fugoidstart,matlab.fugoidstart+matlab.fugoidtime)/60
+fugoid = nummodel.symmetric_interpolate('fugoid')[3]/np.pi*180 #pitchrate 'q'
+
 
 #Aperiodic roll
 ap_rolldata = matlab.getdata_at_time('Ahrs1_bRollRate',matlab.ap_rollstart,matlab.ap_rollstart+matlab.ap_rolltime)/180*np.pi
@@ -52,10 +58,12 @@ spiraltime = matlab.getdata_at_time('time',matlab.spiralstart,matlab.spiralstart
 
 #Plotting
 plt.figure(1)
-plt.plot(fugoidtime,fugoiddata)
+plt.plot(fugoidtime,fugoiddata,label='data')
+plt.plot(fugoidtime,fugoid,label='numerical model')
 plt.xlabel('time [min]')
-plt.ylabel('height [m]')
+plt.ylabel('pitch [deg]')
 plt.title("Phugoid")
+plt.legend()
 
 plt.figure(2)
 plt.plot(ap_rolltime,ap_rolldata)

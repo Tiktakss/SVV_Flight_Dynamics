@@ -121,7 +121,7 @@ class Numerical_Model:
     def t_run(self,T):
         return np.arange(0,T,self.delta_t)
     
-    def interpolate(self,T,manouvre):
+    def symmetric_interpolate(self,manouvre):
         if manouvre == 'fugoid':
             start=matlab.fugoidstart
             time=matlab.fugoidtime
@@ -161,12 +161,10 @@ class Numerical_Model:
             Theta = np.vstack((Theta,Xs[2][0]))
             q = np.vstack((q,Xs[3][0]))
         u_hat = np.array(u_hat)
-        if __name__ == "__main__":
-            print ('8======D~~')
-        #for t in range(len(u_hat)):
-         #   pitchrat
-        pitchrate = np.array([(u_hat[i+1]-u_hat[i])/self.delta_t for i in range(len(u_hat)-1)])
-        return u_hat, AoA, Theta, q, pitchrate
+        AoA = np.array(AoA)
+        Theta = np.array(Theta)
+        q = np.array(q)
+        return u_hat, AoA, Theta, q
 
 
         
@@ -239,5 +237,7 @@ if __name__ == "__main__":
 #    print (model.interpolate(7,'spiral'))
 
     output = model.interpolate(7,'spiral')
+    if __name__ == "__main__":
+            print ('8======D~~')
     print (output)
 
