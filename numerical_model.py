@@ -2,12 +2,10 @@ import numpy as np
 import Cit_par as p
 from aero_tools import Aero_Tools
 from real_analytical_model import Analytical_Model
-<<<<<<< HEAD
+
 from matlab_tools import Matlab_Tools
 matlab = Matlab_Tools('FTISxprt-20190305_124649.mat')
-=======
 
->>>>>>> bf20d127d9adada59eda61c8f7918fa45a2d39fd
 #from control.matlab import * 
 
 class Numerical_Model:
