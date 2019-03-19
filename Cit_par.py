@@ -32,8 +32,8 @@ CD0    = c.CCD0            # Zero lift drag coefficient [ ]
 CLa    = c.CCLa            # Slope of CL-alpha curve [ ]
 
 ## Longitudinal stability
-#Cma    = c.CCma            # longitudinal stabilty [ ]
-#Cmde   = c.CCmde            # elevator effectiveness [ ]
+Cma    = c.CCma            # longitudinal stabilty [ ]
+Cmde   = c.CCmde            # elevator effectiveness [ ]
 
 # Aircraft geometry
 
