@@ -86,7 +86,7 @@ class Matlab_Tools:
         dt= 0.2
         uhat=0 #dimensionlessvelocity vt true airspeed vt0 stationary airspead
         aoa=self.getdata_at_time('vane_AOA',start,start+dt)[0]
-        theta=self.getdata_at_time('Ahrs1_Pitch',start,start+dt)[0]
+        theta=self.getdata_at_time('vane_AOA',start,start+dt)[0]
         qcoverv=self.getdata_at_time('Ahrs1_bPitchRate',start,start+dt)[0]*p.c/self.getdata_at_time('Dadc1_tas',start,start+dt)[0]#q is pitchrate
         X_s=np.matrix([[uhat],[aoa],[theta],[qcoverv]])
         return X_s
