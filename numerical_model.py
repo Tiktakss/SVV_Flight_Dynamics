@@ -143,9 +143,8 @@ class Numerical_Model:
         else:
             print ('invalid manouvre')
             start=0
-        Xs = matlab.Xs(manouvre)
+        Xs, vt0 = matlab.Xs(manouvre) #get Xs with corresponding vtas in m/s
         de = matlab.getdata_at_time('delta_e',start,start+time)
-        vt0 = matlab.getdata_at_time('Dadc1_tas',start,start+0.2)[0]*0.51
         u_hat=np.array(Xs[0][0])
         AoA=np.array(Xs[1][0])
         Theta=np.array(Xs[2][0])
@@ -163,7 +162,7 @@ class Numerical_Model:
         u_hat = np.array(u_hat)
         AoA = np.array(AoA)
         Theta = np.array(Theta)
-        q = np.array(qcoverv)*p.c/vt0
+        q = np.array(qcoverv)/p.c*vt0
         return u_hat, AoA, Theta, q
 
 
@@ -236,8 +235,8 @@ if __name__ == "__main__":
 
 #    print (model.interpolate(7,'spiral'))
 
-    output = model.interpolate(7,'spiral')
+    output = model.symmetric_interpolate('spiral')
     if __name__ == "__main__":
-            print ('8======D~~')
+            print ('8======D~~~~')
     print (output)
 
