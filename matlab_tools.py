@@ -66,22 +66,32 @@ class Matlab_Tools:
             data=np.column_stack((self.getdata_at_time(self.parameters[i],start_time_in_seconds,stop_time_in_seconds),data))
         return data
     
-    def Xs(self,manouvre):
+    def gettimes(self,manouvre):
         if manouvre == 'fugoid':
             start=self.fugoidstart
+            time=self.fugoidtime
         elif manouvre=='ap_roll':
             start=self.ap_rollstart
+            time=self.ap_rolltime
         elif manouvre=='sh_period':
             start=self.sh_periodstart
+            time=self.sh_periodtime
         elif manouvre=='dutchR':
             start=self.dutchRstart
+            time=self.dutchRtime
         elif manouvre=='dutchR_damp':
             start=self.dutchR_dampstart
+            time=self.dutchR_damptime
         elif manouvre=='spiral':
             start=self.spiralstart
+            time=self.spiraltime
         else:
-            print ('invalid manouvre')
-            start=0
+            print ('invalid manouvre \n\n\n\n\n\n\n\n sucker')
+            start,time=0,0
+        return start, time
+    
+    def Xs(self,manouvre):
+        start,time = self.gettimes(manouvre)
         
         dt= 0.2
         uhat=0 #dimensionlessvelocity vt true airspeed vt0 stationary airspead
@@ -93,21 +103,7 @@ class Matlab_Tools:
         return X_s, vtas
 
     def Xa(self,manouvre):
-        if manouvre == 'fugoid':
-            start=self.fugoidstart
-        elif manouvre=='ap_roll':
-            start=self.ap_rollstart
-        elif manouvre=='sh_period':
-            start=self.sh_periodstart
-        elif manouvre=='dutchR':
-            start=self.dutchRstart
-        elif manouvre=='dutchR_damp':
-            start=self.dutchR_dampstart
-        elif manouvre=='spiral':
-            start=self.spiralstart
-        else:
-            print ('invalid manouvre')
-            start=0
+        start,time = self.gettimes(manouvre)
         
         dt= 0.2
         Beta=self.getdata_at_time('Fms1_trueHeading',start,start+dt)[0]

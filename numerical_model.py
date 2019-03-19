@@ -122,29 +122,8 @@ class Numerical_Model:
         return np.arange(0,T,self.delta_t)
     
     def symmetric_interpolate(self,manouvre):
-        if manouvre == 'fugoid':
-            start=matlab.fugoidstart
-            time=matlab.fugoidtime
-        elif manouvre=='ap_roll':
-            print ('not symetric dickhead')
-            start=matlab.ap_rollstart
-            time=matlab.ap_rolltime
-        elif manouvre=='sh_period':
-            start=matlab.sh_periodstart
-            time=matlab.sh_periodtime
-        elif manouvre=='dutchR':
-            start=matlab.dutchRstart
-            time=matlab.dutchRtime
-        elif manouvre=='dutchR_damp':
-            start=matlab.dutchR_dampstart
-            time=matlab.dutchR_damptime
-        elif manouvre=='spiral':
-            print ('not symetric dickhead')
-            start=matlab.spiralstart
-            time=matlab.spiraltime
-        else:
-            print ('invalid manouvre')
-            start=0
+        start,time = matlab.gettimes(manouvre)
+        
         Xs, vt0 = matlab.Xs(manouvre) #get Xs with corresponding vtas in m/s
         de = matlab.getdata_at_time('delta_e',start,start+time)
         u_hat=np.array(Xs[0][0])
@@ -171,27 +150,8 @@ class Numerical_Model:
     
     
     def not_symmetric_interpolate(self,manouvre):
-        if manouvre == 'fugoid':
-            start=matlab.fugoidstart
-            time=matlab.fugoidtime
-        elif manouvre=='ap_roll':
-            start=matlab.ap_rollstart
-            time=matlab.ap_rolltime
-        elif manouvre=='sh_period':
-            start=matlab.sh_periodstart
-            time=matlab.sh_periodtime
-        elif manouvre=='dutchR':
-            start=matlab.dutchRstart
-            time=matlab.dutchRtime
-        elif manouvre=='dutchR_damp':
-            start=matlab.dutchR_dampstart
-            time=matlab.dutchR_damptime
-        elif manouvre=='spiral':
-            start=matlab.spiralstart
-            time=matlab.spiraltime
-        else:
-            print ('invalid manouvre')
-            start=0
+        start,time = matlab.gettimes(manouvre)
+        
         Xa = matlab.Xa(manouvre)
         da = matlab.getdata_at_time('delta_a',start,start+time)
         dr = matlab.getdata_at_time('delta_r',start,start+time)
