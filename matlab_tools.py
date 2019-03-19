@@ -14,11 +14,11 @@ class Matlab_Tools:
     def __init__(self,filename):
         self.lol = 0 #not used
         self.filename = filename#'FTISxprt-20190305_124649.mat'
-        self.fugoidstart = 60*49 +4
+        self.fugoidstart = 60*49 +1
         self.fugoidtime = 159
         self.ap_rollstart = 60*53 + 5
         self.ap_rolltime = 5
-        self.sh_periodstart = 60*54
+        self.sh_periodstart = 60*54 + 0.5
         self.sh_periodtime = 4
         self.dutchRstart = 60*56+2
         self.dutchRtime = 18
@@ -85,9 +85,10 @@ class Matlab_Tools:
         
         dt= 0.2
         uhat=0 #dimensionlessvelocity vt true airspeed vt0 stationary airspead
-        aoa=self.getdata_at_time('vane_AOA',start,start+dt)[0]
-        theta=self.getdata_at_time('vane_AOA',start,start+dt)[0]
-        qcoverv=self.getdata_at_time('Ahrs1_bPitchRate',start,start+dt)[0]*p.c/self.getdata_at_time('Dadc1_tas',start,start+dt)[0]#q is pitchrate
+        aoa=self.getdata_at_time('vane_AOA',start,start+dt)[0]/180*np.pi
+        theta=self.getdata_at_time('Ahrs1_Pitch',start,start+dt)[0]/180*np.pi
+        vtas = self.getdata_at_time('Dadc1_tas',start,start+dt)[0]*0.51
+        qcoverv=self.getdata_at_time('Ahrs1_bPitchRate',start,start+dt)[0]/180*np.pi*p.c/vtas#q is pitchrate
         X_s=np.matrix([[uhat],[aoa],[theta],[qcoverv]])
         return X_s
 

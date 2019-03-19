@@ -13,6 +13,6 @@ CCD0    = 0.04            # Zero lift drag coefficient [ ]
 CCLa    = 5.084            # Slope of CL-alpha curve [ ]
 
 # Longitudinal stability
-CCma    = 0.2            # longitudinal stabilty [ ]
-CCmde   = 0.3            # elevator effectiveness [ ]
+CCma    = -0.7199            # longitudinal stabilty [ ]
+CCmde   = -1.5598       # elevator effectiveness [ ]
 

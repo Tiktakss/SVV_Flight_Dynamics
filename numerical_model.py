@@ -145,11 +145,11 @@ class Numerical_Model:
             start=0
         Xs = matlab.Xs(manouvre)
         de = matlab.getdata_at_time('delta_e',start,start+time)
-        vt0 = matlab.getdata_at_time('Dadc1_tas',start,start+0.2)[0]
+        vt0 = matlab.getdata_at_time('Dadc1_tas',start,start+0.2)[0]*0.51
         u_hat=np.array(Xs[0][0])
         AoA=np.array(Xs[1][0])
         Theta=np.array(Xs[2][0])
-        q=np.array(Xs[3][0])
+        qcoverv=np.array(Xs[3][0])
         for t in range(1,len(self.t_run(time))):
             U_s = de[t]
             if __name__ == "__main__":
@@ -159,11 +159,11 @@ class Numerical_Model:
             u_hat = np.vstack((u_hat,Xs[0][0]))
             AoA = np.vstack((AoA,Xs[1][0]))
             Theta = np.vstack((Theta,Xs[2][0]))
-            q = np.vstack((q,Xs[3][0]))
+            qcoverv = np.vstack((qcoverv,Xs[3][0]))
         u_hat = np.array(u_hat)
         AoA = np.array(AoA)
         Theta = np.array(Theta)
-        q = np.array(q)
+        q = np.array(qcoverv)*p.c/vt0
         return u_hat, AoA, Theta, q
 
 
