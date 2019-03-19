@@ -122,34 +122,14 @@ class Numerical_Model:
         return np.arange(0,T,self.delta_t)
     
     def symmetric_interpolate(self,manouvre):
-        if manouvre == 'fugoid':
-            start=matlab.fugoidstart
-            time=matlab.fugoidtime
-        elif manouvre=='ap_roll':
-            start=matlab.ap_rollstart
-            time=matlab.ap_rolltime
-        elif manouvre=='sh_period':
-            start=matlab.sh_periodstart
-            time=matlab.sh_periodtime
-        elif manouvre=='dutchR':
-            start=matlab.dutchRstart
-            time=matlab.dutchRtime
-        elif manouvre=='dutchR_damp':
-            start=matlab.dutchR_dampstart
-            time=matlab.dutchR_damptime
-        elif manouvre=='spiral':
-            start=matlab.spiralstart
-            time=matlab.spiraltime
-        else:
-            print ('invalid manouvre')
-            start=0
-        Xs = matlab.Xs(manouvre)
+        start,time = matlab.gettimes(manouvre)
+        
+        Xs, vt0 = matlab.Xs(manouvre) #get Xs with corresponding vtas in m/s
         de = matlab.getdata_at_time('delta_e',start,start+time)
-        vt0 = matlab.getdata_at_time('Dadc1_tas',start,start+0.2)[0]
         u_hat=np.array(Xs[0][0])
         AoA=np.array(Xs[1][0])
         Theta=np.array(Xs[2][0])
-        q=np.array(Xs[3][0])
+        qcoverv=np.array(Xs[3][0])
         for t in range(1,len(self.t_run(time))):
             U_s = de[t]
             if __name__ == "__main__":
@@ -159,15 +139,47 @@ class Numerical_Model:
             u_hat = np.vstack((u_hat,Xs[0][0]))
             AoA = np.vstack((AoA,Xs[1][0]))
             Theta = np.vstack((Theta,Xs[2][0]))
-            q = np.vstack((q,Xs[3][0]))
+            qcoverv = np.vstack((qcoverv,Xs[3][0]))
         u_hat = np.array(u_hat)
         AoA = np.array(AoA)
         Theta = np.array(Theta)
-        q = np.array(q)
+        q = np.array(qcoverv)/p.c*vt0
         return u_hat, AoA, Theta, q
-
-
+    
+    
+    
+    
+    def not_symmetric_interpolate(self,manouvre):
+        start,time = matlab.gettimes(manouvre)
         
+        Xa = matlab.Xa(manouvre)
+        da = matlab.getdata_at_time('delta_a',start,start+time)
+        dr = matlab.getdata_at_time('delta_r',start,start+time)
+        vt0 = matlab.getdata_at_time('Dadc1_tas',start,start+0.2)[0]
+        Beta=np.array(Xa[0][0])
+        Phi=np.array(Xa[1][0])
+        pbover2v=np.array(Xa[2][0])
+        rbover2v=np.array(Xa[3][0])
+        for t in range(1,len(self.t_run(time))):
+            U_a = np.transpose(np.matrix(da[t],dr[t]))
+            if __name__ == "__main__":
+                print ('8======D')#,Xa)
+            DX_a = np.dot(self.Aa(vt0),Xa) + np.transpose(self.Ba(vt0)*U_a)
+            Xa = Xa + DX_a*self.delta_t
+            Beta = np.vstack((Beta,Xa[0][0]))
+            Phi = np.vstack((Phi,Xa[1][0]))
+            pbover2v = np.vstack((pbover2v,Xa[2][0]))
+            rbover2v = np.vstack((rbover2v,Xa[3][0]))
+        Beta = np.array(u_hat)
+        Phi = np.array(AoA)
+        pbover2v = np.array(Theta)
+        rbover2v = np.array(q)
+        return Beta, Phi, pbover2v, rbover2v
+
+
+
+
+
         
 if __name__ == "__main__":
     model = Numerical_Model()
@@ -236,8 +248,8 @@ if __name__ == "__main__":
 
 #    print (model.interpolate(7,'spiral'))
 
-    output = model.interpolate(7,'spiral')
+    output = model.not_symmetric_interpolate('spiral')
     if __name__ == "__main__":
-            print ('8======D~~')
+            print ('8======D~~~~')
     print (output)
 

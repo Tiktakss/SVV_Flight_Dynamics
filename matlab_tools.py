@@ -14,11 +14,11 @@ class Matlab_Tools:
     def __init__(self,filename):
         self.lol = 0 #not used
         self.filename = filename#'FTISxprt-20190305_124649.mat'
-        self.fugoidstart = 60*49 +4
+        self.fugoidstart = 60*49 +1
         self.fugoidtime = 159
         self.ap_rollstart = 60*53 + 5
         self.ap_rolltime = 5
-        self.sh_periodstart = 60*54
+        self.sh_periodstart = 60*54 + 0.9
         self.sh_periodtime = 4
         self.dutchRstart = 60*56+2
         self.dutchRtime = 18
@@ -66,32 +66,53 @@ class Matlab_Tools:
             data=np.column_stack((self.getdata_at_time(self.parameters[i],start_time_in_seconds,stop_time_in_seconds),data))
         return data
     
-    def Xs(self,manouvre):
+    def gettimes(self,manouvre):
         if manouvre == 'fugoid':
             start=self.fugoidstart
+            time=self.fugoidtime
         elif manouvre=='ap_roll':
             start=self.ap_rollstart
+            time=self.ap_rolltime
         elif manouvre=='sh_period':
             start=self.sh_periodstart
+            time=self.sh_periodtime
         elif manouvre=='dutchR':
             start=self.dutchRstart
+            time=self.dutchRtime
         elif manouvre=='dutchR_damp':
             start=self.dutchR_dampstart
+            time=self.dutchR_damptime
         elif manouvre=='spiral':
             start=self.spiralstart
+            time=self.spiraltime
         else:
-            print ('invalid manouvre')
-            start=0
+            print ('invalid manouvre \n\n\n\n\n\n\n\n sucker')
+            start,time=0,0
+        return start, time
+    
+    def Xs(self,manouvre):
+        start,time = self.gettimes(manouvre)
         
         dt= 0.2
         uhat=0 #dimensionlessvelocity vt true airspeed vt0 stationary airspead
-        aoa=self.getdata_at_time('vane_AOA',start,start+dt)[0]
-        theta=self.getdata_at_time('vane_AOA',start,start+dt)[0]
-        qcoverv=self.getdata_at_time('Ahrs1_bPitchRate',start,start+dt)[0]*p.c/self.getdata_at_time('Dadc1_tas',start,start+dt)[0]#q is pitchrate
+        aoa=self.getdata_at_time('vane_AOA',start,start+dt)[0]/180*np.pi
+        theta=self.getdata_at_time('Ahrs1_Pitch',start,start+dt)[0]/180*np.pi
+        vtas = self.getdata_at_time('Dadc1_tas',start,start+dt)[0]*0.51 #knots -> m/s
+        qcoverv=self.getdata_at_time('Ahrs1_bPitchRate',start,start+dt)[0]/180*np.pi*p.c/vtas#q is pitchrate
         X_s=np.matrix([[uhat],[aoa],[theta],[qcoverv]])
-        return X_s
+        return X_s, vtas
 
-
+    def Xa(self,manouvre):
+        start,time = self.gettimes(manouvre)
+        
+        dt= 0.2
+        Beta= 0 #assume no sideslip at intitial condition
+        Phi=self.getdata_at_time('Ahrs1_Roll',start,start+dt)[0]
+        vtas = self.getdata_at_time('Dadc1_tas',start,start+dt)[0]*0.51 #knots -> m/s
+        pbover2v=self.getdata_at_time('Ahrs1_bRollRate',start,start+dt)[0]*p.b/(2*vtas)
+        rbover2v=self.getdata_at_time('Ahrs1_bYawRate',start,start+dt)[0]*p.b/(2*vtas)
+        X_a=np.matrix([[Beta],[Phi],[pbover2v],[rbover2v]])
+        return X_a
 
 
 """
