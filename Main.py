@@ -28,9 +28,9 @@ nummodel = Numerical_Model()
 
 #Phugoid
 fugoiddata = matlab.getdata_at_time('Ahrs1_Pitch',matlab.fugoidstart,matlab.fugoidstart+matlab.fugoidtime)
-fugoiddata = fugoiddata - fugoiddata[0] #correct for stable flight
+#fugoiddata = fugoiddata - fugoiddata[0] #correct for stable flight
 fugoidtime = matlab.getdata_at_time('time',matlab.fugoidstart,matlab.fugoidstart+matlab.fugoidtime)/60
-fugoid = nummodel.symmetric_interpolate('fugoid')[2]#/np.pi*180 #pitch 'theta'
+fugoid = nummodel.symmetric_interpolate('fugoid')[2]/np.pi*180#/np.pi*180 #pitch 'theta'
 
 
 #Aperiodic roll
@@ -40,7 +40,7 @@ ap_rolltime = matlab.getdata_at_time('time',matlab.ap_rollstart,matlab.ap_rollst
 #Short period
 sh_perioddata = matlab.getdata_at_time('Ahrs1_bPitchRate',matlab.sh_periodstart,matlab.sh_periodstart+matlab.sh_periodtime)
 sh_periodtime = matlab.getdata_at_time('time',matlab.sh_periodstart,matlab.sh_periodstart+matlab.sh_periodtime)/60
-sh_period = nummodel.symmetric_interpolate('sh_period')[3]#/np.pi*180 #pitch 'q'
+sh_period = nummodel.symmetric_interpolate('sh_period')[3]/np.pi*180#/np.pi*180 #pitch 'q'
 
 #Dutch roll undamped
 dutchRdata = matlab.getdata_at_time('Ahrs1_bRollRate',matlab.dutchRstart,matlab.dutchRstart+matlab.dutchRtime)/180*np.pi
