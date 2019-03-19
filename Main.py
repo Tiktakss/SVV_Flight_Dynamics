@@ -23,6 +23,8 @@ from excel_tools import import_excel
 excel = import_excel('./Post_Flight_Datasheet_03_05_V3.xlsx')
 from matlab_tools import Matlab_Tools
 matlab = Matlab_Tools('FTISxprt-20190305_124649.mat')
+from numerical_model import Numerical_Model
+nummodel = Numerical_Model()
 
 
 #plotting nice stuff
@@ -33,13 +35,16 @@ matlab = Matlab_Tools('FTISxprt-20190305_124649.mat')
 #fugoidstart = 60*49
 #fugoidtime = 159
 
-fugoiddata = matlab.getdata_at_time('Dadc1_bcAlt',matlab.fugoidstart,matlab.fugoidstart+matlab.fugoidtime)*0.3048
+fugoiddata = matlab.getdata_at_time('Ahrs1_Pitch',matlab.fugoidstart,matlab.fugoidstart+matlab.fugoidtime)/180*np.pi
+fugoiddata = fugoiddata - fugoiddata[0]
 fugoidtime = matlab.getdata_at_time('time',matlab.fugoidstart,matlab.fugoidstart+matlab.fugoidtime)/60
+fugoid = nummodel('fugoid')
 
 plt.figure(1)
 plt.plot(fugoidtime,fugoiddata)
+plt.plot(fugoidtime,fugoid)
 plt.xlabel('time [min]')
-plt.ylabel('height [m]')
+plt.ylabel('pitch [rad]')
 
 ### ap_roll
 #ap_rollstart = 60*53 + 5
