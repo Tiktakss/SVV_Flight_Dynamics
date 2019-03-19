@@ -112,7 +112,7 @@ class Matlab_Tools:
         pbover2v=self.getdata_at_time('Ahrs1_bRollRate',start,start+dt)[0]*p.b/(2*vtas)
         rbover2v=self.getdata_at_time('Ahrs1_bYawRate',start,start+dt)[0]*p.b/(2*vtas)
         X_a=np.matrix([[Beta],[Phi],[pbover2v],[rbover2v]])
-        return X_a
+        return np.transpose(X_a)
 
 
 """

@@ -156,14 +156,16 @@ class Numerical_Model:
         da = matlab.getdata_at_time('delta_a',start,start+time)
         dr = matlab.getdata_at_time('delta_r',start,start+time)
         vt0 = matlab.getdata_at_time('Dadc1_tas',start,start+0.2)[0]
-        Beta=np.array(Xa[0][0])
-        Phi=np.array(Xa[1][0])
-        pbover2v=np.array(Xa[2][0])
-        rbover2v=np.array(Xa[3][0])
+        Beta=np.array(Xa)[0][0]
+        Phi=np.array(Xa)[0][1]
+        pbover2v=np.array(Xa)[0][2]
+        rbover2v=np.array(Xa)[0][3]
         for t in range(1,len(self.t_run(time))):
             U_a = np.transpose(np.matrix(da[t],dr[t]))
             if __name__ == "__main__":
                 print ('8======D')#,Xa)
+            print(self.Aa(vt0).shape)
+            print(Xa.shape)
             DX_a = np.dot(self.Aa(vt0),Xa) + np.transpose(self.Ba(vt0)*U_a)
             Xa = Xa + DX_a*self.delta_t
             Beta = np.vstack((Beta,Xa[0][0]))
