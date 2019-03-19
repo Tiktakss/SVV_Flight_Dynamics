@@ -92,7 +92,30 @@ class Matlab_Tools:
         X_s=np.matrix([[uhat],[aoa],[theta],[qcoverv]])
         return X_s, vtas
 
-
+    def Xa(self,manouvre):
+        if manouvre == 'fugoid':
+            start=self.fugoidstart
+        elif manouvre=='ap_roll':
+            start=self.ap_rollstart
+        elif manouvre=='sh_period':
+            start=self.sh_periodstart
+        elif manouvre=='dutchR':
+            start=self.dutchRstart
+        elif manouvre=='dutchR_damp':
+            start=self.dutchR_dampstart
+        elif manouvre=='spiral':
+            start=self.spiralstart
+        else:
+            print ('invalid manouvre')
+            start=0
+        
+        dt= 0.2
+        Beta=self.getdata_at_time('Fms1_trueHeading',start,start+dt)[0]
+        Phi=self.getdata_at_time('vane_AOA',start,start+dt)[0]
+        pbover2v=self.getdata_at_time('vane_AOA',start,start+dt)[0]
+        rbover2v=self.getdata_at_time('Ahrs1_bPitchRate',start,start+dt)[0]*p.c/self.getdata_at_time('Dadc1_tas',start,start+dt)[0]#q is pitchrate
+        X_a=np.matrix([[Beta],[Phi],[pbover2v],[rbover2v]])
+        return X_a
 
 
 """
