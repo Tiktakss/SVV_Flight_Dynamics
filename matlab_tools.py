@@ -14,7 +14,7 @@ class Matlab_Tools:
     def __init__(self,filename):
         self.lol = 0 #not used
         self.filename = filename#'FTISxprt-20190305_124649.mat'
-        self.fugoidstart = 60*49 +1
+        self.fugoidstart = 60*49 
         self.fugoidtime = 159
         self.ap_rollstart = 60*53 + 5
         self.ap_rolltime = 5
@@ -129,6 +129,12 @@ if __name__ == "__main__":
 #    alldata=tools.getalldata('FTISxprt-20180305_124437.mat')
     outputall=tools.getalldata_at_time(10,20)
     output=tools.getdata_at_time('time',10,20)
-    print(output)
-    print(outputall)
+    #print(output)
+    #print(outputall)
+    Xs = tools.Xs('sh_period')
+    Xs[0][3] = Xs[0][3]/p.c*Xs[1]/np.pi*180
+    print (Xs[0][3])
+    start, time = tools.gettimes('sh_period')
+    data = tools.getdata_at_time('Ahrs1_bPitchRate',start,start+time)
+    print (data)
     
