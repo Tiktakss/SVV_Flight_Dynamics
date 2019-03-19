@@ -36,6 +36,9 @@ class Aero_Tools:
     def ias_to_tas(self, h, v_ias):
         return v_ias * np.sqrt(self.rho0 / self.rho_alt(h))
     
+    def calc_pressure(self, h):
+        return self.p0*(1 + (self.lapse*h)/self.T0)**(self.g0/(self.lapse*self.R))
+    
     def calc_mach(self, h, v_cal): #h[m] and v_cal[m/s] speed the pilot reads 
         p = self.p0*(1 + (self.lapse*h)/self.T0)**(self.g0/(self.lapse*self.R))
         M = sqrt((2.0/(self.gamma -1.0))*((1.0 \
@@ -44,6 +47,9 @@ class Aero_Tools:
                     -1.0))-1.0))**((self.gamma \
             - 1.0)/self.gamma)-1.0))
         return M
+    
+    def calc_temp(self, Tm , M ):
+        return Tm/(1 + M*M*(self.gamma-1))
     
     def calc_re(self, rho, speed, length):
         return (rho * speed * length)/(self.mu)
