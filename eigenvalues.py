@@ -14,11 +14,16 @@ class EigenV:
         D = p.Cmu * (p.CXa * (p.CZq + 2*p.muc) - p.CZ0 * (p.CZadot - 2*p.muc)) - p.Cma * (2*p.muc * p.CX0 + p.CXu * (p.CZq + 2*p.muc)) \
         + p.Cmadot * (p.CX0 * p.CXu - p.CZ0 * p.CZu) + p.Cmq * (p.CXu * p.CZa - p.CZu * p.CXa)
         E = -p.Cmu * (p.CX0 * p.CXa + p.CZ0 * p.CZa) + p.Cma * (p.CX0 * p.CXu + p.CZ0 * p.CZu)
-        return [E,D,C,B,A]#[A,B,C,D,E]
+        return [A,B,C,D,E]
+        #return [E,D,C,B,A]
 
+    def half_time(self, xi, v):
+        return np.log(0.5)*p.c/(xi * v)
+    
 if __name__ == "__main__":
     eigen = EigenV()
     e=eigen.poly()
-    roots = np.polynomial.polynomial.polyroots(e)
-    print(e)
+    roots = np.roots(e)
+    #print(e)
     print(roots)
+    print(eigen.half_time(np.real(roots),100))
