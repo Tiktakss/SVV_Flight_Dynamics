@@ -146,22 +146,27 @@ class Numerical_Model:
         Xs = matlab.Xs(manouvre)
         de = matlab.getdata_at_time('delta_e',start,start+time)
         vt0 = matlab.getdata_at_time('Dadc1_tas',start,start+0.2)[0]
-        u_hat=np.matrix(Xs[0][0])
-        AoA=Xs[1][0]
-        Theta=Xs[2][0]
-        q=Xs[3][0]
+        u_hat=np.array(Xs[0][0])
+        AoA=np.array(Xs[1][0])
+        Theta=np.array(Xs[2][0])
+        q=np.array(Xs[3][0])
         for t in range(1,len(self.t_run(time))):
             U_s = de[t]
-            print ('8======D')
+            if __name__ == "__main__":
+                print ('8======D')#,Xs)
             DX_s = np.dot(self.As(vt0),Xs) + np.transpose(self.Bs(vt0)*U_s)
             Xs = Xs + DX_s*self.delta_t
-            np.vstack((u_hat,Xs[0][0]))
-            np.vstack((AoA,Xs[1][0]))
-            np.vstack((Theta,Xs[2][0]))
-            np.vstack((q,Xs[3][0]))
-        print ('8======D~~~~')
-        return u_hat, AoA, Theta, q
-
+            u_hat = np.vstack((u_hat,Xs[0][0]))
+            AoA = np.vstack((AoA,Xs[1][0]))
+            Theta = np.vstack((Theta,Xs[2][0]))
+            q = np.vstack((q,Xs[3][0]))
+        u_hat = np.array(u_hat)
+        if __name__ == "__main__":
+            print ('8======D~~')
+        #for t in range(len(u_hat)):
+         #   pitchrat
+        pitchrate = np.array([(u_hat[i+1]-u_hat[i])/self.delta_t for i in range(len(u_hat)-1)])
+        return u_hat, AoA, Theta, q, pitchrate
 
 
         
@@ -230,4 +235,9 @@ if __name__ == "__main__":
 #    q = model.Qs()
 #    print(q)
 #    print(np.linalg.eig(q)[0])
+
 #    print (model.interpolate(7,'spiral'))
+
+    output = model.interpolate(7,'spiral')
+    print (output)
+
