@@ -2,14 +2,19 @@ import numpy as np
 import Cit_par as p
 from aero_tools import Aero_Tools
 from real_analytical_model import Analytical_Model
+<<<<<<< HEAD
+from matlab_tools import Matlab_Tools
+matlab = Matlab_Tools('FTISxprt-20190305_124649.mat')
+=======
 
+>>>>>>> bf20d127d9adada59eda61c8f7918fa45a2d39fd
 #from control.matlab import * 
 
 class Numerical_Model:
     def __init__(self):
         self.tools = Aero_Tools()
         self.amod = Analytical_Model()
-        self.delta_t = 0.01
+        self.delta_t = 0.1
         
         
     def v_dimless(self, v_t, v_t0):
@@ -115,19 +120,44 @@ class Numerical_Model:
         return np.arange(0,T,self.delta_t)
     
     def interpolate(self,T,manouvre):
-        Xs = matlab.manouvre(manouvre)
-        u_hat = np.array([])
-        AoA = np.array([])
-        Theta = np.array([])
-        q = np.array([])
-        for t in range(len(self.t_run(T))):
-            np.append(u_hat,self.Xs[0,0],axis=0)
-            np.append(AoA,self.Xs[1,0],axis=0)
-            np.append(Theta,self.Xs[2,0],axis=0)
-            np.append(q,self.Xs[3,0],axis=0)
-            U_s = de_interp[t]
-            DX_s = self.As*Xs + self.Bs*U_s
-            Xs += DX_s*self.delta_t
+        if manouvre == 'fugoid':
+            start=matlab.fugoidstart
+            time=matlab.fugoidtime
+        elif manouvre=='ap_roll':
+            start=matlab.ap_rollstart
+            time=matlab.ap_rolltime
+        elif manouvre=='sh_period':
+            start=matlab.sh_periodstart
+            time=matlab.sh_periodtime
+        elif manouvre=='dutchR':
+            start=matlab.dutchRstart
+            time=matlab.dutchRtime
+        elif manouvre=='dutchR_damp':
+            start=matlab.dutchR_dampstart
+            time=matlab.dutchR_damptime
+        elif manouvre=='spiral':
+            start=matlab.spiralstart
+            time=matlab.spiraltime
+        else:
+            print ('invalid manouvre')
+            start=0
+        Xs = matlab.Xs(manouvre)
+        de = matlab.getdata_at_time('delta_e',start,start+time)
+        vt0 = matlab.getdata_at_time('Dadc1_tas',start,start+0.2)[0]
+        u_hat=np.matrix(Xs[0][0])
+        AoA=Xs[1][0]
+        Theta=Xs[2][0]
+        q=Xs[3][0]
+        for t in range(1,len(self.t_run(time))):
+            U_s = de[t]
+            print ('8======D')
+            DX_s = np.dot(self.As(vt0),Xs) + np.transpose(self.Bs(vt0)*U_s)
+            Xs = Xs + DX_s*self.delta_t
+            np.vstack((u_hat,Xs[0][0]))
+            np.vstack((AoA,Xs[1][0]))
+            np.vstack((Theta,Xs[2][0]))
+            np.vstack((q,Xs[3][0]))
+        print ('8======D~~~~')
         return u_hat, AoA, Theta, q
 
 
@@ -200,4 +230,4 @@ if __name__ == "__main__":
 #    q = model.Qs()
 #    print(q)
 #    print(np.linalg.eig(q)[0])
-
+    print (model.interpolate(7,'spiral'))
