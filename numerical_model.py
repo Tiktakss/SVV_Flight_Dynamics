@@ -248,7 +248,7 @@ if __name__ == "__main__":
 
 #    print (model.interpolate(7,'spiral'))
 
-    output = model.symmetric_interpolate('spiral')
+    output = model.not_symmetric_interpolate('spiral')
     if __name__ == "__main__":
             print ('8======D~~~~')
     print (output)

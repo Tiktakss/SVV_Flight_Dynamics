@@ -56,8 +56,12 @@ Center_gravity = np.zeros(len(data)+len(data_trim_curve)+len(data_cg_shift_data)
 A = par.b*par.b / par.S
 #Create emoty lists for plots
 C_l = [] #lift coefficient
-C_d = [] #drag coefficient
 alpha = [] #angle of attack
+pressure = [] #altitude pressure
+Mach = [] #Mach number
+diff_temp = [] #difference between ISA and calcuated temp
+ffl = [] #fuel flow right
+ffr = [] #fuel flow left
 
 #Create plots
 data_lift_curve = import_excel.Cl_Cd_data(excel)
@@ -77,12 +81,29 @@ for i in range(len(data)):
     lift = (2*weight_n)/(density*par.S*speed_ms**2) #N
     C_l.append(lift)
     
-    drag = par.CD0 +(lift**2)/(pi*A*par.e)
-    C_d.append(drag)
-    
     angle = row_lift[5]
     alpha.append(angle)
+    fuel_left = row_lift[6]
+    fuel_right = row_lift[7]
+    ffl.append(fuel_left)
+    ffr.append(fuel_right)
     
+    pres = aero.calc_pressure(height_m)
+    pressure.append(pres)
+    
+    M = aero.calc_mach(height_m, speed_ms)
+    Mach.append(M)
+    
+    temp = aero.calc_temp(row_lift[9]-273.15, M)
+    temp_ISA = aero.T_alt(height_m)
+    diff = temp - temp_ISA
+    diff_temp.append(diff)
+
+print(pressure)
+print(Mach)
+print(diff_temp)
+print(ffl)
+print(ffr)    
 
 #CG shift due to fuel flow
 for i in range(len(data)):
@@ -135,51 +156,68 @@ for i in range(len(data_cg_shift_data)):
     C_n = (2*weight_n)/(density*par.S*speed_ms**2) #N
 
 
-#Calculation for Cm_delta and Cm_alpha
-slope = (max(de)-min(de))/(min(AOA)-max(AOA))
+#Calculation for coefficients
+slope = (np.radians(max(de))-np.radians(min(de)))/(np.radians(min(AOA))-np.radians(max(AOA)))
 #Cm_delta = -C_l[5]*(Center_gravity[13]-Center_gravity[12])/((np.radians(de[7])-np.radians(de[6]))*205.69)
 Cm_delta = -1/(np.radians(de[-1])-np.radians(de[-2]))*C_n*(Center_gravity[-1]-Center_gravity[-2])/(par.c*100)
 Cm_alpha = -Cm_delta*slope
+Cl_alpha = (max(C_l)-min(C_l))/(np.radians(max(alpha))-np.radians(min(alpha)))
 
-print(Cm_delta, Cm_alpha)
+#print("Cl_alpha =" ,Cl_alpha)
+#print("Cm_delta =" ,Cm_delta)
+#print("Cm_alpha =" ,Cm_alpha)
 
 
-#Plotting
-plt.subplot(221)
-plt.plot(Time,Center_gravity, 'ro')
-plt.title("Center of Gravity")
-plt.ylabel("Distance from nose[cm]")
-plt.xlabel("Time[min]")
 
-plt.subplot(222)
-plt.scatter(AOA[:6],de[:6])
-plt.title("Elevator trim curve")
-plt.ylabel("$\delta_e[deg]$")
-plt.xlabel("$\\alpha[deg]$")
-
-plt.subplot(223)
-plt.scatter(AOA[:6],Fe[:6])
-plt.title("Control force curve")
-plt.ylabel("$F_e$[N]")
-plt.xlabel("$\\alpha[deg]$")
-plt.show()
-
-#Plot C curves
-plt.figure()
-plt.subplot(121)
-plt.plot(C_d, C_l, "ro")
-plt.title('Lift coefficient vs Drag coefficient')
-plt.xlabel('Drag coefficient [-]')
-plt.ylabel('Lift coefficient [-]')
-plt.grid(True)
-
-plt.subplot(122)
-plt.plot(alpha, C_l , "ro")
-plt.title('Lift Curve')
-plt.xlabel('Angle of Attack [deg]')
-plt.ylabel('Lift coefficient [-]')
-plt.grid(True)
-plt.show()
+##Plotting
+#plt.subplot(221)
+#plt.plot(Time,Center_gravity, 'ro')
+#plt.title("Center of Gravity")
+#plt.ylabel("Distance from nose[cm]")
+#plt.xlabel("Time[min]")
+#plt.grid(True)
+#
+#plt.subplot(222)
+#plt.scatter(AOA[:6],de[:6])
+#plt.title("Elevator trim curve")
+#plt.ylabel("$\delta_e[deg]$")
+#plt.xlabel("$\\alpha[deg]$")
+#plt.grid(True)
+#
+#plt.subplot(223)
+#plt.scatter(AOA[:6],Fe[:6])
+#plt.title("Control force curve")
+#plt.ylabel("$F_e$[N]")
+#plt.xlabel("$\\alpha[deg]$")
+#plt.grid(True)
+#plt.show()
+#
+##Plot C curves
+#plt.figure()
+#plt.subplot(121)
+#plt.plot(C_d, C_l, "ro", label ="Flight Data")
+#plt.title('Lift coefficient vs Drag coefficient')
+#plt.xlabel('Drag coefficient [-]')
+#plt.ylabel('Lift coefficient [-]')
+#plt.grid(True)
+#
+##z2 = np.polyfit(C_d, C_l, 5)
+##p2= np.poly1d(z2)
+##plt.plot(C_d,p2(C_d),"r--", label="Trendline")
+#plt.legend()
+#
+#plt.subplot(122)
+#plt.plot(alpha, C_l , "ro", label ="Flight Data")
+#plt.title('Lift Curve')
+#plt.xlabel('Angle of Attack [deg]')
+#plt.ylabel('Lift coefficient [-]')
+#plt.grid(True)
+#
+#z1 = np.polyfit(alpha, C_l, 1)
+#p1 = np.poly1d(z1)
+#plt.plot(alpha,p1(alpha),"r--", label="Trendline")
+#plt.legend()
+#plt.show()
 
 
 

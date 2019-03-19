@@ -106,10 +106,11 @@ class Matlab_Tools:
         start,time = self.gettimes(manouvre)
         
         dt= 0.2
-        Beta=self.getdata_at_time('Fms1_trueHeading',start,start+dt)[0]
-        Phi=self.getdata_at_time('vane_AOA',start,start+dt)[0]
-        pbover2v=self.getdata_at_time('vane_AOA',start,start+dt)[0]
-        rbover2v=self.getdata_at_time('Ahrs1_bPitchRate',start,start+dt)[0]*p.c/self.getdata_at_time('Dadc1_tas',start,start+dt)[0]#q is pitchrate
+        Beta= 0 #assume no sideslip at intitial condition
+        Phi=self.getdata_at_time('Ahrs1_Roll',start,start+dt)[0]
+        vtas = self.getdata_at_time('Dadc1_tas',start,start+dt)[0]*0.51 #knots -> m/s
+        pbover2v=self.getdata_at_time('Ahrs1_bRollRate',start,start+dt)[0]*p.b/(2*vtas)
+        rbover2v=self.getdata_at_time('Ahrs1_bYawRate',start,start+dt)[0]*p.b/(2*vtas)
         X_a=np.matrix([[Beta],[Phi],[pbover2v],[rbover2v]])
         return X_a
 
