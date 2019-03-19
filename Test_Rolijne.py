@@ -136,7 +136,7 @@ for i in range(len(data_cg_shift_data)):
 
 
 #Calculation for Cm_delta and Cm_alpha
-slope = (max(de)-min(de))/(max(AOA)-min(AOA))
+slope = (max(de)-min(de))/(min(AOA)-max(AOA))
 #Cm_delta = -C_l[5]*(Center_gravity[13]-Center_gravity[12])/((np.radians(de[7])-np.radians(de[6]))*205.69)
 Cm_delta = -1/(np.radians(de[-1])-np.radians(de[-2]))*C_n*(Center_gravity[-1]-Center_gravity[-2])/(par.c*100)
 Cm_alpha = -Cm_delta*slope
@@ -164,22 +164,22 @@ plt.ylabel("$F_e$[N]")
 plt.xlabel("$\\alpha[deg]$")
 plt.show()
 
-##Plot C curves
-#plt.figure()
-#plt.subplot(121)
-#plt.plot(C_d, C_l, "ro")
-#plt.title('Lift coefficient vs Drag coefficient')
-#plt.xlabel('Drag coefficient [-]')
-#plt.ylabel('Lift coefficient [-]')
-#plt.grid(True)
-#
-#plt.subplot(122)
-#plt.plot(alpha, C_l , "ro")
-#plt.title('Lift Curve')
-#plt.xlabel('Angle of Attack [deg]')
-#plt.ylabel('Lift coefficient [-]')
-#plt.grid(True)
-#plt.show()
+#Plot C curves
+plt.figure()
+plt.subplot(121)
+plt.plot(C_d, C_l, "ro")
+plt.title('Lift coefficient vs Drag coefficient')
+plt.xlabel('Drag coefficient [-]')
+plt.ylabel('Lift coefficient [-]')
+plt.grid(True)
+
+plt.subplot(122)
+plt.plot(alpha, C_l , "ro")
+plt.title('Lift Curve')
+plt.xlabel('Angle of Attack [deg]')
+plt.ylabel('Lift coefficient [-]')
+plt.grid(True)
+plt.show()
 
 
 
