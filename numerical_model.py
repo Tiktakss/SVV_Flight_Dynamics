@@ -2,12 +2,9 @@ import numpy as np
 import Cit_par as p
 from aero_tools import Aero_Tools
 from real_analytical_model import Analytical_Model
-<<<<<<< HEAD
 from matlab_tools import Matlab_Tools
 matlab = Matlab_Tools('FTISxprt-20190305_124649.mat')
-=======
 
->>>>>>> bf20d127d9adada59eda61c8f7918fa45a2d39fd
 #from control.matlab import * 
 
 class Numerical_Model:
@@ -46,34 +43,45 @@ class Numerical_Model:
         return np.transpose(vect)
 
     def Ps(self, v_t0):
-        P1 = [-2 * p.muc * p.c / v_t0,      0,                                      0,              0]
-        P2 = [0,                            (p.CZadot - 2 * p.muc) * p.c / v_t0,    0,              0]
-        P3 = [0,                            0,                                      -p.c / v_t0,    0]
-        P4 = [0,                            p.Cmadot * p.c / v_t0,                  0,              -2 * p.muc * p.KY2 * p.c / v_t0]
-        #print(np.matrix((P1, P2, P3, P4)))
-        return np.matrix((P1, P2, P3, P4))
+        P1 = [-2 * p.muc * p.c / v_t0, 0,                                      0,              0]
+        P2 = [0,                       (p.CZadot - 2 * p.muc) * p.c / v_t0,    0,              0]
+        P3 = [0,                       0,                                      -p.c / v_t0,    0]
+        P4 = [0,                       p.Cmadot * p.c / v_t0,                  0,              -2 * p.muc * p.KY2 * (p.c / v_t0)**1]
+        P =  np.matrix((P1, P2, P3, P4))
+        #print(P)
+        return P
 
     def Qs(self, v_t0):
         Q1 = [-p.CXu,  -p.CXa,     -p.CZ0,     0]
         Q2 = [-p.CZu,  -p.CZa,     p.CX0,      -(p.CZq + 2 * p.muc)]
         Q3 = [0,       0,          0,          -1]
         Q4 = [-p.Cmu,  -p.Cma,     0,          -p.Cmq]
-        #print(np.matrix((Q1, Q2, Q3, Q4)))
-        return np.matrix((Q1, Q2, Q3, Q4))
+        Q = np.matrix((Q1, Q2, Q3, Q4))
+        #Q[:,-1] *= p.c/v_t0
+        #print(Q)
+        return Q
+    
+    def As(self, v_t0):
+        P_inv = np.linalg.inv(self.Ps(v_t0))
+        Q_mat = self.Qs(v_t0)
+        A = np.matmul(P_inv,Q_mat)
+        return A
+
+
 
 
     def Pa(self, v_t0):
-        P1 = [(p.CYbdot -2 * p.mub)*p.b/v_t0, 0, 0, 0]
-        P2 = [0, -0.5*p.b/v_t0, 0, 0]
-        P3 = [0, 0, -4 * p.mub * p.KX2 * p.b/v_t0, 4 * p.mub * p.KXZ * p.b/v_t0]
-        P4 = [p.Cnbdot * p.b/v_t0, 0, 4 * p.mub * p.KXZ * p.b/v_t0, -4 * p.mub * p.KZ2 * p.b/v_t0]
+        P1 = [(p.CYbdot -2 * p.mub)*p.b/v_t0,   0,              0,                              0]
+        P2 = [0,                                -0.5*p.b/v_t0,  0,                              0]
+        P3 = [0,                                0,              -4 * p.mub * p.KX2 * p.b/v_t0,  4 * p.mub * p.KXZ * p.b/v_t0]
+        P4 = [p.Cnbdot * p.b/v_t0,              0,              4 * p.mub * p.KXZ * p.b/v_t0,   -4 * p.mub * p.KZ2 * p.b/v_t0]
         return np.matrix((P1, P2, P3, P4))
     
     def Qa(self):
-        Q1 = [-p.CYb, -p.CL, -p.CYp, -(p.CYr - 4*p.mub)]
-        Q2 = [0, 0, -1, 0]
-        Q3 = [-p.Clb, 0, -p.Clp, -p.Clr]
-        Q4 = [-p.Cnb, 0, -p.Cnp, -p.Cnr]
+        Q1 = [-p.CYb,   -p.CL,  -p.CYp, -(p.CYr - 4*p.mub)]
+        Q2 = [0,        0,      -1,     0]
+        Q3 = [-p.Clb,   0,      -p.Clp, -p.Clr]
+        Q4 = [-p.Cnb,   0,      -p.Cnp, -p.Cnr]
         return np.matrix((Q1, Q2, Q3, Q4))
     
     def Ra(self):
@@ -82,12 +90,6 @@ class Numerical_Model:
         R3 = [-p.Clda, -p.Cldr]
         R4 = [-p.Cnda, -p.Cndr]
         return np.matrix((R1, R2, R3, R4))
-    
-    def As(self, v_t0):
-        P_inv = np.linalg.inv(self.Ps(v_t0))
-        Q_mat = self.Qs(v_t0)
-        A = np.matmul(P_inv,Q_mat)
-        return A
     
     def Bs(self, v_t0):
         P_inv = np.linalg.inv(self.Ps(v_t0))
@@ -144,22 +146,27 @@ class Numerical_Model:
         Xs = matlab.Xs(manouvre)
         de = matlab.getdata_at_time('delta_e',start,start+time)
         vt0 = matlab.getdata_at_time('Dadc1_tas',start,start+0.2)[0]
-        u_hat=np.matrix(Xs[0][0])
-        AoA=Xs[1][0]
-        Theta=Xs[2][0]
-        q=Xs[3][0]
+        u_hat=np.array(Xs[0][0])
+        AoA=np.array(Xs[1][0])
+        Theta=np.array(Xs[2][0])
+        q=np.array(Xs[3][0])
         for t in range(1,len(self.t_run(time))):
             U_s = de[t]
-            print ('8======D')
+            if __name__ == "__main__":
+                print ('8======D')#,Xs)
             DX_s = np.dot(self.As(vt0),Xs) + np.transpose(self.Bs(vt0)*U_s)
             Xs = Xs + DX_s*self.delta_t
-            np.vstack((u_hat,Xs[0][0]))
-            np.vstack((AoA,Xs[1][0]))
-            np.vstack((Theta,Xs[2][0]))
-            np.vstack((q,Xs[3][0]))
-        print ('8======D~~~~')
-        return u_hat, AoA, Theta, q
-
+            u_hat = np.vstack((u_hat,Xs[0][0]))
+            AoA = np.vstack((AoA,Xs[1][0]))
+            Theta = np.vstack((Theta,Xs[2][0]))
+            q = np.vstack((q,Xs[3][0]))
+        u_hat = np.array(u_hat)
+        if __name__ == "__main__":
+            print ('8======D~~')
+        #for t in range(len(u_hat)):
+         #   pitchrat
+        pitchrate = np.array([(u_hat[i+1]-u_hat[i])/self.delta_t for i in range(len(u_hat)-1)])
+        return u_hat, AoA, Theta, q, pitchrate
 
 
         
@@ -189,33 +196,31 @@ if __name__ == "__main__":
     #print(eig_a)
 
     v_ref = 100
-
+    
+    """
+    SYMMETRIC
+    """
+    print('SYMMETRIC')
     As_mat=model.As(v_ref)
-#    As_mat[:,0]*=1/v_ref
-#    As_mat[:,-1]*=p.c/v_ref
-    As_eig=np.linalg.eig(As_mat)[0] #* v_ref/p.c
-    
-    Aa_mat=model.Aa(v_ref)
-#    Aa_mat[:,-1]*=p.b*0.5/v_ref
-#    Aa_mat[:,-2]*=p.b*0.5/v_ref
-    Aa_eig=np.linalg.eig(Aa_mat)[0]
-    
+    As_eig=np.linalg.eig(As_mat)[0] * p.c/v_ref
+
     print(As_mat)
     print(As_eig)
     print(model.amod.half_time(np.real(As_eig),v_ref))
-#    print()
+    print()
 #    print(Aa_mat)
 #    print(Aa_eig)
 #    print(model.amod.half_time2(np.real(Aa_eig),v_ref))
+    """
+    ASYMMETRIC
+    """
+    print('ASYMMETRIC')
+    Aa_mat=model.Aa(v_ref)
+    Aa_eig=np.linalg.eig(Aa_mat)[0] * 0.5*p.b/v_ref
     
-    
-#    print(model.Ba(1))
-#    print()
-#    print(model.C())
-#    print(model.Ds())
-#    print(model.Da())
-    
-    
+    print(Aa_mat)
+    print(Aa_eig)
+    print(model.amod.half_time2(np.real(Aa_eig),v_ref))
     
     s_eigen = np.linalg.eig(model.As(v_ref))[0] / p.c
 #    print(model.amod.eigenv_short())
@@ -230,4 +235,9 @@ if __name__ == "__main__":
 #    q = model.Qs()
 #    print(q)
 #    print(np.linalg.eig(q)[0])
-    print (model.interpolate(7,'spiral'))
+
+#    print (model.interpolate(7,'spiral'))
+
+    output = model.interpolate(7,'spiral')
+    print (output)
+
