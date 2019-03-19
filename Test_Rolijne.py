@@ -64,17 +64,17 @@ data_lift_curve = import_excel.Cl_Cd_data(excel)
 for i in range(len(data)):
     row_lift = data_lift_curve[i]
     weight = total_weight - row_lift[8] #lbs
-    weight_kg = aero.lbs * weight
-    weight_n = weight_kg * aero.g0
+    weight_kg = aero.lbs * weight #kg
+    weight_n = weight_kg * aero.g0 #N
     
-    height = row_lift[3]
-    height_m = aero.ft_to_m(height)
-    density = aero.rho_alt(height_m)
+    height = row_lift[3] #ft
+    height_m = aero.ft_to_m(height) #m
+    density = aero.rho_alt(height_m) 
     
-    speed = row_lift[4]
-    speed_ms = aero.kts_to_ms(speed)
+    speed = row_lift[4] #kts
+    speed_ms = aero.kts_to_ms(speed) #ms
     
-    lift = (2*weight_n)/(density*par.S*speed_ms**2)
+    lift = (2*weight_n)/(density*par.S*speed_ms**2) #N
     C_l.append(lift)
     
     drag = par.CD0 +(lift**2)/(pi*A*par.e)
@@ -106,7 +106,6 @@ for i in range(len(data_trim_curve)):
     Fe[i] = row[8]
     V[i] = row[4]
 
-
 #After cg shifts
 for i in range(len(data_cg_shift_data)):
     row = data_cg_shift_data[i]
@@ -121,50 +120,66 @@ for i in range(len(data_cg_shift_data)):
     de[i+len(data_trim_curve)-1] = row[6]
     Fe[i+len(data_trim_curve)-1] = row[8]
     V[i+len(data_trim_curve)-1] = row[4]
+    
+    weight = total_weight #lbs
+    weight_kg = aero.lbs * weight #kg
+    weight_n = weight_kg * aero.g0 #N
+    
+    height = row_lift[3] #ft
+    height_m = aero.ft_to_m(height) #m
+    density = aero.rho_alt(height_m) 
+    
+    speed = row_lift[4] #kts
+    speed_ms = aero.kts_to_ms(speed) #ms
+    
+    C_n = (2*weight_n)/(density*par.S*speed_ms**2) #N
+
 
 #Calculation for Cm_delta and Cm_alpha
-slope = (de[3]-de[5])/(AOA[3]-AOA[5])
-#Cm_delta = -C_l[5]*(Center_gravity[13]-Center_gravity[12])/((de[7]-de[6])*205.69)
-#Cm_alpha = -Cm_delta*slope
-#print(Cm_alpha,Cm_delta)
-#print(Center_gravity[13]-Center_gravity[12])
+slope = (max(de)-min(de))/(max(AOA)-min(AOA))
+#Cm_delta = -C_l[5]*(Center_gravity[13]-Center_gravity[12])/((np.radians(de[7])-np.radians(de[6]))*205.69)
+Cm_delta = -1/(np.radians(de[-1])-np.radians(de[-2]))*C_n*(Center_gravity[-1]-Center_gravity[-2])/(par.c*100)
+Cm_alpha = -Cm_delta*slope
+
+print(Cm_delta, Cm_alpha)
+
 
 #Plotting
 plt.subplot(221)
-plt.plot(Time,Center_gravity)
+plt.plot(Time,Center_gravity, 'ro')
 plt.title("Center of Gravity")
 plt.ylabel("Distance from nose[cm]")
 plt.xlabel("Time[min]")
 
 plt.subplot(222)
-plt.scatter(AOA,de)
+plt.scatter(AOA[:6],de[:6])
 plt.title("Elevator trim curve")
 plt.ylabel("$\delta_e[deg]$")
 plt.xlabel("$\\alpha[deg]$")
 
 plt.subplot(223)
-plt.scatter(AOA,Fe)
+plt.scatter(AOA[:6],Fe[:6])
 plt.title("Control force curve")
 plt.ylabel("$F_e$[N]")
 plt.xlabel("$\\alpha[deg]$")
 plt.show()
 
-#Plot C curves
-plt.figure()
-plt.subplot(121)
-plt.plot(C_d, C_l, "ro")
-plt.title('Lift coefficient vs Drag coefficient')
-plt.xlabel('Drag coefficient [-]')
-plt.ylabel('Lift coefficient [-]')
-plt.grid(True)
-
-plt.subplot(122)
-plt.plot(alpha, C_l , "ro")
-plt.title('Lift Curve')
-plt.xlabel('Angle of Attack [-]')
-plt.ylabel('Lift coefficient [-]')
-plt.grid(True)
-plt.show()
+##Plot C curves
+#plt.figure()
+#plt.subplot(121)
+#plt.plot(C_d, C_l, "ro")
+#plt.title('Lift coefficient vs Drag coefficient')
+#plt.xlabel('Drag coefficient [-]')
+#plt.ylabel('Lift coefficient [-]')
+#plt.grid(True)
+#
+#plt.subplot(122)
+#plt.plot(alpha, C_l , "ro")
+#plt.title('Lift Curve')
+#plt.xlabel('Angle of Attack [deg]')
+#plt.ylabel('Lift coefficient [-]')
+#plt.grid(True)
+#plt.show()
 
 
 
