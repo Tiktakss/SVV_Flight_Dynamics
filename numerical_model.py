@@ -4,8 +4,8 @@ from aero_tools import Aero_Tools
 from real_analytical_model import Analytical_Model
 from matlab_tools import Matlab_Tools
 matlab = Matlab_Tools('FTISxprt-20190305_124649.mat')
-#from control.matlab import * 
-import scipy.signal as signal
+from control.matlab import * 
+#import scipy.signal as signal
 
 class Numerical_Model:
     def __init__(self):
@@ -95,7 +95,7 @@ class Numerical_Model:
         P_inv = np.linalg.inv(self.Ps(v_t0))
         delta_mat = self.elev_defl_mat()
         B = np.matmul(P_inv,delta_mat)
-        return B
+        return np.transpose(B)
     
     def Aa(self, v_t0):
         P_inv = np.linalg.inv(self.Pa(v_t0))
@@ -113,13 +113,33 @@ class Numerical_Model:
         return np.matrix(np.identity(4))
 
     def Ds(self):
-        return np.matrix(np.transpose(np.zeros(4)))
+        return np.matrix(np.zeros((4,1)))
 
     def Da(self):
         return np.matrix(np.zeros((4,2)))
     
     def t_run(self,T):
         return np.arange(0,T,self.delta_t)
+    
+    def symmetric_control(self,manouvre):
+        start,time = matlab.gettimes(manouvre)
+        
+        Xs, vt0 = matlab.Xs(manouvre) #get Xs with corresponding vtas in m/s
+        de = matlab.getdata_at_time('delta_e',start,start+time)
+        u_hat, AoA, Theta, qcoverv = np.array(Xs[:,0])
+        print (u_hat, AoA, Theta, qcoverv)
+        a = self.As(vt0)
+        b = self.Bs(vt0)
+        c = self.C()
+        d = self.Ds()
+        print (a,'\n\n',b)
+        ss = signal.StateSpace(a,b,c,d)
+        
+        u_hat = np.array(u_hat)
+        AoA = np.array(AoA)
+        Theta = np.array(Theta)
+        q = np.array(qcoverv)/p.c*vt0# make dimentional again
+        return u_hat, AoA, Theta, q
     
     def symmetric_interpolate(self,manouvre):
         start,time = matlab.gettimes(manouvre)
@@ -182,15 +202,32 @@ class Numerical_Model:
 
     def not_symmetric_control(self,manouvre):
         start,time = matlab.gettimes(manouvre)
-        
-        Xa, vtas = matlab.Xa(manouvre)
+        dt=0.1
+        Xa, vt0 = matlab.Xa(manouvre)
+        Xa=Xa[0]
         da = matlab.getdata_at_time('delta_a',start,start+time)
         dr = matlab.getdata_at_time('delta_r',start,start+time)
-        vt0 = matlab.getdata_at_time('Dadc1_tas',start,start+0.2)[0]
+        a=self.Aa(vt0)
+        b=self.Ba(vt0)
+        c=self.C()
+        d=self.Da()
+        sys=ss(a,b,c,d)
+        print (ss)
+        print(Xa)
+        response, T=step(ss,X0=Xa)
+        print(response)
+        
+        
+        
+        
+        
+        
+        
         Beta=np.array(Xa)[0]
         Phi=np.array(Xa)[1]
         pbover2v=np.array(Xa)[2]
         rbover2v=np.array(Xa)[3]
+        '''
         for t in range(1,len(self.t_run(time))):
             U_a = np.transpose(np.matrix([da[t],dr[t]]))
             if __name__ == "__main__":
@@ -200,7 +237,7 @@ class Numerical_Model:
             Beta = np.vstack((Beta,Xa[0]))
             Phi = np.vstack((Phi,Xa[1]))
             pbover2v = np.vstack((pbover2v,Xa[2]))
-            rbover2v = np.vstack((rbover2v,Xa[3]))
+            rbover2v = np.vstack((rbover2v,Xa[3]))'''
         Beta = np.array(Beta)
         Phi = np.array(Phi)
         pbover2v = np.array(pbover2v)
@@ -236,27 +273,27 @@ if __name__ == "__main__":
     """
     SYMMETRIC
     """
-    print('SYMMETRIC')
-    As_mat=model.As(v_ref)
-    As_eig=np.linalg.eig(As_mat)[0] * p.c/v_ref
-
-    print(As_mat)
-    print(As_eig)
-    print(model.amod.half_time(np.real(As_eig),v_ref))
-    print()
+#    print('SYMMETRIC')
+#    As_mat=model.As(v_ref)
+#    As_eig=np.linalg.eig(As_mat)[0] * p.c/v_ref
+#
+#    print(As_mat)
+#    print(As_eig)
+#    print(model.amod.half_time(np.real(As_eig),v_ref))
+#    print()
 #    print(Aa_mat)
 #    print(Aa_eig)
 #    print(model.amod.half_time2(np.real(Aa_eig),v_ref))
     """
     ASYMMETRIC
     """
-    print('ASYMMETRIC')
-    Aa_mat=model.Aa(v_ref)
-    Aa_eig=np.linalg.eig(Aa_mat)[0] * 0.5*p.b/v_ref
+    #print('ASYMMETRIC')
+    #Aa_mat=model.Aa(v_ref)
+    #Aa_eig=np.linalg.eig(Aa_mat)[0] * 0.5*p.b/v_ref
     
-    print(Aa_mat)
-    print(Aa_eig)
-    print(model.amod.half_time2(np.real(Aa_eig),v_ref))
+    #print(Aa_mat)
+    #print(Aa_eig)
+    #print(model.amod.half_time2(np.real(Aa_eig),v_ref))
     
     s_eigen = np.linalg.eig(model.As(v_ref))[0] / p.c
 #    print(model.amod.eigenv_short())
@@ -274,8 +311,11 @@ if __name__ == "__main__":
 
 #    print (model.interpolate(7,'spiral'))
 
-    output = model.not_symmetric_interpolate('spiral')
+    output = model.not_symmetric_control('spiral')
+    output2 = model.symmetric_control('fugoid')
+
     if __name__ == "__main__":
             print ('8======D~~~~')
     print (output)
+    
 
