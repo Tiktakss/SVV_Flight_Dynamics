@@ -28,19 +28,20 @@ nummodel = Numerical_Model()
 
 #Phugoid
 fugoiddata = matlab.getdata_at_time('Ahrs1_Pitch',matlab.fugoidstart,matlab.fugoidstart+matlab.fugoidtime)
-fugoiddata = fugoiddata - fugoiddata[0] #correct for stable flight
+#fugoiddata = fugoiddata - fugoiddata[0] #correct for stable flight
 fugoidtime = matlab.getdata_at_time('time',matlab.fugoidstart,matlab.fugoidstart+matlab.fugoidtime)/60
-fugoid = nummodel.symmetric_interpolate('fugoid')[2]#/np.pi*180 #pitch 'theta'
+fugoid = nummodel.symmetric_interpolate('fugoid')[2]/np.pi*180#/np.pi*180 #pitch 'theta'
 
 
 #Aperiodic roll
-ap_rolldata = matlab.getdata_at_time('Ahrs1_bRollRate',matlab.ap_rollstart,matlab.ap_rollstart+matlab.ap_rolltime)
+ap_rolldata = matlab.getdata_at_time('Ahrs1_Roll',matlab.ap_rollstart,matlab.ap_rollstart+matlab.ap_rolltime)#'Ahrs1_bRollRate'
 ap_rolltime = matlab.getdata_at_time('time',matlab.ap_rollstart,matlab.ap_rollstart+matlab.ap_rolltime)/60
+ap_roll = nummodel.not_symmetric_interpolate('ap_roll')[1] # roll angle 'phi'
 
 #Short period
 sh_perioddata = matlab.getdata_at_time('Ahrs1_bPitchRate',matlab.sh_periodstart,matlab.sh_periodstart+matlab.sh_periodtime)
 sh_periodtime = matlab.getdata_at_time('time',matlab.sh_periodstart,matlab.sh_periodstart+matlab.sh_periodtime)/60
-sh_period = nummodel.symmetric_interpolate('sh_period')[3]#/np.pi*180 #pitch 'q'
+sh_period = nummodel.symmetric_interpolate('sh_period')[3]/np.pi*180#/np.pi*180 #pitch 'q'
 
 #Dutch roll undamped
 dutchRdata = matlab.getdata_at_time('Ahrs1_bRollRate',matlab.dutchRstart,matlab.dutchRstart+matlab.dutchRtime)/180*np.pi
@@ -67,10 +68,12 @@ plt.title("Phugoid")
 plt.legend()
 
 plt.figure(2)
-plt.plot(ap_rolltime,ap_rolldata)
+plt.plot(ap_rolltime,ap_rolldata,label='data')
+plt.plot(ap_rolltime,ap_roll,label='numerical model')
 plt.xlabel('time [min]')
-plt.ylabel('roll rate [deg/s]')
+plt.ylabel('roll [deg]')
 plt.title("Aperiodic roll")
+plt.legend()
 
 plt.figure(3)
 plt.plot(sh_periodtime,sh_perioddata,label='data')
@@ -82,36 +85,47 @@ plt.legend()
 
 plt.figure(4)
 plt.subplot(211)
-plt.plot(dutchRtime,dutchRdata)
-plt.xlabel('time [min]')
+plt.plot(dutchRtime,dutchRdata,label='data')
+#plt.plot(dutchRtime,dutchR,label='numerical model')
 plt.ylabel('roll rate [rad/s]')
 plt.title("Dutch roll (undamped)")
+plt.legend()
 plt.subplot(212)
-plt.plot(dutchRtime,dutchRdata2)
+plt.plot(dutchRtime,dutchRdata2,label='data')
+#plt.plot(dutchRtime,dutchR2,label='numerical model')
 plt.ylabel('yaw rate [rad/s]')
 plt.xlabel('time [min]')
+plt.legend()
 
 plt.figure(5)
 plt.subplot(211)
-plt.plot(dutchR_damptime,dutchR_dampdata)
+plt.plot(dutchR_damptime,dutchR_dampdata,label='data')
+#plt.plot(dutchR_damptime,dutchR_damp,label='numerical')
 plt.ylabel('roll rate [rad/s]')
 plt.xlabel('time [min]')
 plt.title("Dutch roll (damped)")
+plt.legend()
 plt.subplot(212)
-plt.plot(dutchR_damptime,dutchR_dampdata2)
+plt.plot(dutchR_damptime,dutchR_dampdata2,label='data')
+#plt.plot(dutchR_damptime,dutchR_damp2,label='numerical')
 plt.ylabel('yaw rate [rad/s]')
 plt.xlabel('time [min]')
+plt.legend()
 
 plt.figure(6)
 plt.subplot(211)
-plt.plot(spiraltime,spiraldata)
+plt.plot(spiraltime,spiraldata,label='data')
+#plt.plot(spiraltime,spiral,label='numerical')
 plt.ylabel('roll [rad]')
 plt.xlabel('time [min]')
 plt.title("Spiral")
+plt.legend()
 plt.subplot(212)
-plt.plot(spiraltime,spiraldata2)
+plt.plot(spiraltime,spiraldata2,label='data')
+#plt.plot(spiraltime,spiral2,label='numerical')
 plt.ylabel('yaw rate [deg/s]')
 plt.xlabel('time [min]')
+plt.legend()
 
 plt.show()
 
