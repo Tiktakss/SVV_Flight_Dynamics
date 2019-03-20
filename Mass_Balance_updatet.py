@@ -56,15 +56,18 @@ Center_gravity = np.zeros(len(data)+len(data_trim_curve)+len(data_cg_shift_data)
 A = par.b*par.b / par.S
 #Create emoty lists for plots
 C_l = [] #lift coefficient
+C_l2 = []
+C_d = [] #drag coefficient
 alpha = [] #angle of attack
-pressure = [] #altitude pressure
+h_p = [] #altitude pressure
 Mach = [] #Mach number
 diff_temp = [] #difference between ISA and calcuated temp
 ffl = [] #fuel flow right
 ffr = [] #fuel flow left
 
-#Create plots
+#Create C_l plot
 data_lift_curve = import_excel.Cl_Cd_data(excel)
+
 for i in range(len(data)):
     row_lift = data_lift_curve[i]
     weight = total_weight - row_lift[8] #lbs
@@ -73,37 +76,60 @@ for i in range(len(data)):
     
     height = row_lift[3] #ft
     height_m = aero.ft_to_m(height) #m
-    density = aero.rho_alt(height_m) 
+    h_p.append(height_m)
+    density = aero.rho_alt(height_m)
+
     
     speed = row_lift[4] #kts
     speed_ms = aero.kts_to_ms(speed) #ms
     
     lift = (2*weight_n)/(density*par.S*speed_ms**2) #N
     C_l.append(lift)
+    C_l2.append(lift*lift)
     
     angle = row_lift[5]
     alpha.append(angle)
-    fuel_left = row_lift[6]
-    fuel_right = row_lift[7]
+    fuel_left = row_lift[6]*aero.lbs/3600
+    fuel_right = row_lift[7]*aero.lbs/3600
     ffl.append(fuel_left)
     ffr.append(fuel_right)
-    
-    pres = aero.calc_pressure(height_m)
-    pressure.append(pres)
     
     M = aero.calc_mach(height_m, speed_ms)
     Mach.append(M)
     
-    temp = aero.calc_temp(row_lift[9]-273.15, M)
+    temp = aero.calc_temp(row_lift[9]+273.15, M)
     temp_ISA = aero.T_alt(height_m)
     diff = temp - temp_ISA
     diff_temp.append(diff)
+    
+#print(h_p)
+#print(Mach)
+#print(diff_temp)
+#print(ffl)
+#print(ffr)
 
-print(pressure)
-print(Mach)
-print(diff_temp)
-print(ffl)
-print(ffr)    
+T_right = [3641.04, 2717.52, 2266.88, 2123.31, 2223.13, 1907.57] #obtained from thrust file 
+T_left = [3991.19, 3136.22, 2510.9, 2414.81, 2526.69, 2178.88]
+
+#Create Drag plot
+for i in range(len(data)):
+    row_lift = data_lift_curve[i]
+    weight = total_weight - row_lift[8] #lbs
+    weight_kg = aero.lbs * weight #kg
+    weight_n = weight_kg * aero.g0 #N
+    
+    height = row_lift[3] #ft
+    height_m = aero.ft_to_m(height) #m
+    density = aero.rho_alt(height_m)
+
+    
+    speed = row_lift[4] #kts
+    speed_ms = aero.kts_to_ms(speed) #ms
+    
+    thrust = T_right[i] + T_left[i]
+    drag = (2*thrust)/(density*par.S*speed_ms**2)
+    C_d.append(drag)
+
 
 #CG shift due to fuel flow
 for i in range(len(data)):
@@ -169,55 +195,81 @@ Cl_alpha = (max(C_l)-min(C_l))/(np.radians(max(alpha))-np.radians(min(alpha)))
 
 
 
-##Plotting
-#plt.subplot(221)
-#plt.plot(Time,Center_gravity, 'ro')
-#plt.title("Center of Gravity")
-#plt.ylabel("Distance from nose[cm]")
-#plt.xlabel("Time[min]")
-#plt.grid(True)
-#
-#plt.subplot(222)
-#plt.scatter(AOA[:6],de[:6])
-#plt.title("Elevator trim curve")
-#plt.ylabel("$\delta_e[deg]$")
-#plt.xlabel("$\\alpha[deg]$")
-#plt.grid(True)
-#
-#plt.subplot(223)
-#plt.scatter(AOA[:6],Fe[:6])
-#plt.title("Control force curve")
-#plt.ylabel("$F_e$[N]")
-#plt.xlabel("$\\alpha[deg]$")
-#plt.grid(True)
-#plt.show()
-#
-##Plot C curves
-#plt.figure()
-#plt.subplot(121)
-#plt.plot(C_d, C_l, "ro", label ="Flight Data")
-#plt.title('Lift coefficient vs Drag coefficient')
-#plt.xlabel('Drag coefficient [-]')
-#plt.ylabel('Lift coefficient [-]')
-#plt.grid(True)
-#
-##z2 = np.polyfit(C_d, C_l, 5)
-##p2= np.poly1d(z2)
-##plt.plot(C_d,p2(C_d),"r--", label="Trendline")
-#plt.legend()
-#
-#plt.subplot(122)
-#plt.plot(alpha, C_l , "ro", label ="Flight Data")
-#plt.title('Lift Curve')
-#plt.xlabel('Angle of Attack [deg]')
-#plt.ylabel('Lift coefficient [-]')
-#plt.grid(True)
-#
-#z1 = np.polyfit(alpha, C_l, 1)
-#p1 = np.poly1d(z1)
-#plt.plot(alpha,p1(alpha),"r--", label="Trendline")
-#plt.legend()
-#plt.show()
+#Plotting
+plt.figure()
+plt.subplot(221)
+plt.plot(Time,Center_gravity, 'ro')
+plt.title("Center of Gravity")
+plt.ylabel("Distance from nose[cm]")
+plt.xlabel("Time[min]")
+plt.grid(True)
+
+plt.subplot(222)
+plt.scatter(AOA[:6],de[:6])
+plt.title("Elevator trim curve")
+plt.ylabel("$\delta_e[deg]$")
+plt.xlabel("$\\alpha[deg]$")
+plt.grid(True)
+
+plt.subplot(223)
+plt.scatter(AOA[:6],Fe[:6])
+plt.title("Control force curve")
+plt.ylabel("$F_e$[N]")
+plt.xlabel("$\\alpha[deg]$")
+plt.grid(True)
+plt.show()
+
+#Plot C curves
+plt.figure()
+plt.subplot(221)
+plt.plot(C_d, C_l, "ro", label ="Flight Data")
+plt.title('Lift coefficient vs Drag coefficient')
+plt.xlabel('C$_D$ [-]')
+plt.ylabel('C$_L$ [-]')
+plt.grid(True)
+z2 = np.polyfit(C_d, C_l, 2)
+p2= np.poly1d(z2)
+xp2 = np.linspace(0.03, 0.08, 200)
+plt.plot(xp2, p2(xp2) ,"r--", label="Trendline")
+plt.legend()
+
+plt.subplot(222)
+plt.plot(alpha, C_l , "ro", label ="Flight Data")
+plt.title('Lift Curve')
+plt.xlabel('$\\alpha$ [deg]')
+plt.ylabel('C$_L$ [-]')
+plt.grid(True)
+z1 = np.polyfit(alpha, C_l, 1)
+p1 = np.poly1d(z1)
+xp1 = np.linspace(1, 12, 200)
+plt.plot(xp1,p1(xp1),"r--", label="Trendline")
+plt.legend()
+
+plt.subplot(223)
+plt.plot(alpha, C_d, "ro", label ="Flight Data" )
+plt.title('Drag Curve')
+plt.xlabel('$\\alpha$ [deg]')
+plt.ylabel('C$_D$ [-]')
+plt.grid(True)
+z3 = np.polyfit(alpha, C_d, 2)
+p3 = np.poly1d(z3)
+xp3 = np.linspace(1, 12, 200)
+plt.plot(xp3,p3(xp3),"r--", label="Trendline")
+plt.legend()
+
+plt.subplot(224)
+plt.plot(C_l2, C_d, "ro", label ="Flight Data" )
+plt.title('Test')
+plt.xlabel('C$_L^2$ [-]')
+plt.ylabel('C$_D$ [-]')
+plt.grid(True)
+z4 = np.polyfit(C_l2, C_d, 1)
+p4 = np.poly1d(z4)
+xp4 = np.linspace(0, 1.5, 200)
+plt.plot(xp4,p4(xp4),"r--", label="Trendline")
+plt.legend()
+plt.show()
+
 
 
 
