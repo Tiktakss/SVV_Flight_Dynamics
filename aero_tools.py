@@ -1,5 +1,8 @@
 import numpy as np
 from math import *
+from matlab_tools import Matlab_Tools
+mat = Matlab_Tools('./FTISxprt-20190305_124649.mat')
+
 
 class Aero_Tools:
     def __init__(self):
@@ -54,12 +57,19 @@ class Aero_Tools:
     def calc_re(self, rho, speed, length):
         return (rho * speed * length)/(self.mu)
     
-    def calc_aircraft_mass(self, fuel_used): #fuel given in lbs
-        block_fuel = 4050 #lbs
+    def calc_aircraft_mass(self, t_manouvre): #fuel given in lbs
+        block_fuel = 4050.0 #lbs
         empty_weight = 9165.0 #lbs
         weight_people = (92 + 89 + 76.5 + 74 + 77 + 65 + 69 + 72.5 + 106)/self.lbs #lbs
-        mass = block_fuel + empty_weight + weight_people - fuel_used #lbs
+        fuel_used_left = mat.getdata_at_time('lh_engine_FU', t_manouvre, t_manouvre+1)
+        fuel_used_right = mat.getdata_at_time('rh_engine_FU', t_manouvre, t_manouvre+1)
+        fuel_used = fuel_used_right + fuel_used_left
+        fuel_used_avg = sum(fuel_used)/len(fuel_used)
+        mass = block_fuel + empty_weight + weight_people - fuel_used_avg
+        
         return mass*self.lbs #kg
+        
+       
 
 """
 put testing/debugging code in the if-statement below
@@ -72,3 +82,4 @@ if __name__ == "__main__":
     print(h)
     print(tools.p_alt(h), 'Pa')
     print(tools.rho_alt(h), 'kg/m^3')
+    print(tools.calc_aircraft_mass(70))
