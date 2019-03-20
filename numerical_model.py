@@ -123,21 +123,22 @@ class Numerical_Model:
     
     def symmetric_control(self,manouvre):
         start,time = matlab.gettimes(manouvre)
+        T=np.linspace(start,start+time,self.delta_t)
         
         Xs, vt0 = matlab.Xs(manouvre) #get Xs with corresponding vtas in m/s
         de = matlab.getdata_at_time('delta_e',start,start+time)
         u_hat, AoA, Theta, qcoverv = np.array(Xs[:,0])
-        print (u_hat, AoA, Theta, qcoverv)
         a = self.As(vt0)
         b = self.Bs(vt0)
         c = self.C()
         d = self.Ds()
-        print (a,'\n\n',b)
-        ss = signal.StateSpace(a,b,c,d)
-        
+        sys = ss(a,b,c,d)
+        response, T, xout =lsim(sys,U=U_a,T=T,X0=Xa)
+
+        print (yout[:,2])
         u_hat = np.array(u_hat)
         AoA = np.array(AoA)
-        Theta = np.array(Theta)
+        Theta = yout[:,2]
         q = np.array(qcoverv)/p.c*vt0# make dimentional again
         return u_hat, AoA, Theta, q
     
@@ -146,24 +147,24 @@ class Numerical_Model:
         
         Xs, vt0 = matlab.Xs(manouvre) #get Xs with corresponding vtas in m/s
         de = matlab.getdata_at_time('delta_e',start,start+time)
-        u_hat=np.array(Xs[0][0])
-        AoA=np.array(Xs[1][0])
-        Theta=np.array(Xs[2][0])
-        qcoverv=np.array(Xs[3][0])
+        u_hat=np.array(Xs)[0]
+        AoA=np.array(Xs)[1]
+        Theta=np.array(Xs)[2]
+        qcoverv=np.array(Xs)[3]
         for t in range(1,len(self.t_run(time))):
             U_s = de[t]
             if __name__ == "__main__":
                 print ('8======D')#,Xs)
-            DX_s = np.dot(self.As(vt0),Xs) + np.transpose(self.Bs(vt0)*U_s)
+            DX_s = np.dot(self.As(vt0),Xs) + (self.Bs(vt0)*U_s)
             Xs = Xs + DX_s*self.delta_t
-            u_hat = np.vstack((u_hat,Xs[0][0]))
-            AoA = np.vstack((AoA,Xs[1][0]))
-            Theta = np.vstack((Theta,Xs[2][0]))
-            qcoverv = np.vstack((qcoverv,Xs[3][0]))
+            u_hat = np.vstack((u_hat,Xs[0]))
+            AoA = np.vstack((AoA,Xs[1]))
+            Theta = np.vstack((Theta,Xs[2]))
+            qcoverv = np.vstack((qcoverv,Xs[3]))
         u_hat = np.array(u_hat)
         AoA = np.array(AoA)
         Theta = np.array(Theta)
-        q = np.array(qcoverv)/p.c*vt0# make dimentional again
+        q = np.array(qcoverv)/p.c*vt0
         return u_hat, AoA, Theta, q
     
     
@@ -203,30 +204,23 @@ class Numerical_Model:
     def not_symmetric_control(self,manouvre):
         start,time = matlab.gettimes(manouvre)
         dt=0.1
+        T=np.linspace(start,start+time,(time)/dt)
         Xa, vt0 = matlab.Xa(manouvre)
-        Xa=Xa[0]
+        
         da = matlab.getdata_at_time('delta_a',start,start+time)
         dr = matlab.getdata_at_time('delta_r',start,start+time)
+        U_a= np.transpose(np.vstack((da,dr)))
         a=self.Aa(vt0)
         b=self.Ba(vt0)
         c=self.C()
         d=self.Da()
-        sys=ss(a,b,c,d)
-        print (ss)
-        print(Xa)
-        response, T=step(ss,X0=Xa)
-        print(response)
-        
-        
-        
-        
-        
-        
-        
-        Beta=np.array(Xa)[0]
-        Phi=np.array(Xa)[1]
-        pbover2v=np.array(Xa)[2]
-        rbover2v=np.array(Xa)[3]
+        sys=StateSpace(a,b,c,d)
+        response, T, xout =lsim(sys,U=U_a,T=T,X0=Xa)
+
+#        Beta=np.array(Xa)[0]
+#        Phi=np.array(Xa)[1]
+#        pbover2v=np.array(Xa)[2]
+#        rbover2v=np.array(Xa)[3]
         '''
         for t in range(1,len(self.t_run(time))):
             U_a = np.transpose(np.matrix([da[t],dr[t]]))
@@ -238,11 +232,11 @@ class Numerical_Model:
             Phi = np.vstack((Phi,Xa[1]))
             pbover2v = np.vstack((pbover2v,Xa[2]))
             rbover2v = np.vstack((rbover2v,Xa[3]))'''
-        Beta = np.array(Beta)
-        Phi = np.array(Phi)
-        pbover2v = np.array(pbover2v)
-        rbover2v = np.array(rbover2v)
-        return Beta, Phi, pbover2v, rbover2v
+#        Beta = np.array(Beta)
+#        Phi = np.array(Phi)
+#        pbover2v = np.array(pbover2v)
+#        rbover2v = np.array(rbover2v)
+        return response, T, xout
         
 if __name__ == "__main__":
     model = Numerical_Model()
@@ -311,8 +305,12 @@ if __name__ == "__main__":
 
 #    print (model.interpolate(7,'spiral'))
 
+
+    #output = model.not_symmetric_control('spiral')
+    output2 = model.symmetric_interpolate('fugoid')
+
     output = model.not_symmetric_control('spiral')
-    output2 = model.symmetric_control('fugoid')
+    #output2 = model.symmetric_control('fugoid')
 
     if __name__ == "__main__":
             print ('8======D~~~~')
