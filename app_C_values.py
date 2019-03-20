@@ -1,11 +1,10 @@
-
 Chp0    = 0      	  # pressure altitude in the stationary flight condition [m]
 CV0     = 100           # true airspeed in the stationary flight condition [m/sec]
 Calpha0 = 0.04          # angle of attack in the stationary flight condition [rad]
 Cth0    = 0.0        # pitch angle in the stationary flight condition [rad]
 
 # Aircraft mass
-Cm      = 6700            # mass [kg]
+Cm      = 6700            #Use def calc_aircraft_mass from aero tool
 
 # aerodynamic properties
 Ce      = 0.7991242852322632            # Oswald factor [ ]
