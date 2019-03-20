@@ -159,8 +159,7 @@ for i in range(len(data_cg_shift_data)):
     weight_fuel = blockfuel - row[11]
     total_weight = weight_people + weight_fuel + empty_weight #lbs
     moment_fuel = weight_fuel*Arm_fuel #lbs*inch
-    if i == 1.:
-        moment_p8 = moment_CGshift
+    moment_p8 = moment_CGshift
     Center_gravity[i+len(data)+len(data_trim_curve)-1] = (moment_fuel+moment_BEM+moment_p1+moment_p2+moment_p10+moment_p3\
                          +moment_p4+moment_p5+moment_p6+moment_p7+moment_p8)/total_weight*2.54 #cm
     AOA[i+len(data_trim_curve)-1] = row[5]
@@ -198,7 +197,7 @@ Cl_alpha = (max(C_l)-min(C_l))/(np.radians(max(alpha))-np.radians(min(alpha)))
 #Plotting
 plt.figure()
 plt.subplot(221)
-plt.plot(Time,Center_gravity, 'ro')
+plt.scatter(Time,Center_gravity,)
 plt.title("Center of Gravity")
 plt.ylabel("Distance from nose[cm]")
 plt.xlabel("Time[min]")
@@ -208,6 +207,7 @@ plt.subplot(222)
 plt.scatter(AOA[:6],de[:6])
 plt.title("Elevator trim curve")
 plt.ylabel("$\delta_e[deg]$")
+plt.gca().invert_yaxis()
 plt.xlabel("$\\alpha[deg]$")
 plt.grid(True)
 
