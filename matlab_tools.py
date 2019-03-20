@@ -99,7 +99,7 @@ class Matlab_Tools:
         theta=self.getdata_at_time('Ahrs1_Pitch',start,start+dt)[0]/180*np.pi
         vtas = self.getdata_at_time('Dadc1_tas',start,start+dt)[0]*0.51 #knots -> m/s
         qcoverv=self.getdata_at_time('Ahrs1_bPitchRate',start,start+dt)[0]/180*np.pi*p.c/vtas#q is pitchrate
-        X_s=np.matrix([[uhat],[aoa],[theta],[qcoverv]])
+        X_s=np.array([[uhat],[aoa],[theta],[qcoverv]])
         return X_s, vtas
 
     def Xa(self,manouvre):
@@ -111,8 +111,8 @@ class Matlab_Tools:
         vtas = self.getdata_at_time('Dadc1_tas',start,start+dt)[0]*0.51 #knots -> m/s
         pbover2v=self.getdata_at_time('Ahrs1_bRollRate',start,start+dt)[0]*p.b/(2*vtas)
         rbover2v=self.getdata_at_time('Ahrs1_bYawRate',start,start+dt)[0]*p.b/(2*vtas)
-        X_a=np.matrix([[Beta],[Phi],[pbover2v],[rbover2v]])
-        return np.transpose(X_a)
+        X_a=np.array([[Beta],[Phi],[pbover2v],[rbover2v]])
+        return (X_a)
 
 
 """
