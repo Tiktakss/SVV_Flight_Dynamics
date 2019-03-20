@@ -81,7 +81,8 @@ for i in range(len(data)):
 
     
     speed = row_lift[4] #kts
-    speed_ms = aero.kts_to_ms(speed) #ms
+    speed_m = aero.kts_to_ms(speed) #ms IAS
+    speed_ms = aero.ias_to_tas(height_m, speed_m) # ms TAS
     
     lift = (2*weight_n)/(density*par.S*speed_ms**2) #N
     C_l.append(lift)
@@ -124,7 +125,8 @@ for i in range(len(data)):
 
     
     speed = row_lift[4] #kts
-    speed_ms = aero.kts_to_ms(speed) #ms
+    speed_m = aero.kts_to_ms(speed) #ms IAS
+    speed_ms = aero.ias_to_tas(height_m,speed_m) #ms TAS
     
     thrust = T_right[i] + T_left[i]
     drag = (2*thrust)/(density*par.S*speed_ms**2)
@@ -179,32 +181,18 @@ for i in range(len(data_cg_shift_data)):
     speed_ms = aero.kts_to_ms(speed) #ms
     
     C_n = (2*weight_n)/(density*par.S*speed_ms**2) #N
-
-
-#Calculation for coefficients
-slope = (np.radians(max(de))-np.radians(min(de)))/(np.radians(min(AOA))-np.radians(max(AOA)))
-#Cm_delta = -C_l[5]*(Center_gravity[13]-Center_gravity[12])/((np.radians(de[7])-np.radians(de[6]))*205.69)
-Cm_delta = -1/(np.radians(de[-1])-np.radians(de[-2]))*C_n*(Center_gravity[-1]-Center_gravity[-2])/(par.c*100)
-Cm_alpha = -Cm_delta*slope
-Cl_alpha = (max(C_l)-min(C_l))/(np.radians(max(alpha))-np.radians(min(alpha)))
-
-#print("Cl_alpha =" ,Cl_alpha)
-#print("Cm_delta =" ,Cm_delta)
-#print("Cm_alpha =" ,Cm_alpha)
-
-
-
+    
 #Plotting
 plt.figure()
 plt.subplot(221)
-plt.scatter(Time,Center_gravity,)
+plt.plot(Time,Center_gravity, "bo")
 plt.title("Center of Gravity")
 plt.ylabel("Distance from nose[cm]")
 plt.xlabel("Time[min]")
 plt.grid(True)
 
 plt.subplot(222)
-plt.scatter(AOA[:6],de[:6])
+plt.plot(AOA[:6],de[:6], "bo")
 plt.title("Elevator trim curve")
 plt.ylabel("$\delta_e[deg]$")
 plt.gca().invert_yaxis()
@@ -212,29 +200,29 @@ plt.xlabel("$\\alpha[deg]$")
 plt.grid(True)
 
 plt.subplot(223)
-plt.scatter(AOA[:6],Fe[:6])
+plt.plot(AOA[:6],Fe[:6], "bo")
 plt.title("Control force curve")
 plt.ylabel("$F_e$[N]")
 plt.xlabel("$\\alpha[deg]$")
 plt.grid(True)
-plt.show()
+
 
 #Plot C curves
 plt.figure()
 plt.subplot(221)
-plt.plot(C_d, C_l, "ro", label ="Flight Data")
+plt.plot(C_d, C_l, "bo", label ="Flight Data")
 plt.title('Lift coefficient vs Drag coefficient')
 plt.xlabel('C$_D$ [-]')
 plt.ylabel('C$_L$ [-]')
 plt.grid(True)
 z2 = np.polyfit(C_d, C_l, 2)
 p2= np.poly1d(z2)
-xp2 = np.linspace(0.03, 0.08, 200)
-plt.plot(xp2, p2(xp2) ,"r--", label="Trendline")
+xp2 = np.linspace(0.02, 0.06, 200)
+plt.plot(xp2, p2(xp2) ,"b--", label="Trendline")
 plt.legend()
 
 plt.subplot(222)
-plt.plot(alpha, C_l , "ro", label ="Flight Data")
+plt.plot(alpha, C_l , "bo", label ="Flight Data")
 plt.title('Lift Curve')
 plt.xlabel('$\\alpha$ [deg]')
 plt.ylabel('C$_L$ [-]')
@@ -242,11 +230,11 @@ plt.grid(True)
 z1 = np.polyfit(alpha, C_l, 1)
 p1 = np.poly1d(z1)
 xp1 = np.linspace(1, 12, 200)
-plt.plot(xp1,p1(xp1),"r--", label="Trendline")
+plt.plot(xp1,p1(xp1),"b--", label="Trendline")
 plt.legend()
 
 plt.subplot(223)
-plt.plot(alpha, C_d, "ro", label ="Flight Data" )
+plt.plot(alpha, C_d, "bo", label ="Flight Data" )
 plt.title('Drag Curve')
 plt.xlabel('$\\alpha$ [deg]')
 plt.ylabel('C$_D$ [-]')
@@ -254,21 +242,39 @@ plt.grid(True)
 z3 = np.polyfit(alpha, C_d, 2)
 p3 = np.poly1d(z3)
 xp3 = np.linspace(1, 12, 200)
-plt.plot(xp3,p3(xp3),"r--", label="Trendline")
+plt.plot(xp3,p3(xp3),"b--", label="Trendline")
 plt.legend()
 
 plt.subplot(224)
-plt.plot(C_l2, C_d, "ro", label ="Flight Data" )
-plt.title('Test')
+plt.plot(C_l2, C_d, "bo", label ="Flight Data" )
 plt.xlabel('C$_L^2$ [-]')
 plt.ylabel('C$_D$ [-]')
 plt.grid(True)
 z4 = np.polyfit(C_l2, C_d, 1)
 p4 = np.poly1d(z4)
-xp4 = np.linspace(0, 1.5, 200)
-plt.plot(xp4,p4(xp4),"r--", label="Trendline")
+xp4 = np.linspace(0, 1.0, 200)
+plt.plot(xp4,p4(xp4),"b--", label="Trendline")
 plt.legend()
 plt.show()
+
+#Calculation for coefficients
+slope = (np.radians(max(de))-np.radians(min(de)))/(np.radians(min(AOA))-np.radians(max(AOA)))
+#Cm_delta = -C_l[5]*(Center_gravity[13]-Center_gravity[12])/((np.radians(de[7])-np.radians(de[6]))*205.69)
+Cm_delta = -1/(np.radians(de[-1])-np.radians(de[-2]))*C_n*(Center_gravity[-2]-Center_gravity[-3])/(par.c*100)
+Cm_alpha = -Cm_delta*slope
+Cl_alpha = (max(C_l)-min(C_l))/(np.radians(max(alpha))-np.radians(min(alpha)))
+Cd0 = p4(0)
+slope_e = (p4(1.0)-p4(0))/(xp4[-1]-xp4[0])
+e = 1/(pi*A*slope_e)
+
+print("Cl_alpha =" ,Cl_alpha)
+print("Cm_delta =" ,Cm_delta)
+print("Cm_alpha =" ,Cm_alpha)
+print("CD0 =", Cd0)
+print("e=", e)
+
+
+
 
 
 
