@@ -127,17 +127,17 @@ class Numerical_Model:
         Xs, vt0 = matlab.Xs(manouvre) #get Xs with corresponding vtas in m/s
         de = matlab.getdata_at_time('delta_e',start,start+time)
         u_hat, AoA, Theta, qcoverv = np.array(Xs[:,0])
-        print (u_hat, AoA, Theta, qcoverv)
         a = self.As(vt0)
         b = self.Bs(vt0)
         c = self.C()
         d = self.Ds()
-        print (a,'\n\n',b)
-        ss = signal.StateSpace(a,b,c,d)
-        
+        sys = ss(a,b,c,d)
+        yout, T = initial(sys,np.arange(start,start+time,0.1),X0=Xs)
+
+        print (yout[:,2])
         u_hat = np.array(u_hat)
         AoA = np.array(AoA)
-        Theta = np.array(Theta)
+        Theta = yout[:,2]
         q = np.array(qcoverv)/p.c*vt0# make dimentional again
         return u_hat, AoA, Theta, q
     
@@ -146,24 +146,24 @@ class Numerical_Model:
         
         Xs, vt0 = matlab.Xs(manouvre) #get Xs with corresponding vtas in m/s
         de = matlab.getdata_at_time('delta_e',start,start+time)
-        u_hat=np.array(Xs[0][0])
-        AoA=np.array(Xs[1][0])
-        Theta=np.array(Xs[2][0])
-        qcoverv=np.array(Xs[3][0])
+        u_hat=np.array(Xs)[0]
+        AoA=np.array(Xs)[1]
+        Theta=np.array(Xs)[2]
+        qcoverv=np.array(Xs)[3]
         for t in range(1,len(self.t_run(time))):
             U_s = de[t]
             if __name__ == "__main__":
                 print ('8======D')#,Xs)
-            DX_s = np.dot(self.As(vt0),Xs) + np.transpose(self.Bs(vt0)*U_s)
+            DX_s = np.dot(self.As(vt0),Xs) + (self.Bs(vt0)*U_s)
             Xs = Xs + DX_s*self.delta_t
-            u_hat = np.vstack((u_hat,Xs[0][0]))
-            AoA = np.vstack((AoA,Xs[1][0]))
-            Theta = np.vstack((Theta,Xs[2][0]))
-            qcoverv = np.vstack((qcoverv,Xs[3][0]))
+            u_hat = np.vstack((u_hat,Xs[0]))
+            AoA = np.vstack((AoA,Xs[1]))
+            Theta = np.vstack((Theta,Xs[2]))
+            qcoverv = np.vstack((qcoverv,Xs[3]))
         u_hat = np.array(u_hat)
         AoA = np.array(AoA)
         Theta = np.array(Theta)
-        q = np.array(qcoverv)/p.c*vt0# make dimentional again
+        q = np.array(qcoverv)/p.c*vt0
         return u_hat, AoA, Theta, q
     
     
@@ -312,6 +312,10 @@ if __name__ == "__main__":
 #    print(np.linalg.eig(q)[0])
 
 #    print (model.interpolate(7,'spiral'))
+
+
+    #output = model.not_symmetric_control('spiral')
+    output2 = model.symmetric_interpolate('fugoid')
 
     output = model.not_symmetric_control('spiral')
     #output2 = model.symmetric_control('fugoid')
