@@ -143,7 +143,7 @@ class Numerical_Model:
         u_hat = np.array(u_hat)
         AoA = np.array(AoA)
         Theta = np.array(Theta)
-        q = np.array(qcoverv)/p.c*vt0 # make dimentional again
+        q = np.array(qcoverv)/p.c*vt0# make dimentional again
         return u_hat, AoA, Theta, q
     
     
@@ -179,7 +179,7 @@ class Numerical_Model:
         return Beta, Phi, pbover2v, rbover2v
 
 
-    def integrate(array):
+    def integrate(self,array):
         return np.array([(array[i+1]-array[i])/self.delta_t for i in range(len(array)-1)])
 
 
