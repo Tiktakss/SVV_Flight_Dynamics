@@ -34,6 +34,7 @@ fugoid = nummodel.symmetric_interpolate('fugoid')[2]/np.pi*180#/np.pi*180 #pitch
 #fugoid = nummodel.symmetric_control('fugoid')[2]/np.pi*180#/np.pi*180 #pitch 'theta'
 
 
+
 #Aperiodic roll
 ap_rolldata = matlab.getdata_at_time('Ahrs1_Roll',matlab.ap_rollstart,matlab.ap_rollstart+matlab.ap_rolltime)#'Ahrs1_bRollRate'
 ap_rolltime = matlab.getdata_at_time('time',matlab.ap_rollstart,matlab.ap_rollstart+matlab.ap_rolltime)/60
@@ -59,7 +60,7 @@ spiraldata = matlab.getdata_at_time('Ahrs1_Roll',matlab.spiralstart,matlab.spira
 spiraldata2 = matlab.getdata_at_time('Ahrs1_bYawRate',matlab.spiralstart,matlab.spiralstart+matlab.spiraltime)
 spiraltime = matlab.getdata_at_time('time',matlab.spiralstart,matlab.spiralstart+matlab.spiraltime)/60
 
-#Plotting
+##Plotting
 plt.figure(1)
 plt.plot(fugoidtime,fugoiddata,label='data')
 plt.plot(fugoidtime,fugoid,label='numerical model')
@@ -70,7 +71,7 @@ plt.legend()
 
 plt.figure(2)
 plt.plot(ap_rolltime,ap_rolldata,label='data')
-plt.plot(ap_rolltime,ap_roll,label='numerical model')
+#plt.plot(ap_roll[1]ap_roll[0][1],label='numerical model')
 plt.xlabel('time [min]')
 plt.ylabel('roll [deg]')
 plt.title("Aperiodic roll")

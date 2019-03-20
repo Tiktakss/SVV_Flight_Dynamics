@@ -203,18 +203,20 @@ class Numerical_Model:
     def not_symmetric_control(self,manouvre):
         start,time = matlab.gettimes(manouvre)
         dt=0.1
+        T=np.linspace(start,start+time,(time)/dt)
         Xa, vt0 = matlab.Xa(manouvre)
-        Xa=Xa[0]
+        
         da = matlab.getdata_at_time('delta_a',start,start+time)
         dr = matlab.getdata_at_time('delta_r',start,start+time)
+        U_a= np.transpose(np.vstack((da,dr)))
         a=self.Aa(vt0)
         b=self.Ba(vt0)
         c=self.C()
         d=self.Da()
-        sys=ss(a,b,c,d)
-        print (ss)
+        sys=StateSpace(a,b,c,d)
+        print (sys)
         print(Xa)
-        response, T=step(ss,X0=Xa)
+        response=lsim(sys,U=U_a,T=T,X0=Xa)
         print(response)
         
         
@@ -223,10 +225,10 @@ class Numerical_Model:
         
         
         
-        Beta=np.array(Xa)[0]
-        Phi=np.array(Xa)[1]
-        pbover2v=np.array(Xa)[2]
-        rbover2v=np.array(Xa)[3]
+#        Beta=np.array(Xa)[0]
+#        Phi=np.array(Xa)[1]
+#        pbover2v=np.array(Xa)[2]
+#        rbover2v=np.array(Xa)[3]
         '''
         for t in range(1,len(self.t_run(time))):
             U_a = np.transpose(np.matrix([da[t],dr[t]]))
@@ -238,11 +240,11 @@ class Numerical_Model:
             Phi = np.vstack((Phi,Xa[1]))
             pbover2v = np.vstack((pbover2v,Xa[2]))
             rbover2v = np.vstack((rbover2v,Xa[3]))'''
-        Beta = np.array(Beta)
-        Phi = np.array(Phi)
-        pbover2v = np.array(pbover2v)
-        rbover2v = np.array(rbover2v)
-        return Beta, Phi, pbover2v, rbover2v
+#        Beta = np.array(Beta)
+#        Phi = np.array(Phi)
+#        pbover2v = np.array(pbover2v)
+#        rbover2v = np.array(rbover2v)
+        return response
         
 if __name__ == "__main__":
     model = Numerical_Model()
@@ -311,8 +313,12 @@ if __name__ == "__main__":
 
 #    print (model.interpolate(7,'spiral'))
 
+
     #output = model.not_symmetric_control('spiral')
     output2 = model.symmetric_interpolate('fugoid')
+
+    output = model.not_symmetric_control('spiral')
+    #output2 = model.symmetric_control('fugoid')
 
     if __name__ == "__main__":
             print ('8======D~~~~')
