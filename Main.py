@@ -69,7 +69,7 @@ ap_roll = nummodel.not_symmetric_control('ap_roll') # roll angle 'phi'
 
 plt.figure(2)
 plt.plot(ap_rolltime,ap_rolldata,label='data')
-plt.plot(ap_roll[1]ap_roll[0][1],label='numerical model')
+plt.plot(ap_roll[1]/60,nummodel.integrate(ap_roll[0][:,1]),label='numerical model')
 plt.xlabel('time [min]')
 plt.ylabel('roll [deg]')
 plt.title("Aperiodic roll")
