@@ -123,6 +123,7 @@ class Numerical_Model:
     
     def symmetric_control(self,manouvre):
         start,time = matlab.gettimes(manouvre)
+        T=np.linspace(start,start+time,self.delta_t)
         
         Xs, vt0 = matlab.Xs(manouvre) #get Xs with corresponding vtas in m/s
         de = matlab.getdata_at_time('delta_e',start,start+time)
@@ -132,7 +133,7 @@ class Numerical_Model:
         c = self.C()
         d = self.Ds()
         sys = ss(a,b,c,d)
-        yout, T = initial(sys,np.arange(start,start+time,0.1),X0=Xs)
+        response, T, xout =lsim(sys,U=U_a,T=T,X0=Xa)
 
         print (yout[:,2])
         u_hat = np.array(u_hat)
@@ -214,17 +215,8 @@ class Numerical_Model:
         c=self.C()
         d=self.Da()
         sys=StateSpace(a,b,c,d)
-        print (sys)
-        print(Xa)
-        response=lsim(sys,U=U_a,T=T,X0=Xa)
-        print(response)
-        
-        
-        
-        
-        
-        
-        
+        response, T, xout =lsim(sys,U=U_a,T=T,X0=Xa)
+
 #        Beta=np.array(Xa)[0]
 #        Phi=np.array(Xa)[1]
 #        pbover2v=np.array(Xa)[2]
@@ -244,7 +236,7 @@ class Numerical_Model:
 #        Phi = np.array(Phi)
 #        pbover2v = np.array(pbover2v)
 #        rbover2v = np.array(rbover2v)
-        return response
+        return response, T, xout
         
 if __name__ == "__main__":
     model = Numerical_Model()
