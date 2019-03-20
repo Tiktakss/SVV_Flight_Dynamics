@@ -152,30 +152,28 @@ class Numerical_Model:
     def not_symmetric_interpolate(self,manouvre):
         start,time = matlab.gettimes(manouvre)
         
-        Xa = matlab.Xa(manouvre)
+        Xa, vtas = matlab.Xa(manouvre)
         da = matlab.getdata_at_time('delta_a',start,start+time)
         dr = matlab.getdata_at_time('delta_r',start,start+time)
         vt0 = matlab.getdata_at_time('Dadc1_tas',start,start+0.2)[0]
-        Beta=np.array(Xa)[0][0]
-        Phi=np.array(Xa)[0][1]
-        pbover2v=np.array(Xa)[0][2]
-        rbover2v=np.array(Xa)[0][3]
+        Beta=np.array(Xa)[0]
+        Phi=np.array(Xa)[1]
+        pbover2v=np.array(Xa)[2]
+        rbover2v=np.array(Xa)[3]
         for t in range(1,len(self.t_run(time))):
-            U_a = np.transpose(np.matrix(da[t],dr[t]))
+            U_a = np.transpose(np.matrix([da[t],dr[t]]))
             if __name__ == "__main__":
                 print ('8======D')#,Xa)
-            print(self.Aa(vt0).shape)
-            print(Xa.shape)
-            DX_a = np.dot(self.Aa(vt0),Xa) + np.transpose(self.Ba(vt0)*U_a)
+            DX_a = np.dot(self.Aa(vt0),(Xa)) + (self.Ba(vt0)*U_a)
             Xa = Xa + DX_a*self.delta_t
-            Beta = np.vstack((Beta,Xa[0][0]))
-            Phi = np.vstack((Phi,Xa[1][0]))
-            pbover2v = np.vstack((pbover2v,Xa[2][0]))
-            rbover2v = np.vstack((rbover2v,Xa[3][0]))
-        Beta = np.array(u_hat)
-        Phi = np.array(AoA)
-        pbover2v = np.array(Theta)
-        rbover2v = np.array(q)
+            Beta = np.vstack((Beta,Xa[0]))
+            Phi = np.vstack((Phi,Xa[1]))
+            pbover2v = np.vstack((pbover2v,Xa[2]))
+            rbover2v = np.vstack((rbover2v,Xa[3]))
+        Beta = np.array(Beta)
+        Phi = np.array(Phi)
+        pbover2v = np.array(pbover2v)
+        rbover2v = np.array(rbover2v)
         return Beta, Phi, pbover2v, rbover2v
 
 
