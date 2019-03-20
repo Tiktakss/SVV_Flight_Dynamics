@@ -152,7 +152,7 @@ class Numerical_Model:
     def not_symmetric_interpolate(self,manouvre):
         start,time = matlab.gettimes(manouvre)
         
-        Xa = matlab.Xa(manouvre)
+        Xa, vtas = matlab.Xa(manouvre)
         da = matlab.getdata_at_time('delta_a',start,start+time)
         dr = matlab.getdata_at_time('delta_r',start,start+time)
         vt0 = matlab.getdata_at_time('Dadc1_tas',start,start+0.2)[0]
@@ -177,7 +177,7 @@ class Numerical_Model:
         return Beta, Phi, pbover2v, rbover2v
 
 
-    def integrate(array):
+    def integrate(self,array):
         return np.array([(array[i+1]-array[i])/self.delta_t for i in range(len(array)-1)])
 
 
