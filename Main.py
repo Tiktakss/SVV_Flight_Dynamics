@@ -67,9 +67,6 @@ plt.ylabel('pitch [deg]')
 plt.title("Phugoid")
 plt.legend()
 
-print(ap_rolltime.shape)
-print(ap_roll.shape)
-
 plt.figure(2)
 plt.plot(ap_rolltime,ap_rolldata,label='data')
 plt.plot(ap_rolltime,ap_roll,label='numerical model')
