@@ -4,8 +4,8 @@ from aero_tools import Aero_Tools
 from real_analytical_model import Analytical_Model
 from matlab_tools import Matlab_Tools
 matlab = Matlab_Tools('FTISxprt-20190305_124649.mat')
-#from control.matlab import * 
-import scipy.signal as signal
+from control.matlab import * 
+#import scipy.signal as signal
 
 class Numerical_Model:
     def __init__(self):
@@ -182,15 +182,32 @@ class Numerical_Model:
 
     def not_symmetric_control(self,manouvre):
         start,time = matlab.gettimes(manouvre)
-        
-        Xa, vtas = matlab.Xa(manouvre)
+        dt=0.1
+        Xa, vt0 = matlab.Xa(manouvre)
+        Xa=Xa[0]
         da = matlab.getdata_at_time('delta_a',start,start+time)
         dr = matlab.getdata_at_time('delta_r',start,start+time)
-        vt0 = matlab.getdata_at_time('Dadc1_tas',start,start+0.2)[0]
+        a=self.Aa(vt0)
+        b=self.Ba(vt0)
+        c=self.C()
+        d=self.Da()
+        ss=ss(a,b,c,d)
+        print (ss)
+        print(Xa)
+        response, T=step(ss,X0=Xa)
+        print(response)
+        
+        
+        
+        
+        
+        
+        
         Beta=np.array(Xa)[0]
         Phi=np.array(Xa)[1]
         pbover2v=np.array(Xa)[2]
         rbover2v=np.array(Xa)[3]
+        '''
         for t in range(1,len(self.t_run(time))):
             U_a = np.transpose(np.matrix([da[t],dr[t]]))
             if __name__ == "__main__":
@@ -200,7 +217,7 @@ class Numerical_Model:
             Beta = np.vstack((Beta,Xa[0]))
             Phi = np.vstack((Phi,Xa[1]))
             pbover2v = np.vstack((pbover2v,Xa[2]))
-            rbover2v = np.vstack((rbover2v,Xa[3]))
+            rbover2v = np.vstack((rbover2v,Xa[3]))'''
         Beta = np.array(Beta)
         Phi = np.array(Phi)
         pbover2v = np.array(pbover2v)
@@ -274,7 +291,7 @@ if __name__ == "__main__":
 
 #    print (model.interpolate(7,'spiral'))
 
-    output = model.not_symmetric_interpolate('spiral')
+    output = model.not_symmetric_control('spiral')
     if __name__ == "__main__":
             print ('8======D~~~~')
     print (output)
