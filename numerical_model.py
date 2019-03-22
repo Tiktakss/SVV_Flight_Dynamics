@@ -164,7 +164,7 @@ class Numerical_Model:
         u_hat = np.array(u_hat)
         AoA = np.array(AoA)
         Theta = np.array(Theta)
-        q = np.array(qcoverv)/p.c*vt0
+        q = np.array(qcoverv)#/p.c*vt0
         return u_hat, AoA, Theta, q
     
     
