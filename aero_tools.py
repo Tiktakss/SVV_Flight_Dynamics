@@ -57,37 +57,7 @@ class Aero_Tools:
     def calc_re(self, rho, speed, length):
         return (rho * speed * length)/(self.mu)
     
-    def calc_aircraft_mass(self, t_manouvre): #time in Seconds
-        block_fuel = 4050.0 #lbs
-        empty_weight = 9165.0 #lbs
-        weight_people = (92 + 89 + 76.5 + 74 + 77 + 65 + 69 + 72.5 + 106)/self.lbs #lbs
-        fuel_used_left = mat.getdata_at_time('lh_engine_FU', t_manouvre, t_manouvre+1)
-        fuel_used_right = mat.getdata_at_time('rh_engine_FU', t_manouvre, t_manouvre+1)
-        fuel_used = fuel_used_right + fuel_used_left
-        fuel_used_avg = sum(fuel_used)/len(fuel_used)
-        mass = block_fuel + empty_weight + weight_people - fuel_used_avg
-        
-        return mass*self.lbs #kg
-    
-    def calc_pressure_altitude(self, t_manouvre): #Time in seconds
-        height = mat.getdata_at_time('Dadc1_alt',t_manouvre, t_manouvre + 1)
-        height_avg = sum(height)/len(height)
-        return height_avg*self.foot
-    
-    def calc_speed(self, t_manouvre): #Time in Seconds
-        speed = mat.getdata_at_time('Dadc1_tas',t_manouvre, t_manouvre + 1)
-        speed_avg = sum(speed)/len(speed)
-        return speed_avg* self.nm / 3600 #True airspeed m/s
-    
-    def calc_angle_of_attack(self, t_manouvre):#time in seconds
-        angle = mat.getdata_at_time('vane_AOA',t_manouvre, t_manouvre + 1)
-        angle_avg = sum(angle)/len(angle)
-        return np.radians(angle_avg)#rad
-    
-    def calc_pitch_angle(self, t_manouvre):#time ins seconds
-        pitch = mat.getdata_at_time('Ahrs1_Pitch',t_manouvre, t_manouvre + 1)
-        pitch_avg = sum(pitch)/len(pitch)
-        return np.radians(pitch_avg) #rad
+
        
 
 """
