@@ -235,6 +235,28 @@ class Numerical_Model:
 #        pbover2v = np.array(pbover2v)
 #        rbover2v = np.array(rbover2v)
         return response, T, xout
+    
+    
+    
+    def not_symmetric_control_dimension(self,manouvre):
+        start,time = matlab.gettimes(manouvre)
+        dt=0.1
+        T=np.linspace(start,start+time,(time)/dt)
+        Xa, vt0 = matlab.Xa(manouvre)
+        
+        da = matlab.getdata_at_time('delta_a',start,start+time)
+        dr = matlab.getdata_at_time('delta_r',start,start+time)
+        U_a= np.transpose(np.vstack((da,dr)))
+        a=self.Aa(vt0)
+        b=self.Ba(vt0)
+        c=self.C()
+        d=self.Da()
+        sys=StateSpace(a,b,c,d)
+        response, T, xout =lsim(sys,U=U_a,T=T,X0=Xa)
+        
+        response[:,2]=response[:,2]*2*vt0/p.b
+        response[:,3]=response[:,3]*2*vt0/p.b
+        return response, T, xout
         
 if __name__ == "__main__":
     model = Numerical_Model()
@@ -307,7 +329,7 @@ if __name__ == "__main__":
     #output = model.not_symmetric_control('spiral')
     output2 = model.symmetric_control('fugoid')
 
-    output = model.not_symmetric_control('spiral')
+    output = model.not_symmetric_control_dimension('spiral')
     #output2 = model.symmetric_control('fugoid')
 
     if __name__ == "__main__":
