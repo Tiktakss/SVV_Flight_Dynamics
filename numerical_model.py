@@ -127,13 +127,14 @@ class Numerical_Model:
         
         Xs, vt0 = matlab.Xs(manouvre) #get Xs with corresponding vtas in m/s
         de = matlab.getdata_at_time('delta_e',start,start+time)
+        U_s = de
         u_hat, AoA, Theta, qcoverv = np.array(Xs[:,0])
         a = self.As(vt0)
         b = self.Bs(vt0)
         c = self.C()
         d = self.Ds()
         sys = ss(a,b,c,d)
-        response, T, xout =lsim(sys,U=U_a,T=T,X0=Xa)
+        response, T, xout =lsim(sys,U=U_s,T=T,X0=Xs)
 
         print (yout[:,2])
         u_hat = np.array(u_hat)
@@ -155,6 +156,7 @@ class Numerical_Model:
             U_s = de[t]
             if __name__ == "__main__":
                 print ('8======D')#,Xs)
+                
             DX_s = np.dot(self.As(vt0),Xs) + (self.Bs(vt0)*U_s)
             Xs = Xs + DX_s*self.delta_t
             u_hat = np.vstack((u_hat,Xs[0]))
