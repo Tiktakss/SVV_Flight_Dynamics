@@ -60,7 +60,7 @@ class Analytical_Model:
         return (2*np.pi*par.b)/(eta*v)
     
 if __name__ == "__main__":
-    mod = Analytical_Model()
+    amod = Analytical_Model()
     num = Numerical_Model()
     
     v = 100
@@ -77,25 +77,25 @@ if __name__ == "__main__":
     print(num.amod.half_time(np.real(As_eig),v))
     
     print('\t', 'short period:')
-    print(mod.eigenv_short())
-    print(mod.half_time(mod.eigenv_short()[0][0],v)*vc)
+    print(amod.eigenv_short())
+    print(amod.half_time(amod.eigenv_short()[0][0],v)*vc)
     
     
     print('\t', 'phugoid:')
-    print(mod.eigenv_phugoid())
-    print(mod.half_time(mod.eigenv_phugoid()[0][0],v)*vc)
+    print(amod.eigenv_phugoid())
+    print(amod.half_time(amod.eigenv_phugoid()[0][0],v)*vc)
     
     
     
     print('\t', 'dutch roll:')
-    print(mod.dutchr())
-    print(mod.half_time2(mod.dutchr()[0][0],v)*vb)
+    print(amod.dutchr())
+    print(amod.half_time2(amod.dutchr()[0][0],v)*vb)
     
     
     
     print('\t', 'aperiodic roll:')
-    print(mod.aperroll())
-    print(mod.half_time2(mod.aperroll(),v)*vb)
+    print(amod.aperroll())
+    print(amod.half_time2(amod.aperroll(),v)*vb)
     
     
     

@@ -20,9 +20,10 @@ from aero_tools import Aero_Tools
 
 tl = Aero_Tools()
 
-t = 30
+t = 900
 
-Chp0    = tl.calc_pressure_altitude(t)      	  # pressure altitude in the stationary flight condition [m]
+Chp0    = tl.calc_pressure_altitude(t)  
+#print(Chp0,'alt')    	  # pressure altitude in the stationary flight condition [m]
 CV0     = tl.calc_speed(t)                  # true airspeed in the stationary flight condition [m/sec]
 Calpha0 = tl.calc_angle_of_attack(t)          # angle of attack in the stationary flight condition [rad]
 Cth0    = tl.calc_pitch_angle(t)        # pitch angle in the stationary flight condition [rad]

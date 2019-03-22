@@ -1,7 +1,7 @@
 import numpy as np
 import Cit_par as p
 from aero_tools import Aero_Tools
-from real_analytical_model import Analytical_Model
+#from real_analytical_model import Analytical_Model
 from matlab_tools import Matlab_Tools
 matlab = Matlab_Tools('FTISxprt-20190305_124649.mat')
 from control.matlab import * 
@@ -10,7 +10,7 @@ from control.matlab import *
 class Numerical_Model:
     def __init__(self):
         self.tools = Aero_Tools()
-        self.amod = Analytical_Model()
+        #self.amod = Analytical_Model()
         self.delta_t = 0.1
         
         
@@ -238,20 +238,20 @@ class Numerical_Model:
         
 if __name__ == "__main__":
     model = Numerical_Model()
-    
-    v_ias = model.tools.kts_to_ms(1)
-    alt = model.tools.ft_to_m(0)
-    v_tas = model.tools.ias_to_tas(alt, v_ias)
-    v_dimless = model.v_dimless(v_tas, v_tas+1)
-    #print(v_dimless)
-    D_c = model.D_c(1, v_dimless)
-    D_b = model.D_b(1, v_dimless)
-    
-    sym = model.EOM_sym(D_c)
-    asym = model.EOM_asym(D_b)
-    
-    eig_s = np.linalg.eig(sym)[0]
-    eig_a = np.linalg.eig(asym)
+#    
+#    v_ias = model.tools.kts_to_ms(1)
+#    alt = model.tools.ft_to_m(0)
+#    v_tas = model.tools.ias_to_tas(alt, v_ias)
+#    v_dimless = model.v_dimless(v_tas, v_tas+1)
+#    #print(v_dimless)
+#    D_c = model.D_c(1, v_dimless)
+#    D_b = model.D_b(1, v_dimless)
+#    
+#    sym = model.EOM_sym(D_c)
+#    asym = model.EOM_asym(D_b)
+#    
+#    eig_s = np.linalg.eig(sym)[0]
+#    eig_a = np.linalg.eig(asym)
     
     
 #    print(sym)
@@ -265,12 +265,12 @@ if __name__ == "__main__":
     """
     SYMMETRIC
     """
-#    print('SYMMETRIC')
-#    As_mat=model.As(v_ref)
-#    As_eig=np.linalg.eig(As_mat)[0] * p.c/v_ref
-#
-#    print(As_mat)
-#    print(As_eig)
+    print('SYMMETRIC')
+    As_mat=model.As(v_ref)
+    #As_eig=np.linalg.eig(As_mat)[0] * p.c/v_ref
+
+    print(As_mat)
+    print(As_eig)
 #    print(model.amod.half_time(np.real(As_eig),v_ref))
 #    print()
 #    print(Aa_mat)
