@@ -31,7 +31,7 @@ fugoiddata = matlab.getdata_at_time('Ahrs1_Pitch',matlab.fugoidstart,matlab.fugo
 #fugoiddata = fugoiddata - fugoiddata[0] #correct for stable flight
 fugoidtime = matlab.getdata_at_time('time',matlab.fugoidstart,matlab.fugoidstart+matlab.fugoidtime)/60
 fugoid = nummodel.symmetric_interpolate('fugoid')[2]/np.pi*180#/np.pi*180 #pitch 'theta'
-#fugoid = nummodel.symmetric_control('fugoid')[2]/np.pi*180#/np.pi*180 #pitch 'theta'
+fugoid = nummodel.symmetric_control('fugoid')[2]/np.pi*180#/np.pi*180 #pitch 'theta'
 
 
 
@@ -80,7 +80,7 @@ plt.legend()
 
 plt.figure(3)
 plt.plot(sh_periodtime,sh_perioddata,label='data')
-plt.plot(sh_periodtime,sh_period,label='numerical model')
+#plt.plot(sh_periodtime,sh_period,label='numerical model')
 plt.xlabel('time [min]')
 plt.ylabel('pitch rate [deg/s]')
 plt.title("Short period")
