@@ -130,13 +130,14 @@ class Numerical_Model:
         U_s = de
         u_hat, AoA, Theta, qcoverv = np.array(Xs[:,0])
         a = self.As(vt0)
+        a[:,3] = a[:,3]/p.c*vt0
         b = self.Bs(vt0)
         c = self.C()
         d = self.Ds()
         sys = ss(a,b,c,d)
         response, T, xout =lsim(sys,U=U_s,T=T,X0=Xs)
         
-        response[:,3] = response[:,3]/p.c*vt0# make dimentional again
+        response[:,3] = response[:,3]# make dimentional again
         return response, T, xout
     
     def symmetric_interpolate(self,manouvre):
