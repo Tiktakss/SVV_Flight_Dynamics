@@ -265,12 +265,12 @@ if __name__ == "__main__":
     """
     SYMMETRIC
     """
-    print('SYMMETRIC')
-    As_mat=model.As(v_ref)
-    #As_eig=np.linalg.eig(As_mat)[0] * p.c/v_ref
-
-    print(As_mat)
-    print(As_eig)
+#    print('SYMMETRIC')
+#    As_mat=model.As(v_ref)
+#    #As_eig=np.linalg.eig(As_mat)[0] * p.c/v_ref
+#
+#    print(As_mat)
+#    print(As_eig)
 #    print(model.amod.half_time(np.real(As_eig),v_ref))
 #    print()
 #    print(Aa_mat)
