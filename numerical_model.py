@@ -101,6 +101,7 @@ class Numerical_Model:
         P_inv = np.linalg.inv(self.Pa(v_t0))
         Q_mat = self.Qa()
         A = np.matmul(P_inv,Q_mat)
+        A[2]=A[2]*2*v_t0/p.c
         return A
     
     def Ba(self, v_t0):
