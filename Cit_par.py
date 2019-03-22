@@ -25,6 +25,8 @@ V0     = c[1]            # true airspeed in the stationary flight condition [m/s
 alpha0 = c[2]            # angle of attack in the stationary flight condition [rad]
 th0    = c[3]            # pitch angle in the stationary flight condition [rad]
 
+#print(c)
+
 # Aircraft mass
 m      = c[4]            # mass [kg]
 

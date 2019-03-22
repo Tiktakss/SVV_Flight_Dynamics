@@ -31,7 +31,7 @@ fugoiddata = matlab.getdata_at_time('Ahrs1_Pitch',matlab.fugoidstart,matlab.fugo
 #fugoiddata = fugoiddata - fugoiddata[0] #correct for stable flight
 fugoidtime = matlab.getdata_at_time('time',matlab.fugoidstart,matlab.fugoidstart+matlab.fugoidtime)/60
 fugoid = nummodel.symmetric_interpolate('fugoid')[2]/np.pi*180#/np.pi*180 #pitch 'theta'
-fugoid = nummodel.symmetric_control('fugoid')[0][:,2]/np.pi*180#/np.pi*180 #pitch 'theta'
+#fugoid = nummodel.symmetric_control('fugoid')[0][:,2]/np.pi*180#/np.pi*180 #pitch 'theta'
 
 
 
@@ -50,6 +50,7 @@ sh_period = nummodel.symmetric_control('sh_period')[0][:,3]/np.pi*180#/np.pi*180
 dutchRdata = matlab.getdata_at_time('Ahrs1_bRollRate',matlab.dutchRstart,matlab.dutchRstart+matlab.dutchRtime)/180*np.pi
 dutchRdata2 = matlab.getdata_at_time('Ahrs1_bYawRate',matlab.dutchRstart,matlab.dutchRstart+matlab.dutchRtime)/180*np.pi
 dutchRtime = matlab.getdata_at_time('time',matlab.dutchRstart,matlab.dutchRstart+matlab.dutchRtime)/60
+dutchR = nummodel.integrate(nummodel.not_symmetric_control_dimension('dutchR'))
 
 #Dutch roll damped
 dutchR_dampdata = matlab.getdata_at_time('Ahrs1_bRollRate',matlab.dutchR_dampstart,matlab.dutchR_dampstart+matlab.dutchR_damptime)/180*np.pi

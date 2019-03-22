@@ -76,6 +76,7 @@ class Numerical_Model:
         P2 = [0,                                -0.5*p.b/v_t0,  0,                              0]
         P3 = [0,                                0,              -4 * p.mub * p.KX2 * p.b/v_t0,  4 * p.mub * p.KXZ * p.b/v_t0]
         P4 = [p.Cnbdot * p.b/v_t0,              0,              4 * p.mub * p.KXZ * p.b/v_t0,   -4 * p.mub * p.KZ2 * p.b/v_t0]
+        print(np.matrix((P1, P2, P3, P4)))
         return np.matrix((P1, P2, P3, P4))
     
     def Qa(self):
@@ -83,6 +84,7 @@ class Numerical_Model:
         Q2 = [0,        0,      -1,     0]
         Q3 = [-p.Clb,   0,      -p.Clp, -p.Clr]
         Q4 = [-p.Cnb,   0,      -p.Cnp, -p.Cnr]
+        print(np.matrix((Q1, Q2, Q3, Q4)))
         return np.matrix((Q1, Q2, Q3, Q4))
     
     def Ra(self):
@@ -165,7 +167,7 @@ class Numerical_Model:
         u_hat = np.array(u_hat)
         AoA = np.array(AoA)
         Theta = np.array(Theta)
-        q = np.array(qcoverv)/p.c*vt0
+        q = np.array(qcoverv)#/p.c*vt0
         return u_hat, AoA, Theta, q
     
     
