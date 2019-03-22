@@ -123,7 +123,7 @@ class Numerical_Model:
     
     def symmetric_control(self,manouvre):
         start,time = matlab.gettimes(manouvre)
-        T=np.linspace(start,start+time,self.delta_t)
+        T=np.linspace(start,start+time,time/self.delta_t)
         
         Xs, vt0 = matlab.Xs(manouvre) #get Xs with corresponding vtas in m/s
         de = matlab.getdata_at_time('delta_e',start,start+time)
@@ -135,13 +135,9 @@ class Numerical_Model:
         d = self.Ds()
         sys = ss(a,b,c,d)
         response, T, xout =lsim(sys,U=U_s,T=T,X0=Xs)
-
-        print (yout[:,2])
-        u_hat = np.array(u_hat)
-        AoA = np.array(AoA)
-        Theta = yout[:,2]
-        q = np.array(qcoverv)/p.c*vt0# make dimentional again
-        return u_hat, AoA, Theta, q
+        
+        response[:,3] = response[:,3]/p.c*vt0# make dimentional again
+        return response, T, xout
     
     def symmetric_interpolate(self,manouvre):
         start,time = matlab.gettimes(manouvre)
@@ -309,13 +305,13 @@ if __name__ == "__main__":
 
 
     #output = model.not_symmetric_control('spiral')
-    output2 = model.symmetric_interpolate('fugoid')
+    output2 = model.symmetric_control('fugoid')
 
     output = model.not_symmetric_control('spiral')
     #output2 = model.symmetric_control('fugoid')
 
     if __name__ == "__main__":
             print ('8======D~~~~')
-    print (output)
+    #print (output2)
     
 
