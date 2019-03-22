@@ -85,6 +85,8 @@ CD = CD0 + (CLa * alpha0) ** 2 / (math.pi * A * e) # Drag coefficient [ ]
 
 # Stabiblity derivatives
 
+#print(V0)
+
 CX0    = W * math.sin(th0) / (0.5 * rho * V0 ** 2 * S)
 CXu    = -0.02792
 CXa    = -0.47966

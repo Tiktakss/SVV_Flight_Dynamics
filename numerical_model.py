@@ -1,7 +1,7 @@
 import numpy as np
 import Cit_par as p
 from aero_tools import Aero_Tools
-from real_analytical_model import Analytical_Model
+#from real_analytical_model import Analytical_Model
 from matlab_tools import Matlab_Tools
 matlab = Matlab_Tools('FTISxprt-20190305_124649.mat')
 from control.matlab import * 
@@ -10,7 +10,7 @@ from control.matlab import *
 class Numerical_Model:
     def __init__(self):
         self.tools = Aero_Tools()
-        self.amod = Analytical_Model()
+        #self.amod = Analytical_Model()
         self.delta_t = 0.1
         
         
@@ -123,24 +123,21 @@ class Numerical_Model:
     
     def symmetric_control(self,manouvre):
         start,time = matlab.gettimes(manouvre)
-        T=np.linspace(start,start+time,self.delta_t)
+        T=np.linspace(start,start+time,time/self.delta_t)
         
         Xs, vt0 = matlab.Xs(manouvre) #get Xs with corresponding vtas in m/s
         de = matlab.getdata_at_time('delta_e',start,start+time)
+        U_s = de
         u_hat, AoA, Theta, qcoverv = np.array(Xs[:,0])
         a = self.As(vt0)
         b = self.Bs(vt0)
         c = self.C()
         d = self.Ds()
         sys = ss(a,b,c,d)
-        response, T, xout =lsim(sys,U=U_a,T=T,X0=Xa)
-
-        print (yout[:,2])
-        u_hat = np.array(u_hat)
-        AoA = np.array(AoA)
-        Theta = yout[:,2]
-        q = np.array(qcoverv)/p.c*vt0# make dimentional again
-        return u_hat, AoA, Theta, q
+        response, T, xout =lsim(sys,U=U_s,T=T,X0=Xs)
+        
+        response[:,3] = response[:,3]/p.c*vt0# make dimentional again
+        return response, T, xout
     
     def symmetric_interpolate(self,manouvre):
         start,time = matlab.gettimes(manouvre)
@@ -155,6 +152,7 @@ class Numerical_Model:
             U_s = de[t]
             if __name__ == "__main__":
                 print ('8======D')#,Xs)
+                
             DX_s = np.dot(self.As(vt0),Xs) + (self.Bs(vt0)*U_s)
             Xs = Xs + DX_s*self.delta_t
             u_hat = np.vstack((u_hat,Xs[0]))
@@ -262,20 +260,20 @@ class Numerical_Model:
         
 if __name__ == "__main__":
     model = Numerical_Model()
-    
-    v_ias = model.tools.kts_to_ms(1)
-    alt = model.tools.ft_to_m(0)
-    v_tas = model.tools.ias_to_tas(alt, v_ias)
-    v_dimless = model.v_dimless(v_tas, v_tas+1)
-    #print(v_dimless)
-    D_c = model.D_c(1, v_dimless)
-    D_b = model.D_b(1, v_dimless)
-    
-    sym = model.EOM_sym(D_c)
-    asym = model.EOM_asym(D_b)
-    
-    eig_s = np.linalg.eig(sym)[0]
-    eig_a = np.linalg.eig(asym)
+#    
+#    v_ias = model.tools.kts_to_ms(1)
+#    alt = model.tools.ft_to_m(0)
+#    v_tas = model.tools.ias_to_tas(alt, v_ias)
+#    v_dimless = model.v_dimless(v_tas, v_tas+1)
+#    #print(v_dimless)
+#    D_c = model.D_c(1, v_dimless)
+#    D_b = model.D_b(1, v_dimless)
+#    
+#    sym = model.EOM_sym(D_c)
+#    asym = model.EOM_asym(D_b)
+#    
+#    eig_s = np.linalg.eig(sym)[0]
+#    eig_a = np.linalg.eig(asym)
     
     
 #    print(sym)
@@ -291,7 +289,7 @@ if __name__ == "__main__":
     """
 #    print('SYMMETRIC')
 #    As_mat=model.As(v_ref)
-#    As_eig=np.linalg.eig(As_mat)[0] * p.c/v_ref
+#    #As_eig=np.linalg.eig(As_mat)[0] * p.c/v_ref
 #
 #    print(As_mat)
 #    print(As_eig)
@@ -329,13 +327,13 @@ if __name__ == "__main__":
 
 
     #output = model.not_symmetric_control('spiral')
-    output2 = model.symmetric_interpolate('fugoid')
+    output2 = model.symmetric_control('fugoid')
 
     output = model.not_symmetric_control_dimension('spiral')
     #output2 = model.symmetric_control('fugoid')
 
     if __name__ == "__main__":
             print ('8======D~~~~')
-    print (output)
+    #print (output2)
     
 
