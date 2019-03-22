@@ -72,9 +72,17 @@ if __name__ == "__main__":
     print('\t', 'SYMMETRIC')
     As_mat=num.As(v)
     As_eig=np.linalg.eig(As_mat)[0] * par.c/v
-    print(As_mat)
+    #print(As_mat)
     print(As_eig)
     print(amod.half_time(np.real(As_eig),v))
+    
+    print('\t', 'ASYMMETRIC')
+    Aa_mat=num.Aa(v)
+    Aa_eig=np.linalg.eig(Aa_mat)[0] * 0.5*par.b/v
+    print(Aa_mat)
+    print(Aa_eig)
+    print(amod.half_time2(np.real(Aa_eig),v))
+    print()
     
     print('\t', 'short period:')
     print(amod.eigenv_short())
