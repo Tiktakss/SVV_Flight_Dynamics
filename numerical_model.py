@@ -13,6 +13,7 @@ class Numerical_Model:
         #self.amod = Analytical_Model()
         self.delta_t = 0.1
         
+        .
     
     def v_dimless(self, v_t, v_t0):
         return (v_t - v_t0) / v_t0
