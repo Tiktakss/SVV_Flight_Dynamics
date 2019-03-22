@@ -74,7 +74,7 @@ if __name__ == "__main__":
     As_eig=np.linalg.eig(As_mat)[0] * par.c/v
     print(As_mat)
     print(As_eig)
-    print(num.amod.half_time(np.real(As_eig),v))
+    print(amod.half_time(np.real(As_eig),v))
     
     print('\t', 'short period:')
     print(amod.eigenv_short())
@@ -100,8 +100,8 @@ if __name__ == "__main__":
     
     
     print('\t', 'spiral:')
-    print(mod.spiral())
-    print(mod.half_time2(mod.spiral(),v)*vb)
+    print(amod.spiral())
+    print(amod.half_time2(amod.spiral(),v)*vb)
     
     
     
