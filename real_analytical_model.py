@@ -1,5 +1,6 @@
 import numpy as np
 import Cit_par as par
+from numerical_model import Numerical_Model
 
 class Analytical_Model:
     def __init__(self):
@@ -60,23 +61,47 @@ class Analytical_Model:
     
 if __name__ == "__main__":
     mod = Analytical_Model()
+    num = Numerical_Model()
+    
     v = 100
     vc = v/par.c
     vb = v/par.b
     vc =1
     vb =2
+    
+    print('\t', 'SYMMETRIC')
+    As_mat=num.As(v)
+    As_eig=np.linalg.eig(As_mat)[0] * par.c/v
+    print(As_mat)
+    print(As_eig)
+    print(num.amod.half_time(np.real(As_eig),v))
+    
     print('\t', 'short period:')
     print(mod.eigenv_short())
     print(mod.half_time(mod.eigenv_short()[0][0],v)*vc)
+    
+    
     print('\t', 'phugoid:')
     print(mod.eigenv_phugoid())
     print(mod.half_time(mod.eigenv_phugoid()[0][0],v)*vc)
+    
+    
+    
     print('\t', 'dutch roll:')
     print(mod.dutchr())
     print(mod.half_time2(mod.dutchr()[0][0],v)*vb)
+    
+    
+    
     print('\t', 'aperiodic roll:')
     print(mod.aperroll())
     print(mod.half_time2(mod.aperroll(),v)*vb)
+    
+    
+    
     print('\t', 'spiral:')
     print(mod.spiral())
     print(mod.half_time2(mod.spiral(),v)*vb)
+    
+    
+    
