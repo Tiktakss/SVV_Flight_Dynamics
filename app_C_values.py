@@ -67,10 +67,10 @@ class App_C:
         #print(Chp0,'alt')    	  # pressure altitude in the stationary flight condition [m]
         CV0     = self.calc_speed(t)                  # true airspeed in the stationary flight condition [m/sec]
         Calpha0 = self.calc_angle_of_attack(t)          # angle of attack in the stationary flight condition [rad]
-        Cth0    =self.calc_pitch_angle(t)        # pitch angle in the stationary flight condition [rad]
+        Cth0    = self.calc_pitch_angle(t)        # pitch angle in the stationary flight condition [rad]
         
         # Aircraft mass
-        Cm      =self.calc_aircraft_mass(t)    #Use def calc_aircraft_mass from aero tool
+        Cm      = self.calc_aircraft_mass(t)    #Use def calc_aircraft_mass from aero tool
         
         # aerodynamic properties
         Ce      = 0.7991242852322632            # Oswald factor [ ]

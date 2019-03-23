@@ -13,7 +13,7 @@ class Numerical_Model:
         #self.amod = Analytical_Model()
         self.delta_t = 0.1
         
-        .
+
     
     def v_dimless(self, v_t, v_t0):
         return (v_t - v_t0) / v_t0
@@ -104,7 +104,8 @@ class Numerical_Model:
         P_inv = np.linalg.inv(self.Pa(v_t0))
         Q_mat = self.Qa()
         A = np.matmul(P_inv,Q_mat)
-        A[2]=A[2]*2*v_t0/p.c
+        A[:,2]*=v_t0/p.b
+        A[:,3]*=v_t0/p.b
         return A
     
     def Ba(self, v_t0):
