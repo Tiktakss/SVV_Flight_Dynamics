@@ -79,7 +79,7 @@ if __name__ == "__main__":
     print('\t', 'ASYMMETRIC')
     Aa_mat=num.Aa(v)
     Aa_eig=np.linalg.eig(Aa_mat)[0] * 0.5*par.b/v
-    print(Aa_mat)
+    #print(Aa_mat)
     print('eigenv',Aa_eig)
     #print('roots:',np.roots(Aa_eig))
     print('half-time',amod.half_time2(np.real(Aa_eig),v))

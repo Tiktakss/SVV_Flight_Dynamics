@@ -76,7 +76,7 @@ class Numerical_Model:
         P2 = [0,                                -0.5*p.b/v_t0,  0,                              0]
         P3 = [0,                                0,              -4 * p.mub * p.KX2 * p.b/v_t0,  4 * p.mub * p.KXZ * p.b/v_t0]
         P4 = [p.Cnbdot * p.b/v_t0,              0,              4 * p.mub * p.KXZ * p.b/v_t0,   -4 * p.mub * p.KZ2 * p.b/v_t0]
-        print(np.matrix((P1, P2, P3, P4)))
+        #print(np.matrix((P1, P2, P3, P4)))
         return np.matrix((P1, P2, P3, P4))
     
     def Qa(self):
@@ -84,7 +84,7 @@ class Numerical_Model:
         Q2 = [0,        0,      -1,     0]
         Q3 = [-p.Clb,   0,      -p.Clp, -p.Clr]
         Q4 = [-p.Cnb,   0,      -p.Cnp, -p.Cnr]
-        print(np.matrix((Q1, Q2, Q3, Q4)))
+        #print(np.matrix((Q1, Q2, Q3, Q4)))
         return np.matrix((Q1, Q2, Q3, Q4))
     
     def Ra(self):
@@ -104,8 +104,8 @@ class Numerical_Model:
         P_inv = np.linalg.inv(self.Pa(v_t0))
         Q_mat = self.Qa()
         A = np.matmul(P_inv,Q_mat)
-        A[:,2]*=v_t0/p.b
-        A[:,3]*=v_t0/p.b
+        A[:,2]*=v_t0/p.b/2
+        #A[:,3]*=v_t0/p.b
         return A
     
     def Ba(self, v_t0):
