@@ -143,11 +143,10 @@ class Numerical_Model:
         d = self.Ds()
         sys = control.matlab.ss(a,b,c,d)
         T, response, xout = control.forced_response(sys,U=U_s,T=T,X0=Xs)
-        
 
-        response[:,3] = response[:,3]/p.c*vt0# make q dimentional again
+        #response[3,:] = response[3,:]/p.c*vt0# make q dimentional again
 
-        return response, T, xout
+        return response, T, xout, vt0
     
     def symmetric_interpolate(self,manouvre):
         start,time = matlab.gettimes(manouvre)
@@ -215,8 +214,8 @@ class Numerical_Model:
         T=np.linspace(start,start+time,(time)/dt)
         Xa, vt0 = matlab.Xa(manouvre)
         
-        da = matlab.getdata_at_time('delta_a',start,start+time)/180*np.pi
-        dr = matlab.getdata_at_time('delta_r',start,start+time)/180*np.pi
+        da = -matlab.getdata_at_time('delta_a',start,start+time)/180*np.pi
+        dr = -matlab.getdata_at_time('delta_r',start,start+time)/180*np.pi
         U_a= (np.vstack((da,dr)))
         a=self.Aa(vt0)
         b=self.Ba(vt0)

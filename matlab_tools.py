@@ -17,8 +17,8 @@ class Matlab_Tools:
         self.fugoidstart = 60*49 
         self.fugoidtime = 159
         self.ap_rollstart = 60*53 + 5
-        self.ap_rolltime = 5
-        self.sh_periodstart = 60*54 + 0.9
+        self.ap_rolltime = 6
+        self.sh_periodstart = 60*54 #+ 0.9
         self.sh_periodtime = 4
         self.dutchRstart = 60*56+2
         self.dutchRtime = 18
