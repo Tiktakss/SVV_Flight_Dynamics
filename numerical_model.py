@@ -216,35 +216,22 @@ class Numerical_Model:
         
         da = matlab.getdata_at_time('delta_a',start,start+time)
         dr = matlab.getdata_at_time('delta_r',start,start+time)
-        U_a= np.transpose(np.vstack((da,dr)))
+        U_a= (np.vstack((da,dr)))
         a=self.Aa(vt0)
         b=self.Ba(vt0)
         c=self.C()
         d=self.Da()
-        sys=StateSpace(a,b,c,d)
+        sys=control.ss(a,b,c,d)
 
-        response, T, xout =lsim(sys,U=U_a,T=T,X0=Xa)
+        T, response, xout =control.forced_response(sys,U=U_a,T=T,X0=Xa)
 
         return response, T, xout
     
     
     
     def not_symmetric_control_dimension(self,manouvre):
-        start,time = matlab.gettimes(manouvre)
-        dt=0.1
-        T=np.linspace(start,start+time,(time)/dt)
+        response, T, xout = self.not_symmetric_control(manouvre)
         Xa, vt0 = matlab.Xa(manouvre)
-        
-        da = matlab.getdata_at_time('delta_a',start,start+time)
-        dr = matlab.getdata_at_time('delta_r',start,start+time)
-        U_a= np.transpose(np.vstack((da,dr)))
-        a=self.Aa(vt0)
-        b=self.Ba(vt0)
-        c=self.C()
-        d=self.Da()
-        sys=ss(a,b,c,d)
-        response, T, xout =lsim(sys,U=U_a,T=T,X0=Xa)
-        
         response[:,2]=response[:,2]*2*vt0/p.b
         response[:,3]=response[:,3]*2*vt0/p.b
         return response, T, xout
