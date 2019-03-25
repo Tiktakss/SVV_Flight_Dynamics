@@ -69,12 +69,13 @@ if __name__ == "__main__":
     vc =1
     vb =2
     
-#    print('\t', 'SYMMETRIC')
-#    As_mat=num.As(v)
-#    As_eig=np.linalg.eig(As_mat)[0] * par.c/v
-#    #print(As_mat)
-#    print(As_eig)
-#    print(amod.half_time(np.real(As_eig),v))
+    print('\t', 'SYMMETRIC')
+    As_mat=num.As(v)
+    As_eig=np.linalg.eig(As_mat)[0] * par.c/v
+    #print(As_mat)
+    print(As_eig)
+    print('half-time',amod.half_time(np.real(As_eig),v))
+    print(amod.period_s(np.imag(As_eig),v))
     
     print('\t', 'ASYMMETRIC')
     Aa_mat=num.Aa(v)
@@ -83,34 +84,35 @@ if __name__ == "__main__":
     print('eigenv',Aa_eig)
     #print('roots:',np.roots(Aa_eig))
     print('half-time',amod.half_time2(np.real(Aa_eig),v))
+    print(amod.period_a(np.imag(Aa_eig),v))
     print()
     
     print('\t', 'short period:')
     print(amod.eigenv_short())
     print(amod.half_time(amod.eigenv_short()[0][0],v)*vc)
-    
+    print(amod.period_s(amod.eigenv_short()[0][1],v)*vc)
     
     print('\t', 'phugoid:')
     print(amod.eigenv_phugoid())
     print(amod.half_time(amod.eigenv_phugoid()[0][0],v)*vc)
-    
+    print(amod.period_s(amod.eigenv_phugoid()[0][1],v)*vc)
     
     
     print('\t', 'dutch roll:')
     print(amod.dutchr())
     print(amod.half_time2(amod.dutchr()[0][0],v)*vb)
-    
+    print(amod.period_a(amod.dutchr()[0][1],v)*vc)
     
     
     print('\t', 'aperiodic roll:')
     print(amod.aperroll())
     print(amod.half_time2(amod.aperroll(),v)*vb)
-    
+    #print(amod.period_a(amod.aperroll(),v)*vb)
     
     
     print('\t', 'spiral:')
     print(amod.spiral())
     print(amod.half_time2(amod.spiral(),v)*vb)
-    
+    #print(amod.period_a(amod.spiral(),v)*vb)
     
     
