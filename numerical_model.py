@@ -141,7 +141,7 @@ class Numerical_Model:
         c = self.C()
         d = self.Ds()
         sys = control.ss(a,b,c,d)
-        response, T, xout = control.forced_response(sys,U=U_s,T=T,X0=Xs)
+        T, response, xout = control.forced_response(sys,U=U_s,T=T,X0=Xs)
         
 
         response[:,3] = response[:,3]/p.c*vt0# make q dimentional again
@@ -318,7 +318,7 @@ if __name__ == "__main__":
 
 
     #output = model.not_symmetric_control('spiral')
-    T, Yout, Xout = model.symmetric_control('sh_period')
+    Yout, T, Xout = model.symmetric_control('sh_period')
     
     plt.plot(T,Yout[0])
     plt.plot(T,Yout[1])
