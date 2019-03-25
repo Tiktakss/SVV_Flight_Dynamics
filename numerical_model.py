@@ -5,6 +5,7 @@ from aero_tools import Aero_Tools
 from matlab_tools import Matlab_Tools
 matlab = Matlab_Tools('FTISxprt-20190305_124649.mat')
 import control
+#import matlab.control as ctr
 #import scipy.signal as signal
 import matplotlib.pyplot as plt
 
@@ -132,15 +133,15 @@ class Numerical_Model:
         T=np.linspace(start,start+time,time/self.delta_t)
         
         Xs, vt0 = matlab.Xs(manouvre) #get Xs with corresponding vtas in m/s
-        de = matlab.getdata_at_time('delta_e',start,start+time)
+        de = matlab.getdata_at_time('delta_e',start,start+time)/180*np.pi
         U_s = de
         u_hat, AoA, Theta, qcoverv = np.array(Xs[:,0])
         a = self.As(vt0)
-        a[:,3] = a[:,3]/p.c*vt0
+        #a[:,3] = a[:,3]/p.c*vt0
         b = self.Bs(vt0)
         c = self.C()
         d = self.Ds()
-        sys = control.ss(a,b,c,d)
+        sys = control.matlab.ss(a,b,c,d)
         T, response, xout = control.forced_response(sys,U=U_s,T=T,X0=Xs)
         
 
@@ -152,7 +153,7 @@ class Numerical_Model:
         start,time = matlab.gettimes(manouvre)
         
         Xs, vt0 = matlab.Xs(manouvre) #get Xs with corresponding vtas in m/s
-        de = matlab.getdata_at_time('delta_e',start,start+time)
+        de = matlab.getdata_at_time('delta_e',start,start+time)/180*np.pi
         u_hat=np.array(Xs)[0]
         AoA=np.array(Xs)[1]
         Theta=np.array(Xs)[2]
@@ -181,8 +182,8 @@ class Numerical_Model:
         start,time = matlab.gettimes(manouvre)
         
         Xa, vtas = matlab.Xa(manouvre)
-        da = matlab.getdata_at_time('delta_a',start,start+time)
-        dr = matlab.getdata_at_time('delta_r',start,start+time)
+        da = matlab.getdata_at_time('delta_a',start,start+time)/180*np.pi
+        dr = matlab.getdata_at_time('delta_r',start,start+time)/180*np.pi
         vt0 = matlab.getdata_at_time('Dadc1_tas',start,start+0.2)[0]
         Beta=np.array(Xa)[0]
         Phi=np.array(Xa)[1]
@@ -214,8 +215,8 @@ class Numerical_Model:
         T=np.linspace(start,start+time,(time)/dt)
         Xa, vt0 = matlab.Xa(manouvre)
         
-        da = matlab.getdata_at_time('delta_a',start,start+time)
-        dr = matlab.getdata_at_time('delta_r',start,start+time)
+        da = matlab.getdata_at_time('delta_a',start,start+time)/180*np.pi
+        dr = matlab.getdata_at_time('delta_r',start,start+time)/180*np.pi
         U_a= (np.vstack((da,dr)))
         a=self.Aa(vt0)
         b=self.Ba(vt0)
