@@ -4,8 +4,9 @@ from aero_tools import Aero_Tools
 #from real_analytical_model import Analytical_Model
 from matlab_tools import Matlab_Tools
 matlab = Matlab_Tools('FTISxprt-20190305_124649.mat')
-from control.matlab import * 
+import control
 #import scipy.signal as signal
+import matplotlib.pyplot as plt
 
 class Numerical_Model:
     def __init__(self):
@@ -139,10 +140,10 @@ class Numerical_Model:
         b = self.Bs(vt0)
         c = self.C()
         d = self.Ds()
-        sys = ss(a,b,c,d)
-        response, T, xout =lsim(sys,U=U_s,T=T,X0=Xs)
+        sys = control.ss(a,b,c,d)
+        response, T, xout = control.forced_response(sys,U=U_s,T=T,X0=Xs)
         
-        response[:,3] = response[:,3]# make dimentional again
+        #response[:,3] = response[:,3]# make dimentional again
         return response, T, xout
     
     def symmetric_interpolate(self,manouvre):
@@ -219,7 +220,7 @@ class Numerical_Model:
         c=self.C()
         d=self.Da()
         sys=StateSpace(a,b,c,d)
-        response, T, xout =lsim(sys,U=U_a,T=T,X0=Xa)
+        T, response, xout =lsim(sys,U=U_a,T=T,X0=Xa)
 
 #        Beta=np.array(Xa)[0]
 #        Phi=np.array(Xa)[1]
@@ -257,7 +258,7 @@ class Numerical_Model:
         b=self.Ba(vt0)
         c=self.C()
         d=self.Da()
-        sys=StateSpace(a,b,c,d)
+        sys=ss(a,b,c,d)
         response, T, xout =lsim(sys,U=U_a,T=T,X0=Xa)
         
         response[:,2]=response[:,2]*2*vt0/p.b
@@ -333,9 +334,20 @@ if __name__ == "__main__":
 
 
     #output = model.not_symmetric_control('spiral')
-    output2 = model.symmetric_control('fugoid')
+    T, Yout, Xout = model.symmetric_control('sh_period')
+    
+    plt.plot(T,Yout[0])
+    plt.plot(T,Yout[1])
+    plt.plot(T,Yout[2])
+    plt.plot(T,Yout[3])
+    plt.show()
+    plt.plot(T,Xout[0])
+    plt.plot(T,Xout[1])
+    plt.plot(T,Xout[2])
+    plt.plot(T,Xout[3])
+    plt.show()
 
-    output = model.not_symmetric_control_dimension('spiral')
+    #output = model.not_symmetric_control_dimension('spiral')
     #output2 = model.symmetric_control('fugoid')
 
     if __name__ == "__main__":
