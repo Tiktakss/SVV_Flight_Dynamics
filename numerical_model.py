@@ -48,7 +48,7 @@ class Numerical_Model:
         P1 = [-2 * p.muc * p.c / v_t0, 0,                                      0,              0]
         P2 = [0,                       (p.CZadot - 2 * p.muc) * p.c / v_t0,    0,              0]
         P3 = [0,                       0,                                      -p.c / v_t0,    0]
-        P4 = [0,                       p.Cmadot * p.c / v_t0,                  0,              -2 * p.muc * p.KY2 * (p.c / v_t0)**1]
+        P4 = [0,                       p.Cmadot * p.c / v_t0,                  0,              -2 * p.muc * p.KY2 * (p.c / v_t0)]
         P =  np.matrix((P1, P2, P3, P4))
         #print(P)
         return P
@@ -105,8 +105,8 @@ class Numerical_Model:
         P_inv = np.linalg.inv(self.Pa(v_t0))
         Q_mat = self.Qa()
         A = np.matmul(P_inv,Q_mat)
-        A[:,2]*=v_t0/p.b/2
-        #A[:,3]*=v_t0/p.b
+        #A[:,2]*=v_t0/p.b*2
+        #A[:,3]*=v_t0/p.b*2
         return A
     
     def Ba(self, v_t0):
