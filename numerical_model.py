@@ -143,7 +143,9 @@ class Numerical_Model:
         sys = control.ss(a,b,c,d)
         response, T, xout = control.forced_response(sys,U=U_s,T=T,X0=Xs)
         
-        #response[:,3] = response[:,3]# make dimentional again
+
+        response[:,3] = response[:,3]/p.c*vt0# make q dimentional again
+
         return response, T, xout
     
     def symmetric_interpolate(self,manouvre):
@@ -169,7 +171,7 @@ class Numerical_Model:
         u_hat = np.array(u_hat)
         AoA = np.array(AoA)
         Theta = np.array(Theta)
-        q = np.array(qcoverv)#/p.c*vt0
+        q = np.array(qcoverv)/p.c*vt0
         return u_hat, AoA, Theta, q
     
     
@@ -220,27 +222,9 @@ class Numerical_Model:
         c=self.C()
         d=self.Da()
         sys=StateSpace(a,b,c,d)
-        T, response, xout =lsim(sys,U=U_a,T=T,X0=Xa)
 
-#        Beta=np.array(Xa)[0]
-#        Phi=np.array(Xa)[1]
-#        pbover2v=np.array(Xa)[2]
-#        rbover2v=np.array(Xa)[3]
-        '''
-        for t in range(1,len(self.t_run(time))):
-            U_a = np.transpose(np.matrix([da[t],dr[t]]))
-            if __name__ == "__main__":
-                print ('8======D')#,Xa)
-            DX_a = np.dot(self.Aa(vt0),(Xa)) + (self.Ba(vt0)*U_a)
-            Xa = Xa + DX_a*self.delta_t
-            Beta = np.vstack((Beta,Xa[0]))
-            Phi = np.vstack((Phi,Xa[1]))
-            pbover2v = np.vstack((pbover2v,Xa[2]))
-            rbover2v = np.vstack((rbover2v,Xa[3]))'''
-#        Beta = np.array(Beta)
-#        Phi = np.array(Phi)
-#        pbover2v = np.array(pbover2v)
-#        rbover2v = np.array(rbover2v)
+        response, T, xout =lsim(sys,U=U_a,T=T,X0=Xa)
+
         return response, T, xout
     
     
