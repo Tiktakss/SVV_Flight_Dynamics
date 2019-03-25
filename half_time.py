@@ -24,6 +24,22 @@ if __name__ == "__main__":
     matlab=Matlab_Tools('FTISxprt-20190305_124649.mat')
     fugoiddata = matlab.getdata_at_time('Ahrs1_Pitch',matlab.fugoidstart,matlab.fugoidstart+matlab.fugoidtime)
     fugoidtime = matlab.getdata_at_time('time',matlab.fugoidstart,matlab.fugoidstart+matlab.fugoidtime)/60
-    print(max(fugoiddata))
     
+    idx_max =  np.r_[True, fugoiddata[1:] > fugoiddata[:-1]] & np.r_[fugoiddata[:-1] > fugoiddata[1:], True]
+    idx_min = np.r_[True, fugoiddata[1:] < fugoiddata[:-1]] & np.r_[fugoiddata[:-1] < fugoiddata[1:], True]
+    
+    mx = (fugoiddata[idx_max])[:-1]
+    mn = (fugoiddata[idx_min])[1:-1]
+    
+    t_max=(fugoidtime[idx_max])[:-1]
+    t_min=(fugoidtime[idx_min])[1:-1]
+    
+    fit_mx=np.polyfit(t_max-min(t_max),np.log(mx),1)
+    fit_mn=np.polyfit(t_min-min(t_min),np.log(mn),1)
+    
+    print(fit_mx)
+    
+    
+    plt.plot(fugoidtime,np.exp((fugoidtime-min(t_max))*fit_mx[0]+fit_mx[1]))
+    plt.plot(fugoidtime,np.exp((fugoidtime-min(t_min))*fit_mn[0]+fit_mn[1]))
     plt.plot(fugoidtime,fugoiddata)
