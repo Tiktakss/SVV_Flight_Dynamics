@@ -100,7 +100,7 @@ class Matlab_Tools:
         aoa=self.getdata_at_time('vane_AOA',start,start+dt)[0]/180*np.pi
         theta=self.getdata_at_time('Ahrs1_Pitch',start,start+dt)[0]/180*np.pi
         vtas = self.getdata_at_time('Dadc1_tas',start,start+dt)[0]*0.51 #knots -> m/s
-        qcoverv=self.getdata_at_time('Ahrs1_bPitchRate',start,start+dt)[0]/180*np.pi#*self.c/vtas #q is pitchrate
+        qcoverv=self.getdata_at_time('Ahrs1_bPitchRate',start,start+dt)[0]/180*np.pi*self.c/vtas #q is pitchrate
         X_s=np.array([[uhat],[aoa],[theta],[qcoverv]])
 
         return X_s, vtas
@@ -110,10 +110,10 @@ class Matlab_Tools:
         
         dt= 0.2
         Beta= 0 #assume no sideslip at intitial condition
-        Phi=self.getdata_at_time('Ahrs1_Roll',start,start+dt)[0]
+        Phi=self.getdata_at_time('Ahrs1_Roll',start,start+dt)[0]/180*np.pi
         vtas = self.getdata_at_time('Dadc1_tas',start,start+dt)[0]*0.51 #knots -> m/s
-        pbover2v=self.getdata_at_time('Ahrs1_bRollRate',start,start+dt)[0]#*self.b/(2*vtas)
-        rbover2v=self.getdata_at_time('Ahrs1_bYawRate',start,start+dt)[0]#*self.b/(2*vtas)
+        pbover2v=self.getdata_at_time('Ahrs1_bRollRate',start,start+dt)[0]/180*np.pi*self.b/(2*vtas)
+        rbover2v=self.getdata_at_time('Ahrs1_bYawRate',start,start+dt)[0]/180*np.pi*self.b/(2*vtas)
         X_a=np.array([[Beta],[Phi],[pbover2v],[rbover2v]])
         return X_a, vtas
 
