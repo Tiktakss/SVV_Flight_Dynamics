@@ -50,7 +50,7 @@ sh_period = nummodel.symmetric_control('sh_period')[0][:,3]/np.pi*180#/np.pi*180
 dutchRdata = matlab.getdata_at_time('Ahrs1_bRollRate',matlab.dutchRstart,matlab.dutchRstart+matlab.dutchRtime)/180*np.pi
 dutchRdata2 = matlab.getdata_at_time('Ahrs1_bYawRate',matlab.dutchRstart,matlab.dutchRstart+matlab.dutchRtime)/180*np.pi
 dutchRtime = matlab.getdata_at_time('time',matlab.dutchRstart,matlab.dutchRstart+matlab.dutchRtime)/60
-dutchR = nummodel.integrate(nummodel.not_symmetric_control_dimension('dutchR'))
+dutchR = nummodel.integrate(nummodel.not_symmetric_control_dimension('dutchR')[1])
 
 #Dutch roll damped
 dutchR_dampdata = matlab.getdata_at_time('Ahrs1_bRollRate',matlab.dutchR_dampstart,matlab.dutchR_dampstart+matlab.dutchR_damptime)/180*np.pi
