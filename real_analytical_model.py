@@ -51,7 +51,7 @@ class Analytical_Model:
         return np.log(0.5)*par.c/(xi * v)
 
     def half_time2(self, xi, v):
-        return np.log(0.5)*par.b/(xi * v)
+        return np.log(0.5)*par.b/(xi * v *2)
     
     def period_s(self, eta, v):
         return (2*np.pi*par.c)/(eta*v)
@@ -79,7 +79,7 @@ if __name__ == "__main__":
     
     print('\t', 'ASYMMETRIC')
     Aa_mat=num.Aa(v)
-    Aa_eig=np.linalg.eig(Aa_mat)[0] * 0.5*par.b/v
+    Aa_eig=np.linalg.eig(Aa_mat)[0] *par.b/v
     #print(Aa_mat)
     print('eigenv',Aa_eig)
     #print('roots:',np.roots(Aa_eig))
