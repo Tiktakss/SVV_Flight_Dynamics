@@ -144,7 +144,7 @@ class Numerical_Model:
         sys = control.matlab.ss(a,b,c,d)
         T, response, xout = control.forced_response(sys,U=U_s,T=T,X0=Xs)
 
-        #response[3,:] = response[3,:]/p.c*vt0# make q dimentional again
+        response[3,:] = response[3,:]/p.c*vt0# make q dimentional again
 
         return response, T, xout, vt0
     
@@ -232,8 +232,8 @@ class Numerical_Model:
     def not_symmetric_control_dimension(self,manouvre):
         response, T, xout = self.not_symmetric_control(manouvre)
         Xa, vt0 = matlab.Xa(manouvre)
-        response[:,2]=response[:,2]*2*vt0/p.b
-        response[:,3]=response[:,3]*2*vt0/p.b
+        response[2,:]=response[2,:]*2*vt0/p.b
+        response[3,:]=response[3,:]*2*vt0/p.b
         return response, T, xout
         
 if __name__ == "__main__":
