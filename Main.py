@@ -31,7 +31,8 @@ fugoiddata = matlab.getdata_at_time('Ahrs1_Pitch',matlab.fugoidstart,matlab.fugo
 fugoidtime = matlab.getdata_at_time('time',matlab.fugoidstart,matlab.fugoidstart+matlab.fugoidtime)/60
 #fugoid = nummodel.symmetric_interpolate('fugoid')[2]/np.pi*180# #pitch 'theta'
 fugoid = nummodel.symmetric_control('fugoid')[0]
-fugoid = fugoid[:,2]/np.pi*180##pitch 'theta'
+
+fugoid = fugoid[2]/np.pi*180##pitch 'theta'
 
 
 
@@ -45,7 +46,7 @@ ap_roll = nummodel.not_symmetric_control('ap_roll')[0] # roll angle 'phi'
 sh_perioddata = matlab.getdata_at_time('Ahrs1_bPitchRate',matlab.sh_periodstart,matlab.sh_periodstart+matlab.sh_periodtime)
 sh_periodtime = matlab.getdata_at_time('time',matlab.sh_periodstart,matlab.sh_periodstart+matlab.sh_periodtime)/60
 sh_period = nummodel.symmetric_control('sh_period')[0]
-sh_period = sh_period[:,3]/np.pi*180# #pitchrate 'q'
+sh_period = sh_period[3]/np.pi*180# #pitchrate 'q'
 
 #Dutch roll undamped
 dutchRdata = matlab.getdata_at_time('Ahrs1_bRollRate',matlab.dutchRstart,matlab.dutchRstart+matlab.dutchRtime)/180*np.pi
@@ -74,7 +75,7 @@ plt.legend()
 
 plt.figure(2)
 plt.plot(ap_rolltime,ap_rolldata,label='data')
-plt.plot(ap_rolltime,(ap_roll[:,1]),label='numerical model')
+plt.plot(ap_rolltime,(ap_roll[1]),label='numerical model')
 plt.xlabel('time [min]')
 plt.ylabel('roll rate [deg]')
 plt.title("Aperiodic roll")
