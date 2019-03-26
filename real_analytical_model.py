@@ -4,7 +4,8 @@ from numerical_model import Numerical_Model
 
 class Analytical_Model:
     def __init__(self):
-        a=1
+        self.a=48.616850600418104
+        self.b=12.56992018100685
     """
     Sammary 4 FD 2.3.1 Short period motion
     """
@@ -14,8 +15,8 @@ class Analytical_Model:
         (2 * par.muc - par.CZadot) * par.Cmq
         Z = par.CZa * par.Cmq - (2 * par.muc + par.CZq) * par.Cma
         
-        L_Re = -Y/(2*X)
-        L_Im = np.sqrt(4*X*Z - Y**2) / (2*X)
+        L_Re = self.a*-Y/(2*X)
+        L_Im = self.a*np.sqrt(4*X*Z - Y**2) / (2*X)
         L1 = [L_Re, L_Im]
         L2 = [L_Re, -L_Im]
         return L1, L2
@@ -25,27 +26,27 @@ class Analytical_Model:
         Y = 2* par.muc * (par.CXu * par.Cma - par.Cmu * par.CXa) + par.Cmq * (par.CZu * par.CXa - par.CXu * par.CZa)
         Z = par.CZ0 * (par.Cmu * par.CZa - par.CZu * par.Cma)
         
-        L_Re = -Y/(2*X)
-        L_Im = np.sqrt(4*X*Z - Y**2) / (2*X)
+        L_Re = self.a*-Y/(2*X)
+        L_Im = self.a*np.sqrt(4*X*Z - Y**2) / (2*X)
         L1 = [L_Re, L_Im]
         L2 = [L_Re, -L_Im]
         return L1, L2
     
     def dutchr(self):
-        L_Re = (par.Cnr + 2 * par.KZ2 * par.CYb) / (8*par.mub * par.KZ2)
-        L_Im = np.sqrt(64 * par.KZ2 * (4*par.mub * par.Cnb + par.CYb * par.Cnr) - 4 * \
+        L_Re = self.b*(par.Cnr + 2 * par.KZ2 * par.CYb) / (8*par.mub * par.KZ2)
+        L_Im = self.b*np.sqrt(64 * par.KZ2 * (4*par.mub * par.Cnb + par.CYb * par.Cnr) - 4 * \
                        (par.Cnr + 2*par.KZ2 * par.CYb)**2) / (16*par.mub * par.KZ2)
         L1 = [L_Re, L_Im]
         L2 = [L_Re, -L_Im]
         return L1, L2
     
     def aperroll(self):
-        return par.Clp / (4*par.mub * par.KX2)
+        return self.b*par.Clp / (4*par.mub * par.KX2)
     
     def spiral(self):
         X = 2 * par.CL * (par.Clb * par.Cnr - par.Cnb * par.Clr)
         Y = par.Clp * (par.CYb * par.Cnr + 4 *par.mub * par.Cnb) - par.Cnp *(par.CYb * par.Clr + 4*par.mub * par.Clb)
-        return X/Y
+        return self.b*X/Y
     
     def half_time(self, xi, v):
         return np.log(0.5)*par.c/(xi * v)
@@ -64,14 +65,14 @@ if __name__ == "__main__":
     num = Numerical_Model()
     
     v = 100
-    vc = v/par.c
-    vb = v/par.b
-    vc =1
-    vb =2
+    vc = (v/par.c)
+    vb = (2*v/par.b)
+    print(vb)
+#    vb =2
     
     print('\t', 'SYMMETRIC')
     As_mat=num.As(v)
-    As_eig=np.linalg.eig(As_mat)[0] * par.c/v
+    As_eig=np.linalg.eig(As_mat)[0] #* par.c/v
     #print(As_mat)
     print(As_eig)
     print('half-time',amod.half_time(np.real(As_eig),v))
@@ -79,7 +80,7 @@ if __name__ == "__main__":
     
     print('\t', 'ASYMMETRIC')
     Aa_mat=num.Aa(v)
-    Aa_eig=np.linalg.eig(Aa_mat)[0] *par.b/v
+    Aa_eig=np.linalg.eig(Aa_mat)[0] *2#*par.b/v
     #print(Aa_mat)
     print('eigenv',Aa_eig)
     #print('roots:',np.roots(Aa_eig))
@@ -88,7 +89,7 @@ if __name__ == "__main__":
     print()
     
     print('\t', 'short period:')
-    print(amod.eigenv_short())
+    print((amod.eigenv_short()))
     print(amod.half_time(amod.eigenv_short()[0][0],v)*vc)
     print(amod.period_s(amod.eigenv_short()[0][1],v)*vc)
     
