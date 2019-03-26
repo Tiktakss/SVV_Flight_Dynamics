@@ -32,8 +32,11 @@ fugoiddata = matlab.getdata_at_time('Ahrs1_Pitch',matlab.fugoidstart,matlab.fugo
 fugoidtime = matlab.getdata_at_time('time',matlab.fugoidstart,matlab.fugoidstart+matlab.fugoidtime)/60
 #fugoid = nummodel.symmetric_interpolate('fugoid')[2]/np.pi*180# #pitch 'theta'
 fugoid = nummodel.symmetric_control('fugoid')[0]
+fugoidpitchrate=fugoid[3]/np.pi*180
+fugoiddatapitchrate = matlab.getdata_at_time('Ahrs1_bPitchRate',matlab.fugoidstart,matlab.fugoidstart+matlab.fugoidtime)
 fugoid = fugoid[2]/np.pi*180##pitch 'theta'
 fugoid[3] = (fugoid[2]+fugoid[4])/2
+
 
 
 
@@ -48,7 +51,7 @@ sh_perioddata = matlab.getdata_at_time('Ahrs1_bPitchRate',matlab.sh_periodstart,
 sh_periodtime = matlab.getdata_at_time('time',matlab.sh_periodstart,matlab.sh_periodstart+matlab.sh_periodtime)/60
 sh_periodnum = nummodel.symmetric_control('sh_period')
 vt0 = sh_periodnum[3]
-sh_period = sh_periodnum[0][3]/np.pi*180/p.c*vt0# #pitchrate 'q'
+sh_period = sh_periodnum[0][3]/np.pi*180/p.c*vt0*10    # #pitchrate 'q'
 #sh_period = nummodel.symmetric_interpolate('sh_period')[3]/np.pi*180# #pitch 'theta'
 
 #Dutch roll undamped
@@ -138,6 +141,15 @@ plt.plot(spiraltime,spiraldata2,label='data')
 plt.ylabel('yaw rate [deg/s]')
 plt.xlabel('time [min]')
 plt.legend()
+
+plt.figure(7)
+plt.plot(fugoidtime,fugoiddatapitchrate,label='data')
+plt.plot(fugoidtime,fugoidpitchrate,label='numerical model')
+plt.xlabel('time [min]')
+plt.ylabel('pitch rate [deg]')
+plt.title("Phugoid")
+plt.legend()
+
 
 plt.show()
 
