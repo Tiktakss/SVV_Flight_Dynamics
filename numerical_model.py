@@ -1,19 +1,22 @@
 import numpy as np
 import Cit_par as p
 from aero_tools import Aero_Tools
-from real_analytical_model import Analytical_Model
+#from real_analytical_model import Analytical_Model
 from matlab_tools import Matlab_Tools
 matlab = Matlab_Tools('FTISxprt-20190305_124649.mat')
-from control.matlab import * 
+import control
+#import matlab.control as ctr
 #import scipy.signal as signal
+import matplotlib.pyplot as plt
 
 class Numerical_Model:
     def __init__(self):
         self.tools = Aero_Tools()
-        self.amod = Analytical_Model()
+        #self.amod = Analytical_Model()
         self.delta_t = 0.1
         
-        
+
+    
     def v_dimless(self, v_t, v_t0):
         return (v_t - v_t0) / v_t0
     
@@ -46,7 +49,7 @@ class Numerical_Model:
         P1 = [-2 * p.muc * p.c / v_t0, 0,                                      0,              0]
         P2 = [0,                       (p.CZadot - 2 * p.muc) * p.c / v_t0,    0,              0]
         P3 = [0,                       0,                                      -p.c / v_t0,    0]
-        P4 = [0,                       p.Cmadot * p.c / v_t0,                  0,              -2 * p.muc * p.KY2 * (p.c / v_t0)**1]
+        P4 = [0,                       p.Cmadot * p.c / v_t0,                  0,              -2 * p.muc * p.KY2 * (p.c / v_t0)]
         P =  np.matrix((P1, P2, P3, P4))
         #print(P)
         return P
@@ -75,6 +78,7 @@ class Numerical_Model:
         P2 = [0,                                -0.5*p.b/v_t0,  0,                              0]
         P3 = [0,                                0,              -4 * p.mub * p.KX2 * p.b/v_t0,  4 * p.mub * p.KXZ * p.b/v_t0]
         P4 = [p.Cnbdot * p.b/v_t0,              0,              4 * p.mub * p.KXZ * p.b/v_t0,   -4 * p.mub * p.KZ2 * p.b/v_t0]
+        #print(np.matrix((P1, P2, P3, P4)))
         return np.matrix((P1, P2, P3, P4))
     
     def Qa(self):
@@ -82,6 +86,7 @@ class Numerical_Model:
         Q2 = [0,        0,      -1,     0]
         Q3 = [-p.Clb,   0,      -p.Clp, -p.Clr]
         Q4 = [-p.Cnb,   0,      -p.Cnp, -p.Cnr]
+        #print(np.matrix((Q1, Q2, Q3, Q4)))
         return np.matrix((Q1, Q2, Q3, Q4))
     
     def Ra(self):
@@ -101,6 +106,8 @@ class Numerical_Model:
         P_inv = np.linalg.inv(self.Pa(v_t0))
         Q_mat = self.Qa()
         A = np.matmul(P_inv,Q_mat)
+        #A[:,2]*=v_t0/p.b*2
+        #A[:,3]*=v_t0/p.b*2
         return A
     
     def Ba(self, v_t0):
@@ -123,31 +130,29 @@ class Numerical_Model:
     
     def symmetric_control(self,manouvre):
         start,time = matlab.gettimes(manouvre)
-        T=np.linspace(start,start+time,self.delta_t)
+        T=np.linspace(start,start+time,time/self.delta_t)
         
         Xs, vt0 = matlab.Xs(manouvre) #get Xs with corresponding vtas in m/s
-        de = matlab.getdata_at_time('delta_e',start,start+time)
+        de = matlab.getdata_at_time('delta_e',start,start+time)/180*np.pi
         U_s = de
         u_hat, AoA, Theta, qcoverv = np.array(Xs[:,0])
         a = self.As(vt0)
+        #a[:,3] = a[:,3]/p.c*vt0
         b = self.Bs(vt0)
         c = self.C()
         d = self.Ds()
-        sys = ss(a,b,c,d)
-        response, T, xout =lsim(sys,U=U_s,T=T,X0=Xs)
+        sys = control.matlab.ss(a,b,c,d)
+        T, response, xout = control.forced_response(sys,U=U_s,T=T,X0=Xs)
 
-        print (yout[:,2])
-        u_hat = np.array(u_hat)
-        AoA = np.array(AoA)
-        Theta = yout[:,2]
-        q = np.array(qcoverv)/p.c*vt0# make dimentional again
-        return u_hat, AoA, Theta, q
+        response[3,:] = response[3,:]/p.c*vt0# make q dimentional again
+
+        return response, T, xout, vt0
     
     def symmetric_interpolate(self,manouvre):
         start,time = matlab.gettimes(manouvre)
         
         Xs, vt0 = matlab.Xs(manouvre) #get Xs with corresponding vtas in m/s
-        de = matlab.getdata_at_time('delta_e',start,start+time)
+        de = matlab.getdata_at_time('delta_e',start,start+time)/180*np.pi
         u_hat=np.array(Xs)[0]
         AoA=np.array(Xs)[1]
         Theta=np.array(Xs)[2]
@@ -176,8 +181,8 @@ class Numerical_Model:
         start,time = matlab.gettimes(manouvre)
         
         Xa, vtas = matlab.Xa(manouvre)
-        da = matlab.getdata_at_time('delta_a',start,start+time)
-        dr = matlab.getdata_at_time('delta_r',start,start+time)
+        da = matlab.getdata_at_time('delta_a',start,start+time)/180*np.pi
+        dr = matlab.getdata_at_time('delta_r',start,start+time)/180*np.pi
         vt0 = matlab.getdata_at_time('Dadc1_tas',start,start+0.2)[0]
         Beta=np.array(Xa)[0]
         Phi=np.array(Xa)[1]
@@ -209,53 +214,44 @@ class Numerical_Model:
         T=np.linspace(start,start+time,(time)/dt)
         Xa, vt0 = matlab.Xa(manouvre)
         
-        da = matlab.getdata_at_time('delta_a',start,start+time)
-        dr = matlab.getdata_at_time('delta_r',start,start+time)
-        U_a= np.transpose(np.vstack((da,dr)))
+        da = -matlab.getdata_at_time('delta_a',start,start+time)/180*np.pi
+        dr = -matlab.getdata_at_time('delta_r',start,start+time)/180*np.pi
+        U_a= (np.vstack((da,dr)))
         a=self.Aa(vt0)
         b=self.Ba(vt0)
         c=self.C()
         d=self.Da()
-        sys=StateSpace(a,b,c,d)
-        response, T, xout =lsim(sys,U=U_a,T=T,X0=Xa)
+        sys=control.ss(a,b,c,d)
 
-#        Beta=np.array(Xa)[0]
-#        Phi=np.array(Xa)[1]
-#        pbover2v=np.array(Xa)[2]
-#        rbover2v=np.array(Xa)[3]
-        '''
-        for t in range(1,len(self.t_run(time))):
-            U_a = np.transpose(np.matrix([da[t],dr[t]]))
-            if __name__ == "__main__":
-                print ('8======D')#,Xa)
-            DX_a = np.dot(self.Aa(vt0),(Xa)) + (self.Ba(vt0)*U_a)
-            Xa = Xa + DX_a*self.delta_t
-            Beta = np.vstack((Beta,Xa[0]))
-            Phi = np.vstack((Phi,Xa[1]))
-            pbover2v = np.vstack((pbover2v,Xa[2]))
-            rbover2v = np.vstack((rbover2v,Xa[3]))'''
-#        Beta = np.array(Beta)
-#        Phi = np.array(Phi)
-#        pbover2v = np.array(pbover2v)
-#        rbover2v = np.array(rbover2v)
+        T, response, xout =control.forced_response(sys,U=U_a,T=T,X0=Xa)
+
+        return response, T, xout
+    
+    
+    
+    def not_symmetric_control_dimension(self,manouvre):
+        response, T, xout = self.not_symmetric_control(manouvre)
+        Xa, vt0 = matlab.Xa(manouvre)
+        response[2,:]=response[2,:]*2*vt0/p.b
+        response[3,:]=response[3,:]*2*vt0/p.b
         return response, T, xout
         
 if __name__ == "__main__":
     model = Numerical_Model()
-    
-    v_ias = model.tools.kts_to_ms(1)
-    alt = model.tools.ft_to_m(0)
-    v_tas = model.tools.ias_to_tas(alt, v_ias)
-    v_dimless = model.v_dimless(v_tas, v_tas+1)
-    #print(v_dimless)
-    D_c = model.D_c(1, v_dimless)
-    D_b = model.D_b(1, v_dimless)
-    
-    sym = model.EOM_sym(D_c)
-    asym = model.EOM_asym(D_b)
-    
-    eig_s = np.linalg.eig(sym)[0]
-    eig_a = np.linalg.eig(asym)
+#    
+#    v_ias = model.tools.kts_to_ms(1)
+#    alt = model.tools.ft_to_m(0)
+#    v_tas = model.tools.ias_to_tas(alt, v_ias)
+#    v_dimless = model.v_dimless(v_tas, v_tas+1)
+#    #print(v_dimless)
+#    D_c = model.D_c(1, v_dimless)
+#    D_b = model.D_b(1, v_dimless)
+#    
+#    sym = model.EOM_sym(D_c)
+#    asym = model.EOM_asym(D_b)
+#    
+#    eig_s = np.linalg.eig(sym)[0]
+#    eig_a = np.linalg.eig(asym)
     
     
 #    print(sym)
@@ -271,7 +267,7 @@ if __name__ == "__main__":
     """
 #    print('SYMMETRIC')
 #    As_mat=model.As(v_ref)
-#    As_eig=np.linalg.eig(As_mat)[0] * p.c/v_ref
+#    #As_eig=np.linalg.eig(As_mat)[0] * p.c/v_ref
 #
 #    print(As_mat)
 #    print(As_eig)
@@ -309,13 +305,24 @@ if __name__ == "__main__":
 
 
     #output = model.not_symmetric_control('spiral')
-    output2 = model.symmetric_interpolate('fugoid')
+    Yout, T, Xout = model.symmetric_control('sh_period')
+    
+    plt.plot(T,Yout[0])
+    plt.plot(T,Yout[1])
+    plt.plot(T,Yout[2])
+    plt.plot(T,Yout[3])
+    plt.show()
+    plt.plot(T,Xout[0])
+    plt.plot(T,Xout[1])
+    plt.plot(T,Xout[2])
+    plt.plot(T,Xout[3])
+    plt.show()
 
-    output = model.not_symmetric_control('spiral')
+    #output = model.not_symmetric_control_dimension('spiral')
     #output2 = model.symmetric_control('fugoid')
 
     if __name__ == "__main__":
             print ('8======D~~~~')
-    print (output)
+    #print (output2)
     
 

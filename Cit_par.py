@@ -1,5 +1,7 @@
 import math
-import app_C_values as c
+from app_C_values import App_C
+app = App_C()
+c = app.values()
 #from matlab_tools import Matlab_Tools
 #matlab = Matlab_Tools('FTISxprt-20190305_124649.mat')
 #
@@ -18,22 +20,24 @@ import app_C_values as c
 
 # Stationary flight condition
 
-hp0    = c.Chp0      	      # pressure altitude in the stationary flight condition [m]
-V0     = c.CV0            # true airspeed in the stationary flight condition [m/sec]
-alpha0 = c.Calpha0            # angle of attack in the stationary flight condition [rad]
-th0    = c.Cth0            # pitch angle in the stationary flight condition [rad]
+hp0    = c[0]     	      # pressure altitude in the stationary flight condition [m]
+V0     = c[1]            # true airspeed in the stationary flight condition [m/sec]
+alpha0 = c[2]            # angle of attack in the stationary flight condition [rad]
+th0    = c[3]            # pitch angle in the stationary flight condition [rad]
+
+#print(c)
 
 # Aircraft mass
-m      = c.Cm            # mass [kg]
+m      = c[4]            # mass [kg]
 
 # aerodynamic properties
-e      = c.Ce            # Oswald factor [ ]
-CD0    = c.CCD0            # Zero lift drag coefficient [ ]
-CLa    = c.CCLa            # Slope of CL-alpha curve [ ]
+e      = c[5]            # Oswald factor [ ]
+CD0    = c[6]            # Zero lift drag coefficient [ ]
+CLa    = c[7]           # Slope of CL-alpha curve [ ]
 
 ## Longitudinal stability
-Cma    = c.CCma            # longitudinal stabilty [ ]
-Cmde   = c.CCmde            # elevator effectiveness [ ]
+Cma    = c[8]            # longitudinal stabilty [ ]
+Cmde   = c[9]           # elevator effectiveness [ ]
 
 # Aircraft geometry
 
@@ -84,6 +88,8 @@ CL = 2 * W / (rho * V0 ** 2 * S)              # Lift coefficient [ ]
 CD = CD0 + (CLa * alpha0) ** 2 / (math.pi * A * e) # Drag coefficient [ ]
 
 # Stabiblity derivatives
+
+#print(V0)
 
 CX0    = W * math.sin(th0) / (0.5 * rho * V0 ** 2 * S)
 CXu    = -0.02792
