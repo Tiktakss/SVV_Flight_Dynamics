@@ -14,7 +14,7 @@ class Matlab_Tools:
     def __init__(self,filename):
         self.lol = 0 #not used
         self.filename = filename#'FTISxprt-20190305_124649.mat'
-        self.fugoidstart = 60*49 
+        self.fugoidstart = 60*49 -30
         self.fugoidtime = 159
         self.ap_rollstart = 60*53 + 5
         self.ap_rolltime = 6
@@ -25,7 +25,7 @@ class Matlab_Tools:
         self.dutchR_dampstart = 60*57+32
         self.dutchR_damptime = 10
         self.spiralstart = 60*62 -10
-        self.spiraltime = 400
+        self.spiraltime = 470
         self.b=15.911 #m
         self.c=2.0569 #m
 
