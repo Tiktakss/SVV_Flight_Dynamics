@@ -49,6 +49,7 @@ AOA = np.zeros(len(data_trim_curve)+len(data_cg_shift_data)-1)
 de = np.zeros(len(data_trim_curve)+len(data_cg_shift_data)-1)
 Fe = np.zeros(len(data_trim_curve)+len(data_cg_shift_data)-1)
 V = np.zeros(len(data_trim_curve)+len(data_cg_shift_data)-1)
+reduced_V = np.zeros(len(data_trim_curve)+len(data_cg_shift_data)-1)
 Center_gravity = np.zeros(len(data)+len(data_trim_curve)+len(data_cg_shift_data)-1)
 
 #Make Life curve
@@ -158,6 +159,7 @@ for i in range(len(data_trim_curve)):
     de[i] = row[6]
     Fe[i] = row[8]
     V[i] = row[4]
+    reduced_V[i] = row[4] * np.sqrt(60500 / weight_n)
 
 #After cg shifts
 for i in range(len(data_cg_shift_data)):
@@ -172,20 +174,20 @@ for i in range(len(data_cg_shift_data)):
     de[i+len(data_trim_curve)-1] = row[6]
     Fe[i+len(data_trim_curve)-1] = row[8]
     V[i+len(data_trim_curve)-1] = row[4]
-    
     weight = total_weight #lbs
     weight_kg = aero.lbs * weight #kg
     weight_n = weight_kg * aero.g0 #N
-    
+    reduced_V[i+len(data_trim_curve)-1] = row[4] * np.sqrt(60500 / weight_n)
     height = row_lift[3] #ft
     height_m = aero.ft_to_m(height) #m
     density = aero.rho_alt(height_m) 
     
     speed = row_lift[4] #kts
     speed_ms = aero.kts_to_ms(speed) #ms
-    
     C_n = (2*weight_n)/(density*par.S*speed_ms**2) #N
-    
+
+print(reduced_V)
+print(V)
 ##Plotting
 #plt.figure()
 #plt.subplot(221)
@@ -214,13 +216,13 @@ for i in range(len(data_cg_shift_data)):
 #plt.legend()
 #
 #plt.subplot(223)
-plt.plot(V[:6],Fe[:6], "bo", label="Flight Data")
+plt.plot(reduced_V[:6],Fe[:6], "bo", label="Flight Data")
 plt.title("Control force curve")
 plt.ylabel("$F_e$[N]")
 plt.gca().invert_yaxis()
 plt.xlabel("Velocity[kts]")
 plt.grid(True)
-z7 = np.polyfit(V[:6], Fe[:6], 2)
+z7 = np.polyfit(reduced_V[:6], Fe[:6], 2)
 p7 = np.poly1d(z7)
 xp7 = np.linspace(140, 200, 200)
 plt.plot(xp7,p7(xp7),"b--", label="Trendline")
