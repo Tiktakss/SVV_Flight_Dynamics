@@ -10,7 +10,10 @@ import control
 import matplotlib.pyplot as plt
 
 class Numerical_Model:
-    def __init__(self):
+    def __init__(self, match=None):
+        if not match==None:
+            print ('Matching')
+            match=True
         self.tools = Aero_Tools()
         #self.amod = Analytical_Model()
         self.delta_t = 0.1
