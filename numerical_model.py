@@ -141,7 +141,7 @@ class Numerical_Model:
         b = self.Bs(vt0)
         c = self.C()
         d = self.Ds()
-        sys = control.matlab.ss(a,b,c,d)
+        sys = control.ss(a,b,c,d)
         T, response, xout = control.forced_response(sys,U=U_s,T=T,X0=Xs)
 
         response[3,:] = response[3,:]/p.c*vt0# make q dimentional again
