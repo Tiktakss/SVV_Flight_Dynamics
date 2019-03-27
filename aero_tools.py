@@ -46,7 +46,8 @@ class Aero_Tools:
         p = self.p0*(1 + (self.lapse*h)/self.T0)**(-self.g0/(self.lapse*self.R))
         M = sqrt((2.0/(self.gamma -1.0))*((1.0 \
                  + (self.p0/p)*((1.0+ ((self.gamma \
-                   -1.0)/(2.0*self.gamma))*(self.rho0/self.p0)*v_cal*v_cal)**(self.gamma/(self.gamma \
+                   -1.0)/(2.0*self.gamma))*(self.rho0/self.p0)*v_cal*v_cal)**\
+                    (self.gamma/(self.gamma \
                     -1.0))-1.0))**((self.gamma \
             - 1.0)/self.gamma)-1.0))
         return M

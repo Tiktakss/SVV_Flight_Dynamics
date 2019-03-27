@@ -33,20 +33,23 @@ fugoidtime = matlab.getdata_at_time('time',matlab.fugoidstart,matlab.fugoidstart
 #fugoid = nummodel.symmetric_interpolate('fugoid')[2]/np.pi*180# #pitch 'theta'
 fugoid = nummodel.symmetric_control('fugoid')[0]
 fugoidpitchrate=fugoid[3]/np.pi*180
-fugoiddatapitchrate = matlab.getdata_at_time('Ahrs1_bPitchRate',matlab.fugoidstart,matlab.fugoidstart+matlab.fugoidtime)
+fugoiddatapitchrate = matlab.getdata_at_time('Ahrs1_bPitchRate',matlab.fugoidstart,matlab.fugoidstart+\
+                                             matlab.fugoidtime)
 fugoid = fugoid[2]/np.pi*180##pitch 'theta'
 
 
 
 
 #Aperiodic roll
-ap_rolldata = matlab.getdata_at_time('Ahrs1_Roll',matlab.ap_rollstart,matlab.ap_rollstart+matlab.ap_rolltime)#'Ahrs1_bRollRate''
+ap_rolldata = matlab.getdata_at_time('Ahrs1_Roll',matlab.ap_rollstart,matlab.ap_rollstart+matlab.ap_rolltime)\
+#'Ahrs1_bRollRate''
 ap_rolltime = matlab.getdata_at_time('time',matlab.ap_rollstart,matlab.ap_rollstart+matlab.ap_rolltime)/60
 ap_roll = nummodel.not_symmetric_control('ap_roll')[0]/np.pi*180 # roll angle 'phi'
 
 
 #Short period
-sh_perioddata = matlab.getdata_at_time('Ahrs1_bPitchRate',matlab.sh_periodstart,matlab.sh_periodstart+matlab.sh_periodtime)
+sh_perioddata = matlab.getdata_at_time('Ahrs1_bPitchRate',matlab.sh_periodstart,matlab.sh_periodstart+\
+                                       matlab.sh_periodtime)
 sh_periodtime = matlab.getdata_at_time('time',matlab.sh_periodstart,matlab.sh_periodstart+matlab.sh_periodtime)/60
 sh_periodnum = nummodel.symmetric_control('sh_period')
 vt0 = sh_periodnum[3]
@@ -54,8 +57,10 @@ sh_period = sh_periodnum[0][3]/np.pi*180/p.c*vt0 #*0.01 #pitchrate 'q'
 #sh_period = nummodel.symmetric_interpolate('sh_period')[3]/np.pi*180# #pitch 'theta'
 
 #Dutch roll undamped
-dutchRdata = matlab.getdata_at_time('Ahrs1_bRollRate',matlab.dutchRstart,matlab.dutchRstart+matlab.dutchRtime)/180*np.pi
-dutchRdata2 = matlab.getdata_at_time('Ahrs1_bYawRate',matlab.dutchRstart,matlab.dutchRstart+matlab.dutchRtime)/180*np.pi
+dutchRdata = matlab.getdata_at_time('Ahrs1_bRollRate',matlab.dutchRstart,matlab.dutchRstart+matlab.dutchRtime)\
+/180*np.pi
+dutchRdata2 = matlab.getdata_at_time('Ahrs1_bYawRate',matlab.dutchRstart,matlab.dutchRstart+matlab.dutchRtime)\
+/180*np.pi
 dutchRtime = matlab.getdata_at_time('time',matlab.dutchRstart,matlab.dutchRstart+matlab.dutchRtime)/60
 dutchRnum = nummodel.not_symmetric_control_dimension('dutchR')
 dutchR = dutchRnum[0][2]/np.pi*180
@@ -63,16 +68,20 @@ dutchR2 = dutchRnum[0][3]/np.pi*180
 
 
 #Dutch roll damped
-dutchR_dampdata = matlab.getdata_at_time('Ahrs1_bRollRate',matlab.dutchR_dampstart,matlab.dutchR_dampstart+matlab.dutchR_damptime)/180*np.pi
-dutchR_dampdata2 = matlab.getdata_at_time('Ahrs1_bYawRate',matlab.dutchR_dampstart,matlab.dutchR_dampstart+matlab.dutchR_damptime)/180*np.pi
-dutchR_damptime = matlab.getdata_at_time('time',matlab.dutchR_dampstart,matlab.dutchR_dampstart+matlab.dutchR_damptime)/60
+dutchR_dampdata = matlab.getdata_at_time('Ahrs1_bRollRate',matlab.dutchR_dampstart,matlab.dutchR_dampstart+\
+                                         matlab.dutchR_damptime)/180*np.pi
+dutchR_dampdata2 = matlab.getdata_at_time('Ahrs1_bYawRate',matlab.dutchR_dampstart,matlab.dutchR_dampstart+\
+                                          matlab.dutchR_damptime)/180*np.pi
+dutchR_damptime = matlab.getdata_at_time('time',matlab.dutchR_dampstart,\
+                                         matlab.dutchR_dampstart+matlab.dutchR_damptime)/60
 dutchR_dampnum = nummodel.not_symmetric_control_dimension('dutchR_damp')
 dutchR_damp = dutchR_dampnum[0][2]/np.pi*180
 dutchR_damp2 = dutchR_dampnum[0][3]/np.pi*180
 
 
 #Spiral
-spiraldata = matlab.getdata_at_time('Ahrs1_Roll',matlab.spiralstart,matlab.spiralstart+matlab.spiraltime)/180*np.pi
+spiraldata = matlab.getdata_at_time('Ahrs1_Roll',matlab.spiralstart,matlab.spiralstart+matlab.spiraltime)\
+/180*np.pi
 spiraldata2 = matlab.getdata_at_time('Ahrs1_bYawRate',matlab.spiralstart,matlab.spiralstart+matlab.spiraltime)
 spiraltime = matlab.getdata_at_time('time',matlab.spiralstart,matlab.spiralstart+matlab.spiraltime)/60
 spiralnum = nummodel.not_symmetric_control_dimension('spiral')
