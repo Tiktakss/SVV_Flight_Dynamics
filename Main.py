@@ -44,6 +44,8 @@ fugoid = fugoid[2]/np.pi*180##pitch 'theta'
 ap_rolldata = matlab.getdata_at_time('Ahrs1_Roll',matlab.ap_rollstart,matlab.ap_rollstart+matlab.ap_rolltime)#'Ahrs1_bRollRate''
 ap_rolltime = matlab.getdata_at_time('time',matlab.ap_rollstart,matlab.ap_rollstart+matlab.ap_rolltime)/60
 ap_roll = nummodel.not_symmetric_control('ap_roll')[0]/np.pi*180 # roll angle 'phi'
+ap_rollinput1 = matlab.getdata_at_time('delta_r',matlab.ap_rollstart,matlab.ap_rollstart+matlab.ap_rolltime)
+ap_rollinput2 = matlab.getdata_at_time('delta_a',matlab.ap_rollstart,matlab.ap_rollstart+matlab.ap_rolltime)
 
 
 #Short period
@@ -53,6 +55,8 @@ sh_periodnum = nummodel.symmetric_control('sh_period')
 vt0 = sh_periodnum[3]
 sh_period = sh_periodnum[0][3]/np.pi*180#/p.c*vt0*0.015 #pitchrate 'q'
 #sh_period = nummodel.symmetric_interpolate('sh_period')[3]/np.pi*180# #pitch 'theta'
+sh_periodinput = matlab.getdata_at_time('delta_e',matlab.sh_periodstart,matlab.sh_periodstart+matlab.sh_periodtime)
+
 
 #Dutch roll undamped
 dutchRdata = matlab.getdata_at_time('Ahrs1_bRollRate',matlab.dutchRstart,matlab.dutchRstart+matlab.dutchRtime)/180*np.pi
@@ -61,6 +65,8 @@ dutchRtime = matlab.getdata_at_time('time',matlab.dutchRstart,matlab.dutchRstart
 dutchRnum = nummodel.not_symmetric_control('dutchR')
 dutchR = dutchRnum[0][2]/np.pi*180*0.2
 dutchR2 = dutchRnum[0][3]/np.pi*180*0.2
+dutchRinput1 = matlab.getdata_at_time('delta_r',matlab.dutchRstart,matlab.dutchRstart+matlab.dutchRtime)
+dutchRinput2 = matlab.getdata_at_time('delta_a',matlab.dutchRstart,matlab.dutchRstart+matlab.dutchRtime)
 
 
 #Dutch roll damped
@@ -79,56 +85,87 @@ spiraltime = matlab.getdata_at_time('time',matlab.spiralstart,matlab.spiralstart
 spiralnum = nummodel.not_symmetric_control_dimension('spiral')
 spiral = spiralnum[0][0]/np.pi*180*0.15
 spiral2 = spiralnum[0][3]/np.pi*180*0.15
+spiralinput1 = matlab.getdata_at_time('delta_r',matlab.spiralstart,matlab.spiralstart+matlab.spiraltime)
+spiralinput2 = matlab.getdata_at_time('delta_a',matlab.spiralstart,matlab.spiralstart+matlab.spiraltime)
 
 ##Plotting
 
 '''Provide inputs aswell for all cases
 '''
 plt.figure(1)
-plt.subplot(212)
+plt.subplot(211)
+
 plt.plot(fugoidtime,fugoiddata,label='data')
 plt.plot(fugoidtime,fugoid,label='numerical model')
 plt.ylabel('pitch [deg]')
-plt.xlabel('time [min]')
 plt.legend()
+plt.title("Phugoid")
 plt.grid()
-plt.subplot(211)
+plt.subplot(212)
 plt.plot(fugoidtime,fugoiddatade,label='delta_e')
 plt.ylabel('deflection [deg]')
+plt.xlabel('time [min]')
 plt.legend()
 plt.grid()
-plt.title("Phugoid")
+
 
 plt.figure(2)
+plt.subplot(311)
 plt.plot(ap_rolltime,ap_rolldata,label='data')
 plt.plot(ap_rolltime,(ap_roll[1]),label='numerical model')
-plt.xlabel('time [min]')
 plt.ylabel('roll [deg]')
 plt.title("Aperiodic roll")
 plt.legend()
 plt.grid()
+plt.subplot(312)
+plt.plot(ap_rolltime,ap_rollinput1,label='delta_r')
+plt.ylabel('deflection [deg]')
+plt.legend()
+plt.grid()
+plt.subplot(313)
+plt.plot(ap_rolltime,ap_rollinput2,label='delta_a')
+plt.ylabel('deflection [deg]')
+plt.xlabel('time [min]')
+plt.legend()
+plt.grid()
 
 plt.figure(3)
+plt.subplot(211)
 plt.plot(sh_periodtime,sh_perioddata,label='data')
 plt.plot(sh_periodtime,sh_period,label='numerical model')
-plt.xlabel('time [min]')
 plt.ylabel('pitch rate [deg/s]')
 plt.title("Short period")
 plt.legend()
 plt.grid()
+plt.subplot(212)
+plt.plot(sh_periodtime,sh_periodinput,label='delta_e')
+plt.ylabel('deflection [deg]')
+plt.xlabel('time [min]')
+plt.legend()
+plt.grid()
 
 plt.figure(4)
-plt.subplot(211)
+plt.subplot(411)
 plt.plot(dutchRtime,dutchRdata,label='data')
 plt.plot(dutchRtime,dutchR,label='numerical model')
 plt.ylabel('roll rate [rad/s]')
 plt.title("Dutch roll (undamped)")
 plt.legend()
 plt.grid()
-plt.subplot(212)
+plt.subplot(412)
 plt.plot(dutchRtime,dutchRdata2,label='data')
 plt.plot(dutchRtime,dutchR2,label='numerical model')
 plt.ylabel('yaw rate [rad/s]')
+plt.legend()
+plt.grid()
+plt.subplot(413)
+plt.plot(dutchRtime,dutchRinput1,label='delta_e')
+plt.ylabel('deflection [deg]')
+plt.legend()
+plt.grid()
+plt.subplot(414)
+plt.plot(dutchRtime,dutchRinput1,label='delta_e')
+plt.ylabel('deflection [deg]')
 plt.xlabel('time [min]')
 plt.legend()
 plt.grid()
@@ -151,18 +188,27 @@ plt.grid()
 #plt.grid()
 
 plt.figure(6)
-plt.subplot(211)
+plt.subplot(411)
 plt.plot(spiraltime,spiraldata,label='data')
 plt.plot(spiraltime,spiral,label='numerical')
 plt.ylabel('roll [rad]')
-plt.xlabel('time [min]')
 plt.title("Spiral")
 plt.legend()
 plt.grid()
-plt.subplot(212)
+plt.subplot(412)
 plt.plot(spiraltime,spiraldata2,label='data')
 plt.plot(spiraltime,spiral2,label='numerical')
 plt.ylabel('yaw rate [deg/s]')
+plt.legend()
+plt.grid()
+plt.subplot(413)
+plt.plot(spiraltime,spiralinput1,label='delta_r')
+plt.ylabel('deflection [deg]')
+plt.legend()
+plt.grid()
+plt.subplot(414)
+plt.plot(spiraltime,spiralinput2,label='delta_a')
+plt.ylabel('deflection [deg]')
 plt.xlabel('time [min]')
 plt.legend()
 plt.grid()
