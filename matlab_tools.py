@@ -29,7 +29,17 @@ class Matlab_Tools:
         self.b=15.911 #m
         self.c=2.0569 #m
 
-        self.parameters=['vane_AOA','elevator_dte','column_fe','lh_engine_FMF','rh_engine_FMF','lh_engine_itt','rh_engine_itt','lh_engine_OP','rh_engine_OP','lh_engine_fan_N1','lh_engine_turbine_N2','rh_engine_fan_N1','rh_engine_turbine_N2','lh_engine_FU','rh_engine_FU','delta_a','delta_e','delta_r','Gps_date','Gps_utcSec','Ahrs1_Roll','Ahrs1_Pitch','Fms1_trueHeading','Gps_lat','Gps_long','Ahrs1_bRollRate','Ahrs1_bPitchRate','Ahrs1_bYawRate','Ahrs1_bLongAcc','Ahrs1_bLatAcc','Ahrs1_bNormAcc','Ahrs1_aHdgAcc','Ahrs1_xHdgAcc','Ahrs1_VertAcc','Dadc1_sat','Dadc1_tat','Dadc1_alt','Dadc1_bcAlt','Dadc1_bcAltMb','Dadc1_mach','Dadc1_cas','Dadc1_tas','Dadc1_altRate','measurement_running','measurement_n_rdy','display_graph_state','display_active_screen','time' ]
+        self.parameters=['vane_AOA','elevator_dte','column_fe','lh_engine_FMF','rh_engine_FMF',\
+                         'lh_engine_itt','rh_engine_itt','lh_engine_OP','rh_engine_OP',\
+                         'lh_engine_fan_N1','lh_engine_turbine_N2','rh_engine_fan_N1',\
+                         'rh_engine_turbine_N2','lh_engine_FU','rh_engine_FU','delta_a',\
+                         'delta_e','delta_r','Gps_date','Gps_utcSec','Ahrs1_Roll','Ahrs1_Pitch',\
+                         'Fms1_trueHeading','Gps_lat','Gps_long','Ahrs1_bRollRate',\
+                         'Ahrs1_bPitchRate','Ahrs1_bYawRate','Ahrs1_bLongAcc','Ahrs1_bLatAcc',\
+                         'Ahrs1_bNormAcc','Ahrs1_aHdgAcc','Ahrs1_xHdgAcc','Ahrs1_VertAcc',\
+                         'Dadc1_sat','Dadc1_tat','Dadc1_alt','Dadc1_bcAlt','Dadc1_bcAltMb',\
+                         'Dadc1_mach','Dadc1_cas','Dadc1_tas','Dadc1_altRate','measurement_running'\
+                         ,'measurement_n_rdy','display_graph_state','display_active_screen','time' ]
     
     def getdata(self,parameter):
         data=sio.loadmat(self.filename,struct_as_record=True,squeeze_me=True)
@@ -65,7 +75,8 @@ class Matlab_Tools:
         timeparameterdata=np.take(self.getdata('time'),times)
         data=timeparameterdata
         for i in range(len(self.parameters)-1,0,-1):
-            data=np.column_stack((self.getdata_at_time(self.parameters[i],start_time_in_seconds,stop_time_in_seconds),data))
+            data=np.column_stack((self.getdata_at_time(self.parameters[i],\
+                            start_time_in_seconds,stop_time_in_seconds),data))
         return data
     
     def gettimes(self,manouvre):
@@ -100,7 +111,9 @@ class Matlab_Tools:
         aoa=self.getdata_at_time('vane_AOA',start,start+dt)[0]/180*np.pi
         theta=self.getdata_at_time('Ahrs1_Pitch',start,start+dt)[0]/180*np.pi
         vtas = self.getdata_at_time('Dadc1_tas',start,start+dt)[0]*0.51 #knots -> m/s
-        qcoverv=self.getdata_at_time('Ahrs1_bPitchRate',start,start+dt)[0]/180*np.pi*self.c/vtas #q is pitchrate
+        qcoverv=self.getdata_at_time('Ahrs1_bPitchRate',start,start+dt)[0]/\
+        180*np.pi*self.c/vtas \
+        #q is pitchrate
         X_s=np.array([[uhat],[aoa],[theta],[qcoverv]])
 
         return X_s, vtas
@@ -112,8 +125,10 @@ class Matlab_Tools:
         Beta= 0 #assume no sideslip at intitial condition
         Phi=self.getdata_at_time('Ahrs1_Roll',start,start+dt)[0]/180*np.pi
         vtas = self.getdata_at_time('Dadc1_tas',start,start+dt)[0]*0.51 #knots -> m/s
-        pbover2v=self.getdata_at_time('Ahrs1_bRollRate',start,start+dt)[0]/180*np.pi*self.b/(2*vtas)
-        rbover2v=self.getdata_at_time('Ahrs1_bYawRate',start,start+dt)[0]/180*np.pi*self.b/(2*vtas)
+        pbover2v=self.getdata_at_time('Ahrs1_bRollRate',start,start+dt)[0]/\
+        180*np.pi*self.b/(2*vtas)
+        rbover2v=self.getdata_at_time('Ahrs1_bYawRate',start,start+dt)[0]/\
+        180*np.pi*self.b/(2*vtas)
         X_a=np.array([[Beta],[Phi],[pbover2v],[rbover2v]])
         return X_a, vtas
 
